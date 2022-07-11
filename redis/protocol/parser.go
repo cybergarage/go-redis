@@ -14,7 +14,7 @@
 
 package protocol
 
-// Paser represents a protocol parser.
+// Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
 }
 
@@ -22,4 +22,9 @@ type Parser struct {
 func NewParser() *Parser {
 	Parser := &Parser{}
 	return Parser
+}
+
+// Parse parses a serialized request binary from the client.
+func (parser *Parser) Paerse() error {
+	return nil
 }
