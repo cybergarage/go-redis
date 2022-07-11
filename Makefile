@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 SHELL := bash
 
 #PREFIX?=$(shell pwd)
@@ -47,7 +46,7 @@ all: test
 version:
 	@pushd ${SOURCE_DIR} && ./version.gen > version.go && popd
 
-format:
+format: version
 	gofmt -w ${SOURCE_DIR} ${BINARY_DIR}
 
 vet: format
