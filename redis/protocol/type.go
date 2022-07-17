@@ -20,6 +20,20 @@ type MessageType int
 const (
 	SimpleString MessageType = iota
 	Error
+	Integer
 	BulkString
 	Array
 )
+
+var messageTypes = map[byte]MessageType{
+	'+': SimpleString,
+	'-': Error,
+	':': Integer,
+	'$': BulkString,
+	'*': Array,
+}
+
+func parseMessageType(b byte) (MessageType, bool) {
+	t, ok := messageTypes[b]
+	return t, ok
+}

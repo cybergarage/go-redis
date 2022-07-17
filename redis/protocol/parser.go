@@ -14,6 +14,8 @@
 
 package protocol
 
+import "fmt"
+
 // Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
 }
@@ -25,6 +27,13 @@ func NewParser() *Parser {
 }
 
 // Parse parses a serialized request binary from the client.
-func (parser *Parser) Paerse() error {
+func (parser *Parser) Paerse(msgBytes []byte) error {
+	if len(msgBytes) == 0 {
+		return fmt.Errorf(errorShortMessage, len(msgBytes))
+	}
+	_, ok := parseMessageType(msgBytes[0])
+	if !ok {
+		return fmt.Errorf(errorUnknownMessageType, msgBytes[0])
+	}
 	return nil
 }
