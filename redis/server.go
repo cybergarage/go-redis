@@ -36,8 +36,7 @@ func (server *Server) Stop() error {
 
 // Restart restarts the server.
 func (server *Server) Restart() error {
-	err := server.Stop()
-	if err != nil {
+	if err := server.Stop(); err != nil {
 		return err
 	}
 
