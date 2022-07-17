@@ -16,5 +16,14 @@ package protocol
 
 import "testing"
 
+var testMessages = []string{
+	"+OK\r\n",
+}
+
 func TestMessageType(t *testing.T) {
+	for _, testMsg := range testMessages {
+		if _, ok := parseMessageType(testMsg[0]); !ok {
+			t.Errorf(testMsg)
+		}
+	}
 }
