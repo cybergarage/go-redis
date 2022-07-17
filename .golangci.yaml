@@ -25,3 +25,4 @@ linters:
     - makezero
     - gomnd
     - nestif
+    - gochecknoglobals
