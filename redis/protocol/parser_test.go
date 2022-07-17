@@ -16,7 +16,7 @@ package protocol
 
 import "testing"
 
-// RESP protocol spec examples
+// RESP protocol spec examples.
 var respExampleMessages = []string{
 	// RESP Simple Strings
 	"+OK\r\n",
@@ -43,9 +43,12 @@ var testMessages = respExampleMessages
 func TestParser(t *testing.T) {
 	for _, testMsg := range testMessages {
 		parser := NewParser()
-		err := parser.Paerse([]byte(testMsg))
+		msgs, err := parser.Paerse([]byte(testMsg))
 		if err != nil {
 			t.Error(err)
+		}
+		if len(msgs) != 0 {
+			t.Errorf("%d != 0", len(msgs))
 		}
 	}
 }

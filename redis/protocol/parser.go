@@ -30,22 +30,23 @@ func NewParser() *Parser {
 }
 
 // Parse parses a serialized request binary from the client.
-func (parser *Parser) Paerse(protoBytes []byte) error {
+func (parser *Parser) Paerse(protoBytes []byte) ([]Message, error) {
 	if len(protoBytes) == 0 {
-		return fmt.Errorf(errorEmptyMessage, len(protoBytes))
+		return nil, fmt.Errorf(errorEmptyMessage, len(protoBytes))
 	}
 	allMsgBytes := bytes.Split(protoBytes, []byte(crlr))
-	if len(allMsgBytes) == 0 {
-		return fmt.Errorf(errorEmptyMessage, len(allMsgBytes))
+	if msgCount := len(allMsgBytes); msgCount == 0 {
+		return nil, fmt.Errorf(errorEmptyMessage, msgCount)
 	}
+	var msgs []Message
 	for _, msgBytes := range allMsgBytes {
 		if len(msgBytes) == 0 {
 			continue
 		}
 		_, ok := parseMessageType(msgBytes[0])
 		if !ok {
-			return fmt.Errorf(errorUnknownMessageType, msgBytes[0])
+			return nil, fmt.Errorf(errorUnknownMessageType, msgBytes[0])
 		}
 	}
-	return nil
+	return msgs, nil
 }
