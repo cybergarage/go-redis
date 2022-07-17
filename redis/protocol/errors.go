@@ -16,5 +16,5 @@ package protocol
 
 const (
 	errorEmptyMessage       = "message is short (%d)"
-	errorUnknownMessageType = "unknown message type (%X)"
+	errorUnknownMessageType = "unknown message type (%c)"
 )

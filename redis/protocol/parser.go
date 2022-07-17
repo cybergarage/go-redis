@@ -45,7 +45,7 @@ func (parser *Parser) Paerse(protoBytes []byte) ([]Message, error) {
 		}
 		_, ok := parseMessageType(msgBytes[0])
 		if !ok {
-			return nil, fmt.Errorf(errorUnknownMessageType, msgBytes[0])
+			return nil, fmt.Errorf(errorUnknownMessageType, rune(msgBytes[0]))
 		}
 	}
 	return msgs, nil
