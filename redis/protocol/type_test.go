@@ -16,6 +16,5 @@ package protocol
 
 import "testing"
 
-func TestMessage(t *testing.T) {
-	NewMessage(SimpleString)
+func TestMessageType(t *testing.T) {
 }

@@ -14,8 +14,12 @@
 
 package protocol
 
-import "testing"
+// MessageType represents a message type of Redis serialization protocol.
+type MessageType int
 
-func TestMessage(t *testing.T) {
-	NewMessage(SimpleString)
-}
+const (
+	SimpleString MessageType = iota
+	Error
+	BulkString
+	Array
+)
