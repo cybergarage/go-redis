@@ -14,14 +14,7 @@
 
 package protocol
 
-// Message represents a message of Redis serialization protocol.
-type Message struct {
-	Type MessageType
-}
+import "testing"
 
-// NewMessage returns a new message instance.
-func NewMessage(t MessageType) *Message {
-	msg := &Message{
-		Type: t}
-	return msg
+func TestMessageType(t *testing.T) {
 }
