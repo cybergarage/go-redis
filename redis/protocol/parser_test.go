@@ -45,7 +45,7 @@ func TestParser(t *testing.T) {
 		parser := NewParser()
 		msgs, err := parser.Paerse([]byte(testMsg))
 		if err != nil {
-			t.Error(err)
+			t.Errorf("%s %s", testMsg, err)
 		}
 		if len(msgs) != 0 {
 			t.Errorf("%d != 0", len(msgs))
