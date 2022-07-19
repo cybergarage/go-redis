@@ -14,7 +14,9 @@
 
 package protocol
 
-import "testing"
+import (
+	"testing"
+)
 
 // RESP protocol spec examples.
 var respExampleMessages = []string{
@@ -52,6 +54,7 @@ func TestParser(t *testing.T) {
 			msg, err = parser.Next()
 			if err != nil {
 				t.Errorf("%s %s", testMsg, err)
+				continue
 			}
 		}
 	}
