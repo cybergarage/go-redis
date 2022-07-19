@@ -14,14 +14,25 @@
 
 package protocol
 
+import "fmt"
+
 // Message represents a message of Redis serialization protocol.
 type Message struct {
 	Type MessageType
 }
 
-// NewMessage returns a new message instance.
-func NewMessage(t MessageType) *Message {
+// newMessageWithType returns a new message instance with the specified type.
+func newMessageWithType(t MessageType) *Message {
 	msg := &Message{
 		Type: t}
 	return msg
+}
+
+// newMessageWithTypeByte returns a new message instance with the specified type byte.
+func newMessageWithTypeByte(b byte) (*Message, error) {
+	t, ok := parseMessageType(b)
+	if !ok {
+		return nil, fmt.Errorf(errorUnknownMessageType, b)
+	}
+	return newMessageWithType(t), nil
 }
