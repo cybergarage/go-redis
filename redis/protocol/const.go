@@ -15,6 +15,6 @@
 package protocol
 
 const (
-	cr   = '\r'
-	crlr = "\r\n"
+	cr = '\r'
+	lf = '\n'
 )
