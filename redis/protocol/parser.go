@@ -15,38 +15,29 @@
 package protocol
 
 import (
-	"bytes"
 	"fmt"
 )
 
 // Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
+	readBuffer []byte
+	readIndex  int
 }
 
 // NewParser returns a new parser instance.
 func NewParser() *Parser {
-	Parser := &Parser{}
+	Parser := &Parser{
+		readBuffer: nil,
+		readIndex:  0,
+	}
 	return Parser
 }
 
 // Parse parses a serialized request binary from the client.
-func (parser *Parser) Paerse(protoBytes []byte) ([]Message, error) {
+func (parser *Parser) Paerse(protoBytes []byte) error {
 	if len(protoBytes) == 0 {
-		return nil, fmt.Errorf(errorEmptyMessage, len(protoBytes))
+		return fmt.Errorf(errorEmptyMessage, 0)
 	}
-	allMsgBytes := bytes.Split(protoBytes, []byte(crlr))
-	if msgCount := len(allMsgBytes); msgCount == 0 {
-		return nil, fmt.Errorf(errorEmptyMessage, msgCount)
-	}
-	var msgs []Message
-	for _, msgBytes := range allMsgBytes {
-		if len(msgBytes) == 0 {
-			continue
-		}
-		_, ok := parseMessageType(msgBytes[0])
-		if !ok {
-			return nil, fmt.Errorf(errorUnknownMessageType, rune(msgBytes[0]))
-		}
-	}
-	return msgs, nil
+	parser.readBuffer = protoBytes
+	return nil
 }
