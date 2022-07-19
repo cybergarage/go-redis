@@ -21,15 +21,16 @@ import (
 // Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
 	readBuffer    []byte
-	readIndex     int
 	readBufferLen int
+	readIndex     int
 }
 
 // NewParser returns a new parser instance.
 func NewParser() *Parser {
 	Parser := &Parser{
-		readBuffer: nil,
-		readIndex:  0,
+		readBuffer:    nil,
+		readBufferLen: 0,
+		readIndex:     0,
 	}
 	return Parser
 }
@@ -41,10 +42,38 @@ func (parser *Parser) Parse(protoBytes []byte) error {
 	}
 	parser.readBuffer = protoBytes
 	parser.readBufferLen = len(protoBytes)
+	parser.readIndex = 0
 	return nil
 }
 
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
-	return nil, nil
+	// Parses a first type byte
+	typeByte := parser.readBuffer[parser.readIndex]
+	msg, err := newMessageWithTypeByte(typeByte)
+	if err != nil {
+		return nil, err
+	}
+
+	// Gets a message bytes
+	parser.readIndex++
+	startIndex := parser.readIndex
+	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
+		parser.readIndex++
+	}
+	if parser.readBufferLen <= parser.readIndex {
+		return nil, fmt.Errorf(errorInvalidMessage, string(parser.readBuffer))
+	}
+	msg.Bytes = parser.readBuffer[startIndex:parser.readIndex]
+
+	// Skips a next line field
+	parser.readIndex++
+	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != lf) {
+		parser.readIndex++
+	}
+	if parser.readBufferLen <= parser.readIndex {
+		return nil, fmt.Errorf(errorInvalidMessage, string(parser.readBuffer))
+	}
+
+	return msg, nil
 }
