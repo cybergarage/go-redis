@@ -17,5 +17,5 @@ package protocol
 import "testing"
 
 func TestMessage(t *testing.T) {
-	NewMessage(SimpleString)
+	newMessageWithType(SimpleString)
 }
