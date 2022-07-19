@@ -20,8 +20,9 @@ import (
 
 // Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
-	readBuffer []byte
-	readIndex  int
+	readBuffer    []byte
+	readIndex     int
+	readBufferLen int
 }
 
 // NewParser returns a new parser instance.
@@ -34,10 +35,16 @@ func NewParser() *Parser {
 }
 
 // Parse parses a serialized request binary from the client.
-func (parser *Parser) Paerse(protoBytes []byte) error {
+func (parser *Parser) Parse(protoBytes []byte) error {
 	if len(protoBytes) == 0 {
 		return fmt.Errorf(errorEmptyMessage, 0)
 	}
 	parser.readBuffer = protoBytes
+	parser.readBufferLen = len(protoBytes)
 	return nil
+}
+
+// Next returns a next message.
+func (parser *Parser) Next() (*Message, error) {
+	return nil, nil
 }
