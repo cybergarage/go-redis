@@ -18,13 +18,16 @@ import "fmt"
 
 // Message represents a message of Redis serialization protocol.
 type Message struct {
-	Type MessageType
+	Type  MessageType
+	Bytes []byte
 }
 
 // newMessageWithType returns a new message instance with the specified type.
 func newMessageWithType(t MessageType) *Message {
 	msg := &Message{
-		Type: t}
+		Type:  t,
+		Bytes: nil,
+	}
 	return msg
 }
 
