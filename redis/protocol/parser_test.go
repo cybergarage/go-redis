@@ -43,9 +43,16 @@ var testMessages = respExampleMessages
 func TestParser(t *testing.T) {
 	for _, testMsg := range testMessages {
 		parser := NewParser()
-		err := parser.Paerse([]byte(testMsg))
+		err := parser.Parse([]byte(testMsg))
 		if err != nil {
 			t.Errorf("%s %s", testMsg, err)
+		}
+		msg, err := parser.Next()
+		for msg != nil && err != nil {
+			msg, err = parser.Next()
+			if err != nil {
+				t.Errorf("%s %s", testMsg, err)
+			}
 		}
 	}
 }
