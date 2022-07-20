@@ -14,7 +14,9 @@
 
 package protocol
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Message represents a message of Redis serialization protocol.
 type Message struct {
@@ -38,4 +40,15 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 		return nil, fmt.Errorf(errorUnknownMessageType, b)
 	}
 	return newMessageWithType(t), nil
+}
+
+// String returns the message string value if the message type is string, otherwise it returns an error.
+func (msg *Message) String() (string, error) {
+	switch msg.Type {
+	case SimpleString:
+		return string(msg.Bytes), nil
+	case Array, BulkString, Error, Integer:
+		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
+	}
+	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
