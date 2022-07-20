@@ -60,6 +60,31 @@ func TestParser(t *testing.T) {
 	}
 }
 
+func testParsergMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
+	t.Helper()
+
+	parser := NewParser()
+	err := parser.Parse([]byte(msgString))
+	if err != nil {
+		t.Errorf("%s %s", msgString, err)
+		return
+	}
+	msg, err := parser.Next()
+	if err != nil {
+		t.Errorf("%s %s", msgString, err)
+		return
+	}
+	if actual, ok := compare(msg, expected); !ok {
+		t.Errorf("%s != %s", actual, expected)
+		return
+	}
+	_, err = parser.Next()
+	if err != nil {
+		t.Errorf("%s %s", msgString, err)
+		return
+	}
+}
+
 func TestParserStringMessages(t *testing.T) {
 	// RESP protocol spec examples.
 	respExamples := []struct {
@@ -72,26 +97,22 @@ func TestParserStringMessages(t *testing.T) {
 		},
 	}
 
-	for _, respExample := range respExamples {
-		parser := NewParser()
-		err := parser.Parse([]byte(respExample.message))
-		if err != nil {
-			t.Errorf("%s %s", respExample.message, err)
-		}
-		msg, err := parser.Next()
-		if err != nil {
-			t.Errorf("%s %s", respExample.message, err)
-			continue
+	compare := func(msg *Message, exp any) (any, bool) {
+		expected, ok := exp.(string)
+		if !ok {
+			return nil, false
 		}
 		actual, err := msg.String()
-		if err != nil || respExample.expected != actual {
-			t.Errorf("%s %s", respExample.message, err)
-			continue
-		}
-		_, err = parser.Next()
 		if err != nil {
-			t.Errorf("%s %s", respExample.message, err)
-			continue
+			return nil, false
 		}
+		if actual != expected {
+			return actual, false
+		}
+		return actual, true
+	}
+
+	for _, respExample := range respExamples {
+		testParsergMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
