@@ -59,3 +59,39 @@ func TestParser(t *testing.T) {
 		}
 	}
 }
+
+func TestParserStringMessages(t *testing.T) {
+	// RESP protocol spec examples.
+	respExamples := []struct {
+		message  string
+		expected string
+	}{
+		{
+			message:  "+OK\r\n",
+			expected: "OK",
+		},
+	}
+
+	for _, respExample := range respExamples {
+		parser := NewParser()
+		err := parser.Parse([]byte(respExample.message))
+		if err != nil {
+			t.Errorf("%s %s", respExample.message, err)
+		}
+		msg, err := parser.Next()
+		if err != nil {
+			t.Errorf("%s %s", respExample.message, err)
+			continue
+		}
+		actual, err := msg.String()
+		if err != nil || respExample.expected != actual {
+			t.Errorf("%s %s", respExample.message, err)
+			continue
+		}
+		_, err = parser.Next()
+		if err != nil {
+			t.Errorf("%s %s", respExample.message, err)
+			continue
+		}
+	}
+}
