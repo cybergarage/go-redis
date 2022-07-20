@@ -48,14 +48,19 @@ func (parser *Parser) Parse(protoBytes []byte) error {
 
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
-	// Parses a first type byte
+	// Finishes when all bytes have been read.
+	if parser.readBufferLen <= parser.readIndex {
+		return nil, nil
+	}
+
+	// Parses a first type byte.
 	typeByte := parser.readBuffer[parser.readIndex]
 	msg, err := newMessageWithTypeByte(typeByte)
 	if err != nil {
 		return nil, err
 	}
 
-	// Gets a message bytes
+	// Gets a message bytes.
 	parser.readIndex++
 	startIndex := parser.readIndex
 	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
@@ -66,7 +71,7 @@ func (parser *Parser) Next() (*Message, error) {
 	}
 	msg.Bytes = parser.readBuffer[startIndex:parser.readIndex]
 
-	// Skips a next line field
+	// Skips a next line field.
 	parser.readIndex++
 	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != lf) {
 		parser.readIndex++
@@ -74,6 +79,7 @@ func (parser *Parser) Next() (*Message, error) {
 	if parser.readBufferLen <= parser.readIndex {
 		return nil, fmt.Errorf(errorInvalidMessage, string(parser.readBuffer))
 	}
+	parser.readIndex++
 
 	return msg, nil
 }
