@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -42,7 +43,7 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	return newMessageWithType(t), nil
 }
 
-// String returns the message string value if the message type is string, otherwise it returns an error.
+// String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
 	case SimpleString:
@@ -51,4 +52,15 @@ func (msg *Message) String() (string, error) {
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
+}
+
+// Error returns the message error if the message type is error, otherwise it returns an error.
+func (msg *Message) Error() (error, error) {
+	switch msg.Type {
+	case Error:
+		return errors.New(string(msg.Bytes)), nil
+	case SimpleString, Array, BulkString, Integer:
+		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
+	}
+	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
