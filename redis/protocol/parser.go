@@ -66,18 +66,17 @@ func (parser *Parser) Next() (*Message, error) {
 	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
 		parser.readIndex++
 	}
-	if parser.readBufferLen <= parser.readIndex {
-		return nil, fmt.Errorf(errorInvalidMessage, string(parser.readBuffer))
+	if parser.readIndex < parser.readBufferLen {
+		msg.Bytes = parser.readBuffer[startIndex:parser.readIndex]
+	} else { // a next carriage return filed is not found all bytes have been read.
+		msg.Bytes = parser.readBuffer[startIndex:parser.readBufferLen]
+		return msg, nil
 	}
-	msg.Bytes = parser.readBuffer[startIndex:parser.readIndex]
 
 	// Skips a next line field.
 	parser.readIndex++
-	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != lf) {
-		parser.readIndex++
-	}
-	if parser.readBufferLen <= parser.readIndex {
-		return nil, fmt.Errorf(errorInvalidMessage, string(parser.readBuffer))
+	if parser.readBufferLen <= parser.readIndex { // a next line filed is not found.
+		return msg, nil
 	}
 	parser.readIndex++
 

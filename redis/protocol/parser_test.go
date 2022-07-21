@@ -116,3 +116,43 @@ func TestParserStringMessages(t *testing.T) {
 		testParsergMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
+
+func TestParserErrorMessages(t *testing.T) {
+	// RESP protocol spec examples.
+	respExamples := []struct {
+		message  string
+		expected string
+	}{
+		// {
+		// 	message:  "-Error message\r\n",
+		// 	expected: "Error message",
+		// },
+		{
+			message:  "-ERR unknown command 'helloworld'",
+			expected: "ERR unknown command 'helloworld'",
+		},
+		{
+			message:  "-WRONGTYPE Operation against a key holding the wrong kind of value",
+			expected: "WRONGTYPE Operation against a key holding the wrong kind of value",
+		},
+	}
+
+	compare := func(msg *Message, exp any) (any, bool) {
+		expected, ok := exp.(string)
+		if !ok {
+			return nil, false
+		}
+		actual, err := msg.Error()
+		if err != nil {
+			return nil, false
+		}
+		if actual.Error() != expected {
+			return actual, false
+		}
+		return actual, true
+	}
+
+	for _, respExample := range respExamples {
+		testParsergMessages(t, respExample.message, compare, respExample.expected)
+	}
+}
