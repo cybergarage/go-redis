@@ -49,7 +49,7 @@ func (msg *Message) String() (string, error) {
 	switch msg.Type {
 	case String:
 		return string(msg.Bytes), nil
-	case Array, BulkString, Error, Integer:
+	case Array, Bulk, Error, Integer:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -60,7 +60,7 @@ func (msg *Message) Error() (error, error) {
 	switch msg.Type {
 	case Error:
 		return errors.New(string(msg.Bytes)), nil
-	case String, Array, BulkString, Integer:
+	case String, Array, Bulk, Integer:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -71,7 +71,7 @@ func (msg *Message) Integer() (int, error) {
 	switch msg.Type {
 	case Integer:
 		return strconv.Atoi(string(msg.Bytes))
-	case Array, String, BulkString, Error:
+	case Array, String, Bulk, Error:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)

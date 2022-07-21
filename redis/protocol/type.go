@@ -21,7 +21,7 @@ const (
 	String MessageType = iota
 	Error
 	Integer
-	BulkString
+	Bulk
 	Array
 )
 
@@ -29,7 +29,7 @@ var messageTypes = map[byte]MessageType{
 	'+': String,
 	'-': Error,
 	':': Integer,
-	'$': BulkString,
+	'$': Bulk,
 	'*': Array,
 }
 
