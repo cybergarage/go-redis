@@ -18,7 +18,7 @@ package protocol
 type MessageType int
 
 const (
-	SimpleString MessageType = iota
+	String MessageType = iota
 	Error
 	Integer
 	BulkString
@@ -26,7 +26,7 @@ const (
 )
 
 var messageTypes = map[byte]MessageType{
-	'+': SimpleString,
+	'+': String,
 	'-': Error,
 	':': Integer,
 	'$': BulkString,
