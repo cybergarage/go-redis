@@ -123,10 +123,10 @@ func TestParserErrorMessages(t *testing.T) {
 		message  string
 		expected string
 	}{
-		// {
-		// 	message:  "-Error message\r\n",
-		// 	expected: "Error message",
-		// },
+		{
+			message:  "-Error message\r\n",
+			expected: "Error message",
+		},
 		{
 			message:  "-ERR unknown command 'helloworld'",
 			expected: "ERR unknown command 'helloworld'",
