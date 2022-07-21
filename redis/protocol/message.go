@@ -17,6 +17,7 @@ package protocol
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 // Message represents a message of Redis serialization protocol.
@@ -63,4 +64,15 @@ func (msg *Message) Error() (error, error) {
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
+}
+
+// Integer returns the message integer if the message type is integer, otherwise it returns an error.
+func (msg *Message) Integer() (int, error) {
+	switch msg.Type {
+	case Integer:
+		return strconv.Atoi(string(msg.Bytes))
+	case Array, SimpleString, BulkString, Error:
+		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
+	}
+	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }

@@ -156,3 +156,39 @@ func TestParserErrorMessages(t *testing.T) {
 		testParsergMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
+
+func TestParserIntegerMessages(t *testing.T) {
+	// RESP protocol spec examples.
+	respExamples := []struct {
+		message  string
+		expected int
+	}{
+		{
+			message:  ":0\r\n",
+			expected: 0,
+		},
+		{
+			message:  ":1000\r\n",
+			expected: 1000,
+		},
+	}
+
+	compare := func(msg *Message, exp any) (any, bool) {
+		expected, ok := exp.(int)
+		if !ok {
+			return nil, false
+		}
+		actual, err := msg.Integer()
+		if err != nil {
+			return nil, false
+		}
+		if actual != expected {
+			return actual, false
+		}
+		return actual, true
+	}
+
+	for _, respExample := range respExamples {
+		testParsergMessages(t, respExample.message, compare, respExample.expected)
+	}
+}
