@@ -47,7 +47,7 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 // String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
-	case SimpleString:
+	case String:
 		return string(msg.Bytes), nil
 	case Array, BulkString, Error, Integer:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -60,7 +60,7 @@ func (msg *Message) Error() (error, error) {
 	switch msg.Type {
 	case Error:
 		return errors.New(string(msg.Bytes)), nil
-	case SimpleString, Array, BulkString, Integer:
+	case String, Array, BulkString, Integer:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -71,7 +71,7 @@ func (msg *Message) Integer() (int, error) {
 	switch msg.Type {
 	case Integer:
 		return strconv.Atoi(string(msg.Bytes))
-	case Array, SimpleString, BulkString, Error:
+	case Array, String, BulkString, Error:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
