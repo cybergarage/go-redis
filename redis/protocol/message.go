@@ -23,14 +23,14 @@ import (
 // Message represents a message of Redis serialization protocol.
 type Message struct {
 	Type  MessageType
-	Bytes []byte
+	bytes []byte
 }
 
 // newMessageWithType returns a new message instance with the specified type.
 func newMessageWithType(t MessageType) *Message {
 	msg := &Message{
 		Type:  t,
-		Bytes: nil,
+		bytes: nil,
 	}
 	return msg
 }
@@ -44,11 +44,16 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	return newMessageWithType(t), nil
 }
 
+// Bytes returns the message raw bytes.
+func (msg *Message) Bytes() ([]byte, error) {
+	return msg.bytes, nil
+}
+
 // String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
 	case String:
-		return string(msg.Bytes), nil
+		return string(msg.bytes), nil
 	case Array, Bulk, Error, Integer:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
@@ -59,7 +64,7 @@ func (msg *Message) String() (string, error) {
 func (msg *Message) Error() (error, error) {
 	switch msg.Type {
 	case Error:
-		return errors.New(string(msg.Bytes)), nil
+		return errors.New(string(msg.bytes)), nil
 	case String, Array, Bulk, Integer:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
@@ -70,7 +75,7 @@ func (msg *Message) Error() (error, error) {
 func (msg *Message) Integer() (int, error) {
 	switch msg.Type {
 	case Integer:
-		return strconv.Atoi(string(msg.Bytes))
+		return strconv.Atoi(string(msg.bytes))
 	case Array, String, Bulk, Error:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
