@@ -111,7 +111,7 @@ func (parser *Parser) Next() (*Message, error) {
 	parser.readIndex++
 
 	// Gets a next bulk strings
-	if typeByte == bulkByte {
+	if typeByte == bulkMessageByte {
 		msg.bytes, err = parser.nextBulkStrings()
 		if err != nil {
 			return nil, err
