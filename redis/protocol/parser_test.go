@@ -15,6 +15,7 @@
 package protocol
 
 import (
+	"bytes"
 	"testing"
 )
 
@@ -183,6 +184,43 @@ func TestParserIntegerMessages(t *testing.T) {
 			return nil, false
 		}
 		if actual != expected {
+			return actual, false
+		}
+		return actual, true
+	}
+
+	for _, respExample := range respExamples {
+		testParsergMessages(t, respExample.message, compare, respExample.expected)
+	}
+}
+
+func TestParserBulkStringrMessages(t *testing.T) {
+	// RESP protocol spec examples.
+	respExamples := []struct {
+		message  string
+		expected []byte
+	}{
+		{
+			message:  "$5\r\nhello\r\n",
+			expected: []byte("hello"),
+		},
+		{
+			message:  "$0\r\n\r\n",
+			expected: []byte(""),
+		},
+		{
+			message:  "$-1\r\n",
+			expected: nil,
+		},
+	}
+
+	compare := func(msg *Message, exp any) (any, bool) {
+		expected, ok := exp.([]byte)
+		if !ok {
+			return nil, false
+		}
+		actual := msg.Bytes
+		if !bytes.Equal(actual, expected) {
 			return actual, false
 		}
 		return actual, true

@@ -16,6 +16,7 @@ package protocol
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // Paser represents a Redis serialization protocol (RESP) parser.
@@ -46,6 +47,54 @@ func (parser *Parser) Parse(protoBytes []byte) error {
 	return nil
 }
 
+// nextLineBytes gets a next line bytes.
+func (parser *Parser) nextLineBytes() ([]byte, error) {
+	// Gets a message bytes.
+	startIndex := parser.readIndex
+	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
+		parser.readIndex++
+	}
+
+	// a next carriage return filed is not found, and all bytes have been read.
+	if parser.readBufferLen <= parser.readIndex {
+		return parser.readBuffer[startIndex:parser.readBufferLen], nil
+	}
+
+	lineBytes := parser.readBuffer[startIndex:parser.readIndex]
+
+	// Skips a next line field.
+	parser.readIndex++
+	if parser.readBufferLen <= parser.readIndex { // a next line filed is not found.
+		return lineBytes, nil
+	}
+	parser.readIndex++
+
+	return lineBytes, nil
+}
+
+// nextBulkStrings gets a next line bytes.
+func (parser *Parser) nextBulkStrings() ([]byte, error) {
+	numBytes, err := parser.nextLineBytes()
+	if err != nil {
+		return nil, err
+	}
+	num, err := strconv.Atoi(string(numBytes))
+	if err != nil {
+		return nil, err
+	}
+	if num < 0 {
+		return nil, nil
+	}
+	bulkBytes, err := parser.nextLineBytes()
+	if err != nil {
+		return nil, err
+	}
+	if len(bulkBytes) != num {
+		return bulkBytes, fmt.Errorf(errorInvalidBulkStringLength, len(bulkBytes), num)
+	}
+	return bulkBytes, nil
+}
+
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
 	// Finishes when all bytes have been read.
@@ -59,26 +108,21 @@ func (parser *Parser) Next() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// Gets a message bytes.
 	parser.readIndex++
-	startIndex := parser.readIndex
-	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
-		parser.readIndex++
-	}
-	if parser.readIndex < parser.readBufferLen {
-		msg.Bytes = parser.readBuffer[startIndex:parser.readIndex]
-	} else { // a next carriage return filed is not found all bytes have been read.
-		msg.Bytes = parser.readBuffer[startIndex:parser.readBufferLen]
+
+	// Gets a next bulk strings
+	if typeByte == bulkByte {
+		msg.Bytes, err = parser.nextBulkStrings()
+		if err != nil {
+			return nil, err
+		}
 		return msg, nil
 	}
 
-	// Skips a next line field.
-	parser.readIndex++
-	if parser.readBufferLen <= parser.readIndex { // a next line filed is not found.
-		return msg, nil
+	// Gets a next line bytes
+	msg.Bytes, err = parser.nextLineBytes()
+	if err != nil {
+		return nil, err
 	}
-	parser.readIndex++
-
 	return msg, nil
 }
