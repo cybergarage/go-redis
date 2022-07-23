@@ -25,12 +25,20 @@ const (
 	Array
 )
 
+const (
+	stringByte  = byte('+')
+	errorByte   = byte('-')
+	integerByte = byte(':')
+	bulkByte    = byte('$')
+	arrayByte   = byte('*')
+)
+
 var messageTypes = map[byte]MessageType{
-	'+': String,
-	'-': Error,
-	':': Integer,
-	'$': Bulk,
-	'*': Array,
+	stringByte:  String,
+	errorByte:   Error,
+	integerByte: Integer,
+	bulkByte:    Bulk,
+	arrayByte:   Array,
 }
 
 func parseMessageType(b byte) (MessageType, bool) {
