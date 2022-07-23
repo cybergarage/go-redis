@@ -52,9 +52,9 @@ func (msg *Message) Bytes() ([]byte, error) {
 // String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
-	case String:
+	case StringMessage:
 		return string(msg.bytes), nil
-	case Array, Bulk, Error, Integer:
+	case ArrayMessage, BulkMessage, ErrorMessage, IntegerMessage:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -63,9 +63,9 @@ func (msg *Message) String() (string, error) {
 // Error returns the message error if the message type is error, otherwise it returns an error.
 func (msg *Message) Error() (error, error) {
 	switch msg.Type {
-	case Error:
+	case ErrorMessage:
 		return errors.New(string(msg.bytes)), nil
-	case String, Array, Bulk, Integer:
+	case StringMessage, ArrayMessage, BulkMessage, IntegerMessage:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
@@ -74,9 +74,9 @@ func (msg *Message) Error() (error, error) {
 // Integer returns the message integer if the message type is integer, otherwise it returns an error.
 func (msg *Message) Integer() (int, error) {
 	switch msg.Type {
-	case Integer:
+	case IntegerMessage:
 		return strconv.Atoi(string(msg.bytes))
-	case Array, String, Bulk, Error:
+	case ArrayMessage, StringMessage, BulkMessage, ErrorMessage:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)

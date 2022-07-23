@@ -18,27 +18,27 @@ package protocol
 type MessageType int
 
 const (
-	String MessageType = iota
-	Error
-	Integer
-	Bulk
-	Array
+	StringMessage MessageType = iota
+	ErrorMessage
+	IntegerMessage
+	BulkMessage
+	ArrayMessage
 )
 
 const (
-	stringByte  = byte('+')
-	errorByte   = byte('-')
-	integerByte = byte(':')
-	bulkByte    = byte('$')
-	arrayByte   = byte('*')
+	stringMessageByte  = byte('+')
+	errorMessageByte   = byte('-')
+	integerMessageByte = byte(':')
+	bulkMessageByte    = byte('$')
+	arrayMessageByte   = byte('*')
 )
 
 var messageTypes = map[byte]MessageType{
-	stringByte:  String,
-	errorByte:   Error,
-	integerByte: Integer,
-	bulkByte:    Bulk,
-	arrayByte:   Array,
+	stringMessageByte:  StringMessage,
+	errorMessageByte:   ErrorMessage,
+	integerMessageByte: IntegerMessage,
+	bulkMessageByte:    BulkMessage,
+	arrayMessageByte:   ArrayMessage,
 }
 
 func parseMessageType(b byte) (MessageType, bool) {
