@@ -112,7 +112,7 @@ func (parser *Parser) Next() (*Message, error) {
 
 	// Gets a next bulk strings
 	if typeByte == bulkByte {
-		msg.Bytes, err = parser.nextBulkStrings()
+		msg.bytes, err = parser.nextBulkStrings()
 		if err != nil {
 			return nil, err
 		}
@@ -120,7 +120,7 @@ func (parser *Parser) Next() (*Message, error) {
 	}
 
 	// Gets a next line bytes
-	msg.Bytes, err = parser.nextLineBytes()
+	msg.bytes, err = parser.nextLineBytes()
 	if err != nil {
 		return nil, err
 	}

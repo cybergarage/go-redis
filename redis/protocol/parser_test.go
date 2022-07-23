@@ -219,7 +219,10 @@ func TestParserBulkStringrMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
-		actual := msg.Bytes
+		actual, err := msg.Bytes()
+		if err != nil {
+			return nil, false
+		}
 		if !bytes.Equal(actual, expected) {
 			return actual, false
 		}
