@@ -260,6 +260,10 @@ func TestParserArrayMessages(t *testing.T) {
 			message:  "*5\r\n:1\r\n:2\r\n:3\r\n:4\r\n$5\r\nhello\r\n",
 			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("4"), []byte("hello")},
 		},
+		{
+			message:  "*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n+Hello\r\n-World\r\n",
+			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("Hello"), []byte("World")},
+		},
 	}
 
 	compare := func(msg *Message, exp any) (any, bool) {
