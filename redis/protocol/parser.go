@@ -72,8 +72,8 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	return lineBytes, nil
 }
 
-// nextBulkStrings gets a next line bytes.
-func (parser *Parser) nextBulkStrings() ([]byte, error) {
+// nextBulkBytes gets a next line bytes.
+func (parser *Parser) nextBulkBytes() ([]byte, error) {
 	numBytes, err := parser.nextLineBytes()
 	if err != nil {
 		return nil, err
@@ -95,6 +95,22 @@ func (parser *Parser) nextBulkStrings() ([]byte, error) {
 	return bulkBytes, nil
 }
 
+// nextFirstArrayMessage gets a first message in the next array.
+func (parser *Parser) nextFirstArrayMessage() (*Message, error) {
+	numBytes, err := parser.nextLineBytes()
+	if err != nil {
+		return nil, err
+	}
+	num, err := strconv.Atoi(string(numBytes))
+	if err != nil {
+		return nil, err
+	}
+	if num < 0 {
+		return nil, nil
+	}
+	return parser.Next()
+}
+
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
 	// Finishes when all bytes have been read.
@@ -104,22 +120,28 @@ func (parser *Parser) Next() (*Message, error) {
 
 	// Parses a first type byte.
 	typeByte := parser.readBuffer[parser.readIndex]
+	parser.readIndex++
+
+	// Returns a next array if the message type is array.
+	if typeByte == arrayMessageByte {
+		return parser.nextFirstArrayMessage()
+	}
+
 	msg, err := newMessageWithTypeByte(typeByte)
 	if err != nil {
 		return nil, err
 	}
-	parser.readIndex++
 
-	// Gets a next bulk strings
+	// Returns a next bulk strings if the message type is bulk string.
 	if typeByte == bulkMessageByte {
-		msg.bytes, err = parser.nextBulkStrings()
+		msg.bytes, err = parser.nextBulkBytes()
 		if err != nil {
 			return nil, err
 		}
 		return msg, nil
 	}
 
-	// Gets a next line bytes
+	// Returns a next line bytes
 	msg.bytes, err = parser.nextLineBytes()
 	if err != nil {
 		return nil, err
