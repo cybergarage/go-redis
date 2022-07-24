@@ -27,23 +27,17 @@ type Parser struct {
 	reader io.Reader
 }
 
-// NewParser returns a new parser instance.
-func NewParser() *Parser {
+// NewParserWithReader returns a new parser for the specified reader.
+func NewParserWithReader(msgReader io.Reader) *Parser {
 	Parser := &Parser{
-		reader: nil,
+		reader: msgReader,
 	}
 	return Parser
 }
 
-// Parse sets a reader to parse the serialized protocol reader.
-func (parser *Parser) Parse(reader io.Reader) error {
-	parser.reader = reader
-	return nil
-}
-
-// ParseBytes sets a reader to parse the serialized protocol bytes.
-func (parser *Parser) ParseBytes(msgBytes []byte) error {
-	return parser.Parse(bytes.NewBuffer(msgBytes))
+// NewParserWithBytes returns a new parser for the specified bytes.
+func NewParserWithBytes(msgBytes []byte) *Parser {
+	return NewParserWithReader(bytes.NewBuffer(msgBytes))
 }
 
 // nextLineBytes gets a next line bytes.
