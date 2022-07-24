@@ -51,8 +51,11 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 		readBytes.WriteByte(readByte[0])
 		n, err = parser.reader.Read(readByte)
 	}
-	if errors.Is(err, io.EOF) {
-		return readBytes.Bytes(), nil
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return readBytes.Bytes(), nil
+		}
+		return nil, err
 	}
 
 	// Skips a next line field.
@@ -111,8 +114,11 @@ func (parser *Parser) Next() (*Message, error) {
 	// Parses a first type byte.
 	typeByte := make([]byte, 1)
 	_, err := parser.reader.Read(typeByte)
-	if errors.Is(err, io.EOF) {
-		return nil, nil
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil, nil
+		}
+		return nil, err
 	}
 
 	// Returns a next array if the message type is array.
