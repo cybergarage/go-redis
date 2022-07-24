@@ -14,18 +14,42 @@
 
 package redis
 
+import (
+	"net"
+	"strconv"
+)
+
 // Server is an instance for Redisprotocols.
 type Server struct {
+	Addr        string
+	Port        int
+	tcpListener net.Listener
 }
 
 // NewServer returns a new server instance.
 func NewServer() *Server {
-	server := &Server{}
+	server := &Server{
+		Addr:        "",
+		Port:        DefaultPort,
+		tcpListener: nil,
+	}
 	return server
 }
 
 // Start starts the server.
 func (server *Server) Start() error {
+	err := server.Stop()
+	if err != nil {
+		return err
+	}
+
+	err = server.open()
+	if err != nil {
+		return err
+	}
+
+	go server.serve()
+
 	return nil
 }
 
@@ -41,4 +65,55 @@ func (server *Server) Restart() error {
 	}
 
 	return server.Start()
+}
+
+// open opens a listen socket.
+func (server *Server) open() error {
+	var err error
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	server.tcpListener, err = net.Listen("tcp", addr)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// close closes a listening socket.
+func (server *Server) close() error {
+	if server.tcpListener != nil {
+		err := server.tcpListener.Close()
+		if err != nil {
+			return err
+		}
+	}
+
+	server.tcpListener = nil
+
+	return nil
+}
+
+// serve handles client connections.
+func (server *Server) serve() error {
+	defer server.close()
+
+	l := server.tcpListener
+	for {
+		if l == nil {
+			break
+		}
+		conn, err := l.Accept()
+		if err != nil {
+			return err
+		}
+
+		go server.receive(conn)
+	}
+
+	return nil
+}
+
+// receive handles a client connection.
+func (server *Server) receive(conn net.Conn) error {
+	defer conn.Close()
+	return nil
 }
