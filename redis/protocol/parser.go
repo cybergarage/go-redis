@@ -72,8 +72,8 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	return lineBytes, nil
 }
 
-// nextBulkBytes gets a next line bytes.
-func (parser *Parser) nextBulkBytes() ([]byte, error) {
+// nextBulkMessage gets a next line bytes.
+func (parser *Parser) nextBulkMessage() (*Message, error) {
 	numBytes, err := parser.nextLineBytes()
 	if err != nil {
 		return nil, err
@@ -82,17 +82,23 @@ func (parser *Parser) nextBulkBytes() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if num < 0 {
-		return nil, nil
-	}
-	bulkBytes, err := parser.nextLineBytes()
+
+	msg, err := newMessageWithTypeByte(arrayMessageByte)
 	if err != nil {
 		return nil, err
 	}
-	if len(bulkBytes) != num {
-		return bulkBytes, fmt.Errorf(errorInvalidBulkStringLength, len(bulkBytes), num)
+	if num < 0 {
+		return msg, nil
 	}
-	return bulkBytes, nil
+
+	msg.bytes, err = parser.nextLineBytes()
+	if err != nil {
+		return nil, err
+	}
+	if len(msg.bytes) != num {
+		return msg, fmt.Errorf(errorInvalidBulkStringLength, len(msg.bytes), num)
+	}
+	return msg, nil
 }
 
 // nextFirstArrayMessage gets a first message in the next array.
@@ -127,21 +133,16 @@ func (parser *Parser) Next() (*Message, error) {
 		return parser.nextFirstArrayMessage()
 	}
 
+	// Returns a next bulk strings if the message type is bulk string.
+	if typeByte == bulkMessageByte {
+		return parser.nextBulkMessage()
+	}
+
+	// Returns a next line bytes
 	msg, err := newMessageWithTypeByte(typeByte)
 	if err != nil {
 		return nil, err
 	}
-
-	// Returns a next bulk strings if the message type is bulk string.
-	if typeByte == bulkMessageByte {
-		msg.bytes, err = parser.nextBulkBytes()
-		if err != nil {
-			return nil, err
-		}
-		return msg, nil
-	}
-
-	// Returns a next line bytes
 	msg.bytes, err = parser.nextLineBytes()
 	if err != nil {
 		return nil, err
