@@ -241,8 +241,24 @@ func TestParserArrayMessages(t *testing.T) {
 		expected [][]byte
 	}{
 		{
+			message:  "*-1\r\n",
+			expected: [][]byte{},
+		},
+		{
+			message:  "*0\r\n",
+			expected: [][]byte{},
+		},
+		{
 			message:  "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n",
 			expected: [][]byte{[]byte("hello"), []byte("world")},
+		},
+		{
+			message:  "*3\r\n:1\r\n:2\r\n:3\r\n",
+			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3")},
+		},
+		{
+			message:  "*5\r\n:1\r\n:2\r\n:3\r\n:4\r\n$5\r\nhello\r\n",
+			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("4"), []byte("hello")},
 		},
 	}
 
