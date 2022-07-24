@@ -23,7 +23,7 @@ func testParserSingleMessages(t *testing.T, msgString string, compare func(*Mess
 	t.Helper()
 
 	parser := NewParser()
-	err := parser.Parse([]byte(msgString))
+	err := parser.ParseBytes([]byte(msgString))
 	if err != nil {
 		t.Errorf("%s %s", msgString, err)
 		return
@@ -249,7 +249,7 @@ func TestParserArrayMessages(t *testing.T) {
 	for _, respExample := range respExamples {
 		msgStr := respExample.message
 		parser := NewParser()
-		err := parser.Parse([]byte(msgStr))
+		err := parser.ParseBytes([]byte(msgStr))
 		if err != nil {
 			t.Errorf("%s %s", msgStr, err)
 			return
