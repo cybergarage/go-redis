@@ -19,48 +19,6 @@ import (
 	"testing"
 )
 
-// RESP protocol spec examples.
-var respExampleMessages = []string{
-	// RESP Simple Strings
-	"+OK\r\n",
-	// RESP Errors
-	"-Error message\r\n",
-	"-ERR unknown command 'helloworld'",
-	"-WRONGTYPE Operation against a key holding the wrong kind of value",
-	// RESP Integers
-	":0\r\n",
-	":1000\r\n",
-	// RESP Bulk Strings
-	"$5\r\nhello\r\n",
-	"$0\r\n\r\n",
-	"$-1\r\n",
-	// RESP Arrays
-	"*0\r\n",
-	"*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n",
-	"*3\r\n:1\r\n:2\r\n:3\r\n",
-	"*-1\r\n",
-}
-
-var testMessages = respExampleMessages
-
-func TestParser(t *testing.T) {
-	for _, testMsg := range testMessages {
-		parser := NewParser()
-		err := parser.Parse([]byte(testMsg))
-		if err != nil {
-			t.Errorf("%s %s", testMsg, err)
-		}
-		msg, err := parser.Next()
-		for msg != nil && err != nil {
-			msg, err = parser.Next()
-			if err != nil {
-				t.Errorf("%s %s", testMsg, err)
-				continue
-			}
-		}
-	}
-}
-
 func testParserSingleMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
 	t.Helper()
 
