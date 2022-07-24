@@ -15,61 +15,56 @@
 package protocol
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"strconv"
 )
 
 // Paser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
-	readBuffer    []byte
-	readBufferLen int
-	readIndex     int
+	reader io.Reader
 }
 
 // NewParser returns a new parser instance.
 func NewParser() *Parser {
 	Parser := &Parser{
-		readBuffer:    nil,
-		readBufferLen: 0,
-		readIndex:     0,
+		reader: nil,
 	}
 	return Parser
 }
 
-// Parse parses a serialized request binary from the client.
-func (parser *Parser) Parse(protoBytes []byte) error {
-	if len(protoBytes) == 0 {
-		return fmt.Errorf(errorEmptyMessage, 0)
-	}
-	parser.readBuffer = protoBytes
-	parser.readBufferLen = len(protoBytes)
-	parser.readIndex = 0
+// Parse sets a reader to parse the serialized protocol reader.
+func (parser *Parser) Parse(reader io.Reader) error {
+	parser.reader = reader
 	return nil
+}
+
+// ParseBytes sets a reader to parse the serialized protocol bytes.
+func (parser *Parser) ParseBytes(msgBytes []byte) error {
+	return parser.Parse(bytes.NewBuffer(msgBytes))
 }
 
 // nextLineBytes gets a next line bytes.
 func (parser *Parser) nextLineBytes() ([]byte, error) {
+	var readBytes bytes.Buffer
+	readByte := make([]byte, 1)
+
 	// Gets a message bytes.
-	startIndex := parser.readIndex
-	for (parser.readIndex < parser.readBufferLen) && (parser.readBuffer[parser.readIndex] != cr) {
-		parser.readIndex++
+	n, err := parser.reader.Read(readByte)
+	for n == 1 && err == nil && readByte[0] != cr {
+		readBytes.WriteByte(readByte[0])
+		n, err = parser.reader.Read(readByte)
 	}
-
-	// a next carriage return filed is not found, and all bytes have been read.
-	if parser.readBufferLen <= parser.readIndex {
-		return parser.readBuffer[startIndex:parser.readBufferLen], nil
+	if errors.Is(err, io.EOF) {
+		return readBytes.Bytes(), nil
 	}
-
-	lineBytes := parser.readBuffer[startIndex:parser.readIndex]
 
 	// Skips a next line field.
-	parser.readIndex++
-	if parser.readBufferLen <= parser.readIndex { // a next line filed is not found.
-		return lineBytes, nil
-	}
-	parser.readIndex++
+	parser.reader.Read(readByte)
 
-	return lineBytes, nil
+	return readBytes.Bytes(), nil
 }
 
 // nextBulkMessage gets a next line bytes.
@@ -119,27 +114,25 @@ func (parser *Parser) nextFirstArrayMessage() (*Message, error) {
 
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
-	// Finishes when all bytes have been read.
-	if parser.readBufferLen <= parser.readIndex {
+	// Parses a first type byte.
+	typeByte := make([]byte, 1)
+	_, err := parser.reader.Read(typeByte)
+	if errors.Is(err, io.EOF) {
 		return nil, nil
 	}
 
-	// Parses a first type byte.
-	typeByte := parser.readBuffer[parser.readIndex]
-	parser.readIndex++
-
 	// Returns a next array if the message type is array.
-	if typeByte == arrayMessageByte {
+	if typeByte[0] == arrayMessageByte {
 		return parser.nextFirstArrayMessage()
 	}
 
 	// Returns a next bulk strings if the message type is bulk string.
-	if typeByte == bulkMessageByte {
+	if typeByte[0] == bulkMessageByte {
 		return parser.nextBulkMessage()
 	}
 
 	// Returns a next line bytes
-	msg, err := newMessageWithTypeByte(typeByte)
+	msg, err := newMessageWithTypeByte(typeByte[0])
 	if err != nil {
 		return nil, err
 	}
