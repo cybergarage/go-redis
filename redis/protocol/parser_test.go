@@ -61,7 +61,7 @@ func TestParser(t *testing.T) {
 	}
 }
 
-func testParsergMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
+func testParserSingleMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
 	t.Helper()
 
 	parser := NewParser()
@@ -114,7 +114,7 @@ func TestParserStringMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParsergMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
 
@@ -154,7 +154,7 @@ func TestParserErrorMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParsergMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
 
@@ -190,7 +190,7 @@ func TestParserIntegerMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParsergMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
 	}
 }
 
@@ -230,6 +230,63 @@ func TestParserBulkStringrMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParsergMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
+	}
+}
+
+func TestParserArrayMessages(t *testing.T) {
+	// RESP protocol spec examples.
+	respExamples := []struct {
+		message  string
+		expected [][]byte
+	}{
+		{
+			message:  "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n",
+			expected: [][]byte{[]byte("hello"), []byte("world")},
+		},
+	}
+
+	compare := func(msg *Message, exp any) (any, bool) {
+		expected, ok := exp.([]byte)
+		if !ok {
+			return nil, false
+		}
+		actual, err := msg.Bytes()
+		if err != nil {
+			return nil, false
+		}
+		if !bytes.Equal(actual, expected) {
+			return actual, false
+		}
+		return actual, true
+	}
+
+	for _, respExample := range respExamples {
+		msgStr := respExample.message
+		parser := NewParser()
+		err := parser.Parse([]byte(msgStr))
+		if err != nil {
+			t.Errorf("%s %s", msgStr, err)
+			return
+		}
+		msgIndex := 0
+		msg, err := parser.Next()
+		if err != nil {
+			t.Errorf("%s %s", msgStr, err)
+			continue
+		}
+		for msg != nil {
+			expectedBytes := respExample.expected[msgIndex]
+			if actual, ok := compare(msg, expectedBytes); !ok {
+				t.Errorf("%s != %s", actual, expectedBytes)
+				return
+			}
+			msgIndex++
+			msg, err = parser.Next()
+			if err != nil {
+				t.Errorf("%s %s", msgStr, err)
+				continue
+			}
+		}
 	}
 }
