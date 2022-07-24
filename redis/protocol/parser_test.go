@@ -22,12 +22,7 @@ import (
 func testParserSingleMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
 	t.Helper()
 
-	parser := NewParser()
-	err := parser.ParseBytes([]byte(msgString))
-	if err != nil {
-		t.Errorf("%s %s", msgString, err)
-		return
-	}
+	parser := NewParserWithBytes([]byte(msgString))
 	msg, err := parser.Next()
 	if err != nil {
 		t.Errorf("%s %s", msgString, err)
@@ -248,12 +243,7 @@ func TestParserArrayMessages(t *testing.T) {
 
 	for _, respExample := range respExamples {
 		msgStr := respExample.message
-		parser := NewParser()
-		err := parser.ParseBytes([]byte(msgStr))
-		if err != nil {
-			t.Errorf("%s %s", msgStr, err)
-			return
-		}
+		parser := NewParserWithBytes([]byte(msgStr))
 		msgIndex := 0
 		msg, err := parser.Next()
 		if err != nil {
