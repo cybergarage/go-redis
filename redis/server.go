@@ -55,6 +55,9 @@ func (server *Server) Start() error {
 
 // Stop stops the server.
 func (server *Server) Stop() error {
+	if err := server.close(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -63,7 +66,6 @@ func (server *Server) Restart() error {
 	if err := server.Stop(); err != nil {
 		return err
 	}
-
 	return server.Start()
 }
 
@@ -114,6 +116,6 @@ func (server *Server) serve() error {
 
 // receive handles a client connection.
 func (server *Server) receive(conn net.Conn) error {
-	defer conn.Close()
+	// defer conn.Close()
 	return nil
 }
