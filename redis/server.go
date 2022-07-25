@@ -15,8 +15,11 @@
 package redis
 
 import (
+	"io"
 	"net"
 	"strconv"
+
+	"github.com/cybergarage/go-redis/redis/proto"
 )
 
 // Server is an instance for Redisprotocols.
@@ -115,7 +118,17 @@ func (server *Server) serve() error {
 }
 
 // receive handles a client connection.
-func (server *Server) receive(conn net.Conn) error {
-	// defer conn.Close()
+func (server *Server) receive(conn io.ReadCloser) error {
+	defer conn.Close()
+
+	parser := proto.NewParserWithReader(conn)
+	msg, err := parser.Next()
+	for msg != nil {
+		if err != nil {
+			return err
+		}
+		msg, err = parser.Next()
+	}
+
 	return nil
 }
