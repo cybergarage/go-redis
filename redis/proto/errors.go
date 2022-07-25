@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocol
+package proto
 
 const (
-	cr = '\r'
-	lf = '\n'
+	errorEmptyMessage            = "message is short (%d)"
+	errorUnknownMessageType      = "unknown message type (%c)"
+	errorInvalidMessageType      = "invalid message type (%c)"
+	errorInvalidMessage          = "invalid message (%s)"
+	errorInvalidBulkStringLength = "invalid bulk string length (%d != %d)"
 )
