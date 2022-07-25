@@ -26,12 +26,12 @@ PACKAGE_ROOT=${MODULE_ROOT}/${PACKAGE_NAME}
 
 SOURCES=\
         ${SOURCE_DIR} \
-        ${SOURCE_DIR}/protocol
+        ${SOURCE_DIR}/proto
 
 PACKAGE_ID=${PACKAGE_ROOT}
 PACKAGES=\
 	${PACKAGE_ID} \
-	${PACKAGE_ID}/protocol
+	${PACKAGE_ID}/proto
 
 BINARY_DIR=examples
 BINARY_ROOT=${MODULE_ROOT}/${BINARY_DIR}
