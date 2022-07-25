@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocol
+package proto
 
-const (
-	cr = '\r'
-	lf = '\n'
-)
+import "testing"
+
+func TestMessage(t *testing.T) {
+	newMessageWithType(StringMessage)
+}
