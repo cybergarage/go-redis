@@ -136,5 +136,17 @@ func (server *Server) receive(conn io.ReadCloser) error {
 
 // handleMessage handles a client message.
 func (server *Server) handleMessage(msg *proto.Message) error {
+	switch msg.Type {
+	case proto.StringMessage:
+		return nil
+	case proto.IntegerMessage:
+		return nil
+	case proto.BulkMessage:
+		return nil
+	case proto.ArrayMessage:
+		return nil
+	case proto.ErrorMessage:
+		return nil
+	}
 	return nil
 }

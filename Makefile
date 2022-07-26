@@ -18,51 +18,53 @@ SHELL := bash
 #GOPATH:=$(shell pwd)
 #export GOPATH
 
-PACKAGE_NAME=redis
-
 MODULE_ROOT=github.com/cybergarage/go-redis
-SOURCE_DIR=${PACKAGE_NAME}
-PACKAGE_ROOT=${MODULE_ROOT}/${PACKAGE_NAME}
 
-SOURCES=\
-        ${SOURCE_DIR} \
-        ${SOURCE_DIR}/proto
+PKG_NAME=redis
+PKG_ID=${MODULE_ROOT}/${PKG_NAME}
+PKG_SRC_DIR=${PKG_NAME}
+PKG_SRCS=\
+        ${PKG_SRC_DIR} \
+        ${PKG_SRC_DIR}/proto
+PKGS=\
+	${PKG_ID} \
+	${PKG_ID}/proto
 
-PACKAGE_ID=${PACKAGE_ROOT}
-PACKAGES=\
-	${PACKAGE_ID} \
-	${PACKAGE_ID}/proto
+BIN_DIR=examples
+BIN_ROOT=${MODULE_ROOT}/${BIN_DIR}
+BINS=\
+	${BIN_ROOT}/go-redisd
 
-BINARY_DIR=examples
-BINARY_ROOT=${MODULE_ROOT}/${BINARY_DIR}
-
-BINARIES=\
-	${BINARY_ROOT}/go-redisd
+TEST_PKG_NAME=${PKG_NAME}test
+TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
+TEST_PKG_DIR=${TEST_PKG_NAME}
+TEST_PKG_SRCS=\
+	${TEST_PKG_DIR}
 
 .PHONY: version format vet lint clean
 
 all: test
 
 version:
-	@pushd ${SOURCE_DIR} && ./version.gen > version.go && popd
+	@pushd ${PKG_SRC_DIR} && ./version.gen > version.go && popd
 
 format: version
-	gofmt -w ${SOURCE_DIR} ${BINARY_DIR}
+	gofmt -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
-	go vet ${PACKAGE_ROOT}
+	go vet ${PKG_ID} ${TEST_PKG_ID}
 
 lint: vet
-	golangci-lint run ${SOURCES}
+	golangci-lint run ${PKG_SRCS} ${TEST_PKG_SRCS}
 
 build:
-	go build -v ${PACKAGES}
+	go build -v ${PKGS}
 
 test: lint
-	go test -v -cover -timeout 60s ${PACKAGES}
+	go test -v -cover -timeout 60s ${PKGS}
 
 install:
-	go install ${BINARIES}
+	go install ${BINS}
 
 clean:
-	go clean -i ${PACKAGES}
+	go clean -i ${PKGS}
