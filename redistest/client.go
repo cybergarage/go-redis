@@ -15,6 +15,8 @@
 package redistest
 
 import (
+	"fmt"
+
 	goredis "github.com/go-redis/redis/v9"
 )
 
@@ -32,11 +34,17 @@ func NewClient() *Client {
 }
 
 // Open opens a connection with the specified host.
-func (client *Client) Open() error {
+func (client *Client) Open(host string) error {
+	client.Client = goredis.NewClient(&goredis.Options{
+		Addr: fmt.Sprintf("%s:%d", host, DefaultPort),
+	})
 	return nil
 }
 
 // Close closes the current connection with the specified host.
 func (client *Client) Close() error {
-	return nil
+	if client.Client == nil {
+		return nil
+	}
+	return client.Client.Close()
 }

@@ -28,7 +28,7 @@ func TestServer(t *testing.T) {
 	}
 
 	client := NewClient()
-	err = client.Open()
+	err = client.Open(LocalHost)
 	if err != nil {
 		t.Error(err)
 	}
