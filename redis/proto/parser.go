@@ -93,20 +93,18 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 	return msg, nil
 }
 
-// nextFirstArrayMessage gets a first message in the next array.
-func (parser *Parser) nextFirstArrayMessage() (*Message, error) {
-	numBytes, err := parser.nextLineBytes()
+// nextArrayMessage gets a next array message in the next array.
+func (parser *Parser) nextArrayMessage() (*Message, error) {
+	array, err := newArrayWithParser(parser)
 	if err != nil {
 		return nil, err
 	}
-	num, err := strconv.Atoi(string(numBytes))
+	msg, err := newMessageWithTypeByte(arrayMessageByte)
 	if err != nil {
 		return nil, err
 	}
-	if num < 0 {
-		return nil, nil
-	}
-	return parser.Next()
+	msg.array = array
+	return msg, nil
 }
 
 // Next returns a next message.
@@ -123,7 +121,7 @@ func (parser *Parser) Next() (*Message, error) {
 
 	// Returns a next array if the message type is array.
 	if typeByte[0] == arrayMessageByte {
-		return parser.nextFirstArrayMessage()
+		return parser.nextArrayMessage()
 	}
 
 	// Returns a next bulk strings if the message type is bulk string.
