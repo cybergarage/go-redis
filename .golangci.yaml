@@ -26,3 +26,4 @@ linters:
     - gomnd
     - nestif
     - gochecknoglobals
+    - exhaustivestruct
