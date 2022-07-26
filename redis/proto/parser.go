@@ -75,7 +75,7 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 		return nil, err
 	}
 
-	msg, err := newMessageWithTypeByte(arrayMessageByte)
+	msg, err := newMessageWithTypeByte(bulkMessageByte)
 	if err != nil {
 		return nil, err
 	}
