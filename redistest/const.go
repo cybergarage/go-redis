@@ -15,5 +15,6 @@
 package redistest
 
 const (
+	LocalHost   = "localhost"
 	DefaultPort = 6379
 )
