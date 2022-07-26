@@ -56,6 +56,9 @@ func TestParserStringMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+		if msg.Type != StringMessage {
+			return nil, false
+		}
 		actual, err := msg.String()
 		if err != nil {
 			return nil, false
@@ -96,6 +99,9 @@ func TestParserErrorMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+		if msg.Type != ErrorMessage {
+			return nil, false
+		}
 		actual, err := msg.Error()
 		if err != nil {
 			return nil, false
@@ -130,6 +136,9 @@ func TestParserIntegerMessages(t *testing.T) {
 	compare := func(msg *Message, exp any) (any, bool) {
 		expected, ok := exp.(int)
 		if !ok {
+			return nil, false
+		}
+		if msg.Type != IntegerMessage {
 			return nil, false
 		}
 		actual, err := msg.Integer()
@@ -170,6 +179,9 @@ func TestParserBulkStringrMessages(t *testing.T) {
 	compare := func(msg *Message, exp any) (any, bool) {
 		expected, ok := exp.([]byte)
 		if !ok {
+			return nil, false
+		}
+		if msg.Type != BulkMessage {
 			return nil, false
 		}
 		actual, err := msg.Bytes()
