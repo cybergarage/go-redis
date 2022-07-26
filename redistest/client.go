@@ -14,12 +14,29 @@
 
 package redistest
 
+import (
+	goredis "github.com/go-redis/redis/v9"
+)
+
 // Client represents a client for the Redis server.
 type Client struct {
+	*goredis.Client
 }
 
 // NewClient returns a client instance.
 func NewClient() *Client {
-	client := &Client{}
+	client := &Client{
+		Client: nil,
+	}
 	return client
+}
+
+// Open opens a connection with the specified host.
+func (client *Client) Open() error {
+	return nil
+}
+
+// Close closes the current connection with the specified host.
+func (client *Client) Close() error {
+	return nil
 }
