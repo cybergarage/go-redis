@@ -16,8 +16,6 @@ package redis
 
 import (
 	"testing"
-
-	"github.com/cybergarage/go-redis/redistest"
 )
 
 func TestServer(t *testing.T) {
@@ -27,17 +25,6 @@ func TestServer(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 		return
-	}
-
-	client := redistest.NewClient()
-	err = client.Open()
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = client.Close()
-	if err != nil {
-		t.Error(err)
 	}
 
 	err = server.Stop()
