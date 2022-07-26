@@ -33,11 +33,11 @@ import (
 	"flag"
 	"log"
 
-	// nolint
-	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/cybergarage/go-redis/examples/go-redisd/server"
 )
 
 const (
@@ -49,7 +49,7 @@ func main() {
 	// isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
 	flag.Parse()
 
-	server := NewServer()
+	server := server.NewServer()
 	err := server.Start()
 	if err != nil {
 		log.Printf("%s couldn't be started (%s)", programName, err.Error())
