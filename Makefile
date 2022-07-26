@@ -31,9 +31,9 @@ PKGS=\
 	${PKG_ID}/proto
 
 BIN_DIR=examples
-BIN_ROOT=${MODULE_ROOT}/${BIN_DIR}
+BIN_ID=${MODULE_ROOT}/${BIN_DIR}/go-redisd
 BINS=\
-	${BIN_ROOT}/go-redisd
+	${BIN_ID}
 
 TEST_PKG_NAME=${PKG_NAME}test
 TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
@@ -52,7 +52,7 @@ format: version
 	gofmt -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
-	go vet ${PKG_ID} ${TEST_PKG_ID}
+	go vet ${PKG_ID} ${TEST_PKG_ID} ${BIN_ID}
 
 lint: vet
 	golangci-lint run ${PKG_SRCS} ${TEST_PKG_SRCS}
