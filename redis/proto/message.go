@@ -83,3 +83,14 @@ func (msg *Message) Integer() (int, error) {
 	}
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
+
+// Array returns the message array if the message type is array, otherwise it returns an error.
+func (msg *Message) Array() (*Array, error) {
+	switch msg.Type {
+	case ArrayMessage:
+		return msg.array, nil
+	case IntegerMessage, StringMessage, BulkMessage, ErrorMessage:
+		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
+	}
+	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
+}
