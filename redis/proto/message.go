@@ -24,6 +24,7 @@ import (
 type Message struct {
 	Type  MessageType
 	bytes []byte
+	array *Array
 }
 
 // newMessageWithType returns a new message instance with the specified type.
@@ -31,6 +32,7 @@ func newMessageWithType(t MessageType) *Message {
 	msg := &Message{
 		Type:  t,
 		bytes: nil,
+		array: nil,
 	}
 	return msg
 }
