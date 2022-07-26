@@ -144,9 +144,39 @@ func (server *Server) handleMessage(msg *proto.Message) error {
 	case proto.BulkMessage:
 		return nil
 	case proto.ArrayMessage:
-		return nil
+		msg, err := msg.Array()
+		if err != nil {
+			return err
+		}
+		return server.handleArrayMessage(msg)
 	case proto.ErrorMessage:
 		return nil
 	}
+	return nil
+}
+
+// handleMessage handles a client message.
+func (server *Server) handleArrayMessage(arrayMsg *proto.Array) error {
+	msg, err := arrayMsg.Next()
+	if err != nil {
+		return err
+	}
+
+	// Nested array ?
+	if msg.IsArray() {
+		nestedArrayMsg, err := msg.Array()
+		if err != nil {
+			return err
+		}
+		return server.handleArrayMessage(nestedArrayMsg)
+	}
+
+	for msg != nil {
+		msg, err = arrayMsg.Next()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
