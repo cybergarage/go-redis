@@ -46,6 +46,11 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	return newMessageWithType(t), nil
 }
 
+// IsType returns true if the message type is the specified type, otherwise false.
+func (msg *Message) IsType(t MessageType) bool {
+	return msg.Type == t
+}
+
 // Bytes returns the message raw bytes.
 func (msg *Message) Bytes() ([]byte, error) {
 	return msg.bytes, nil
