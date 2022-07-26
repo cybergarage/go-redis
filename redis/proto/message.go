@@ -51,6 +51,31 @@ func (msg *Message) IsType(t MessageType) bool {
 	return msg.Type == t
 }
 
+// IsString returns true if the message type is string, otherwise false.
+func (msg *Message) IsString() bool {
+	return msg.IsType(StringMessage)
+}
+
+// IsError returns true if the message type is error, otherwise false.
+func (msg *Message) IsError() bool {
+	return msg.IsType(ErrorMessage)
+}
+
+// IsInteger returns true if the message type is integer, otherwise false.
+func (msg *Message) IsInteger() bool {
+	return msg.IsType(IntegerMessage)
+}
+
+// IsBulk returns true if the message type is bulk, otherwise false.
+func (msg *Message) IsBulk() bool {
+	return msg.IsType(BulkMessage)
+}
+
+// IsArray returns true if the message type is array, otherwise false.
+func (msg *Message) IsArray() bool {
+	return msg.IsType(ArrayMessage)
+}
+
 // Bytes returns the message raw bytes.
 func (msg *Message) Bytes() ([]byte, error) {
 	return msg.bytes, nil
