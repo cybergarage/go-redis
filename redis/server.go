@@ -127,8 +127,14 @@ func (server *Server) receive(conn io.ReadCloser) error {
 		if err != nil {
 			return err
 		}
+		server.handleMessage(msg)
 		msg, err = parser.Next()
 	}
 
+	return nil
+}
+
+// handleMessage handles a client message.
+func (server *Server) handleMessage(msg *proto.Message) error {
 	return nil
 }
