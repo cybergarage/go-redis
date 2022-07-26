@@ -205,37 +205,37 @@ func TestParserArrayMessages(t *testing.T) {
 		message  string
 		expected [][]byte
 	}{
-		// {
-		// 	message:  "*0\r\n",
-		// 	expected: [][]byte{},
-		// },
-		// {
-		// 	message:  "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n",
-		// 	expected: [][]byte{[]byte("hello"), []byte("world")},
-		// },
-		// {
-		// 	message:  "*3\r\n:1\r\n:2\r\n:3\r\n",
-		// 	expected: [][]byte{[]byte("1"), []byte("2"), []byte("3")},
-		// },
-		// {
-		// 	message:  "*5\r\n:1\r\n:2\r\n:3\r\n:4\r\n$5\r\nhello\r\n",
-		// 	expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("4"), []byte("hello")},
-		// },
-		// // Null Arrays
-		// {
-		// 	message:  "*-1\r\n",
-		// 	expected: [][]byte{},
-		// },
+		{
+			message:  "*0\r\n",
+			expected: [][]byte{},
+		},
+		{
+			message:  "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n",
+			expected: [][]byte{[]byte("hello"), []byte("world")},
+		},
+		{
+			message:  "*3\r\n:1\r\n:2\r\n:3\r\n",
+			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3")},
+		},
+		{
+			message:  "*5\r\n:1\r\n:2\r\n:3\r\n:4\r\n$5\r\nhello\r\n",
+			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("4"), []byte("hello")},
+		},
+		// Null Arrays
+		{
+			message:  "*-1\r\n",
+			expected: [][]byte{},
+		},
 		// Nested arrays
 		{
 			message:  "*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n+Hello\r\n-World\r\n",
 			expected: [][]byte{[]byte("1"), []byte("2"), []byte("3"), []byte("Hello"), []byte("World")},
 		},
-		// // Null elements in Arrays
-		// {
-		// 	message:  "*3\r\n$5\r\nhello\r\n$-1\r\n$5\r\nworld\r\n",
-		// 	expected: [][]byte{[]byte("hello"), nil, []byte("world")},
-		// },
+		// Null elements in Arrays
+		{
+			message:  "*3\r\n$5\r\nhello\r\n$-1\r\n$5\r\nworld\r\n",
+			expected: [][]byte{[]byte("hello"), nil, []byte("world")},
+		},
 	}
 
 	compare := func(msg *Message, exp any) (any, bool) {
@@ -276,6 +276,25 @@ func TestParserArrayMessages(t *testing.T) {
 				t.Errorf("%s %s", msgStr, err)
 				continue
 			}
+
+			if arrayMsg == nil {
+				break
+			}
+
+			// Nested array ?
+			if arrayMsg.IsArray() {
+				array, err = arrayMsg.Array()
+				if err != nil {
+					t.Errorf("%s %s", msgStr, err)
+					continue
+				}
+				arrayMsg, err = array.Next()
+				if err != nil {
+					t.Errorf("%s %s", msgStr, err)
+					continue
+				}
+			}
+
 			for arrayMsg != nil {
 				expectedBytes := respExample.expected[msgIndex]
 				if actual, ok := compare(arrayMsg, expectedBytes); !ok {
@@ -283,7 +302,7 @@ func TestParserArrayMessages(t *testing.T) {
 					return
 				}
 				msgIndex++
-				arrayMsg, err = parser.Next()
+				arrayMsg, err = array.Next()
 				if err != nil {
 					t.Errorf("%s %s", msgStr, err)
 					continue
