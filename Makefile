@@ -40,6 +40,8 @@ TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
 TEST_PKG_DIR=${TEST_PKG_NAME}
 TEST_PKG_SRCS=\
 	${TEST_PKG_DIR}
+TEST_PKGS=\
+	${TEST_PKG_ID}
 
 .PHONY: version format vet lint clean
 
@@ -61,7 +63,7 @@ build:
 	go build -v ${PKGS}
 
 test: lint
-	go test -v -cover -timeout 60s ${PKGS}
+	go test -v -cover -timeout 60s ${PKGS} ${TEST_PKGS}
 
 install:
 	go install ${BINS}
