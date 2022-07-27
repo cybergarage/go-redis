@@ -15,10 +15,9 @@
 package redistest
 
 import (
-	"context"
 	"fmt"
 
-	goredis "github.com/go-redis/redis/v9"
+	goredis "github.com/go-redis/redis"
 )
 
 // Client represents a client for the Redis server.
@@ -39,7 +38,7 @@ func (client *Client) Open(host string) error {
 	client.Client = goredis.NewClient(&goredis.Options{
 		Addr: fmt.Sprintf("%s:%d", host, DefaultPort),
 	})
-	status := client.Ping(context.Background())
+	status := client.Ping()
 	if err := status.Err(); err != nil {
 		return err
 	}
