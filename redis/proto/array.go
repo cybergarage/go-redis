@@ -41,6 +41,11 @@ func newArrayWithParser(parser *Parser) (*Array, error) {
 	return array, nil
 }
 
+// Size returns the array size.
+func (array *Array) Size() int {
+	return array.size
+}
+
 // Next returns a next message.
 func (array *Array) Next() (*Message, error) {
 	if array.size <= array.index {
