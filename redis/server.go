@@ -20,6 +20,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
@@ -131,12 +132,16 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 	reqMsg, err := parser.Next()
 	for reqMsg != nil {
 		if err != nil {
+			log.Error(err.Error())
 			return err
 		}
 		var resMsg *Message
 		resMsg, err = server.handleMessage(reqMsg)
+		if err == nil {
+			err = server.responseMessage(conn, resMsg)
+		}
 		if err != nil {
-			server.responseMessage(conn, resMsg)
+			log.Error(err.Error())
 		}
 		reqMsg, err = parser.Next()
 	}
