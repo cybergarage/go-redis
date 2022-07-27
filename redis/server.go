@@ -124,17 +124,21 @@ func (server *Server) serve() error {
 }
 
 // receive handles a client connection.
-func (server *Server) receive(conn io.ReadCloser) error {
+func (server *Server) receive(conn io.ReadWriteCloser) error {
 	defer conn.Close()
 
 	parser := proto.NewParserWithReader(conn)
-	msg, err := parser.Next()
-	for msg != nil {
+	reqMsg, err := parser.Next()
+	for reqMsg != nil {
 		if err != nil {
 			return err
 		}
-		server.handleMessage(msg)
-		msg, err = parser.Next()
+		var resMsg *Message
+		resMsg, err = server.handleMessage(reqMsg)
+		if err != nil {
+			server.responseMessage(conn, resMsg)
+		}
+		reqMsg, err = parser.Next()
 	}
 
 	return nil
@@ -159,6 +163,12 @@ func (server *Server) handleMessage(msg *proto.Message) (*Message, error) {
 		return nil, nil
 	}
 	return nil, nil
+}
+
+// responseMessage returns the response message to the request connection.
+func (server *Server) responseMessage(conn io.Writer, msg *Message) error {
+	_, err := conn.Write(msg.RESPBytes())
+	return err
 }
 
 // handleMessage handles a client message.
