@@ -124,3 +124,8 @@ func (msg *Message) Array() (*Array, error) {
 	}
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
+
+// RESPBytes returns the RESP byte representation.
+func (msg *Message) RESPBytes() []byte {
+	return nil
+}
