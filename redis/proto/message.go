@@ -15,6 +15,7 @@
 package proto
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
@@ -127,5 +128,35 @@ func (msg *Message) Array() (*Array, error) {
 
 // RESPBytes returns the RESP byte representation.
 func (msg *Message) RESPBytes() []byte {
-	return nil
+	var respBytes bytes.Buffer
+
+	switch msg.Type {
+	case StringMessage:
+		respBytes.WriteByte(stringMessageByte)
+		respBytes.Write(msg.bytes)
+		respBytes.WriteRune(cr)
+		respBytes.WriteRune(lf)
+	case ErrorMessage:
+		respBytes.WriteByte(errorMessageByte)
+		respBytes.Write(msg.bytes)
+		respBytes.WriteRune(cr)
+		respBytes.WriteRune(lf)
+	case IntegerMessage:
+		respBytes.WriteByte(integerMessageByte)
+		respBytes.Write(msg.bytes)
+		respBytes.WriteRune(cr)
+		respBytes.WriteRune(lf)
+	case BulkMessage:
+		respBytes.WriteByte(bulkMessageByte)
+		respBytes.Write(msg.bytes)
+		respBytes.WriteRune(cr)
+		respBytes.WriteRune(lf)
+	case ArrayMessage:
+		array, err := msg.Array()
+		if err != nil {
+			respBytes.Write(array.RESPBytes())
+		}
+	}
+
+	return respBytes.Bytes()
 }
