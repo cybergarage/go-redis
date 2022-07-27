@@ -127,7 +127,7 @@ func (msg *Message) Array() (*Array, error) {
 }
 
 // RESPBytes returns the RESP byte representation.
-func (msg *Message) RESPBytes() []byte {
+func (msg *Message) RESPBytes() ([]byte, error) {
 	var respBytes bytes.Buffer
 
 	switch msg.Type {
@@ -154,9 +154,10 @@ func (msg *Message) RESPBytes() []byte {
 	case ArrayMessage:
 		array, err := msg.Array()
 		if err != nil {
-			respBytes.Write(array.RESPBytes())
+			return nil, err
 		}
+		respBytes.Write(array.RESPBytes())
 	}
 
-	return respBytes.Bytes()
+	return respBytes.Bytes(), nil
 }
