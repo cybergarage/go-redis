@@ -19,16 +19,29 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	server := NewServer()
+	// server := NewServer()
 
-	err := server.Start()
+	// err := server.Start()
+	// if err != nil {
+	// 	t.Error(err)
+	// 	return
+	// }
+
+	client := NewClient()
+	err := client.Open(LocalHost)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	client := NewClient()
-	err = client.Open(LocalHost)
+	// ctx := context.Background()
+
+	err = client.Set("key", "value", 0).Err()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = client.Get("key").Result()
 	if err != nil {
 		t.Error(err)
 	}
@@ -38,9 +51,9 @@ func TestServer(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = server.Stop()
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	// err = server.Stop()
+	// if err != nil {
+	// 	t.Error(err)
+	// 	return
+	// }
 }

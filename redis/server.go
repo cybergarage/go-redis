@@ -18,24 +18,30 @@ import (
 	"io"
 	"net"
 	"strconv"
+	"strings"
 
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
 // Server is an instance for Redisprotocols.
 type Server struct {
-	Addr        string
-	Port        int
-	tcpListener net.Listener
+	Addr             string
+	Port             int
+	tcpListener      net.Listener
+	systemCmdHandler SystemCommandHandler
+	CommandHandler   CommandHandler
 }
 
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Addr:        "",
-		Port:        DefaultPort,
-		tcpListener: nil,
+		Addr:             "",
+		Port:             DefaultPort,
+		tcpListener:      nil,
+		systemCmdHandler: nil,
+		CommandHandler:   nil,
 	}
+	server.systemCmdHandler = server
 	return server
 }
 
@@ -135,48 +141,63 @@ func (server *Server) receive(conn io.ReadCloser) error {
 }
 
 // handleMessage handles a client message.
-func (server *Server) handleMessage(msg *proto.Message) error {
+func (server *Server) handleMessage(msg *proto.Message) (*Message, error) {
 	switch msg.Type {
 	case proto.StringMessage:
-		return nil
+		return nil, nil
 	case proto.IntegerMessage:
-		return nil
+		return nil, nil
 	case proto.BulkMessage:
-		return nil
+		return nil, nil
 	case proto.ArrayMessage:
 		msg, err := msg.Array()
 		if err != nil {
-			return err
+			return nil, err
 		}
 		return server.handleArrayMessage(msg)
 	case proto.ErrorMessage:
-		return nil
+		return nil, nil
 	}
-	return nil
+	return nil, nil
 }
 
 // handleMessage handles a client message.
-func (server *Server) handleArrayMessage(arrayMsg *proto.Array) error {
-	msg, err := arrayMsg.Next()
+func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error) {
+	firstMsg, err := arrayMsg.Next()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Nested array ?
-	if msg.IsArray() {
-		nestedArrayMsg, err := msg.Array()
+	if firstMsg.IsArray() {
+		nestedArrayMsg, err := firstMsg.Array()
 		if err != nil {
-			return err
+			return nil, err
 		}
 		return server.handleArrayMessage(nestedArrayMsg)
 	}
 
-	for msg != nil {
-		msg, err = arrayMsg.Next()
-		if err != nil {
-			return err
+	cmd, err := firstMsg.String()
+	if err != nil {
+		return nil, err
+	}
+
+	args, err := arrayMsg.NextMessages()
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.ToUpper(cmd) == "PING" {
+		if len(args) < 1 {
+			server.systemCmdHandler.Ping("")
+		} else {
+			msg, err := args[0].String()
+			if err != nil {
+				return nil, err
+			}
+			server.systemCmdHandler.Ping(msg)
 		}
 	}
 
-	return nil
+	return nil, nil
 }
