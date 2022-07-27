@@ -17,3 +17,8 @@ package redis
 // CommandHandler is a hander interface for user commands.
 type CommandHandler interface {
 }
+
+// SystemCommandHandler is a hander interface for system commands.
+type SystemCommandHandler interface {
+	Ping(arg string) (*Message, error)
+}
