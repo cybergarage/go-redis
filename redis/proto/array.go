@@ -14,7 +14,10 @@
 
 package proto
 
-import "strconv"
+import (
+	"bytes"
+	"strconv"
+)
 
 // Array represents a array message.
 type Array struct {
@@ -74,4 +77,10 @@ func (array *Array) NextMessages() ([]*Message, error) {
 		unreadMsgs[n] = msg
 	}
 	return unreadMsgs, nil
+}
+
+// RESPBytes returns the RESP byte representation.
+func (array *Array) RESPBytes() []byte {
+	var respBytes bytes.Buffer
+	return respBytes.Bytes()
 }
