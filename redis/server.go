@@ -167,7 +167,11 @@ func (server *Server) handleMessage(msg *proto.Message) (*Message, error) {
 
 // responseMessage returns the response message to the request connection.
 func (server *Server) responseMessage(conn io.Writer, msg *Message) error {
-	_, err := conn.Write(msg.RESPBytes())
+	bytes, err := msg.RESPBytes()
+	if err != nil {
+		return err
+	}
+	_, err = conn.Write(bytes)
 	return err
 }
 
