@@ -131,23 +131,12 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 	var respBytes bytes.Buffer
 
 	switch msg.Type {
-	case StringMessage:
-		respBytes.WriteByte(stringMessageByte)
-		respBytes.Write(msg.bytes)
-		respBytes.WriteRune(cr)
-		respBytes.WriteRune(lf)
-	case ErrorMessage:
-		respBytes.WriteByte(errorMessageByte)
-		respBytes.Write(msg.bytes)
-		respBytes.WriteRune(cr)
-		respBytes.WriteRune(lf)
-	case IntegerMessage:
-		respBytes.WriteByte(integerMessageByte)
-		respBytes.Write(msg.bytes)
-		respBytes.WriteRune(cr)
-		respBytes.WriteRune(lf)
-	case BulkMessage:
-		respBytes.WriteByte(bulkMessageByte)
+	case StringMessage, ErrorMessage, IntegerMessage, BulkMessage:
+		b, ok := messageTypeToByte(msg.Type)
+		if !ok {
+			return nil, fmt.Errorf(errorUnknownMessageType, msg.Type)
+		}
+		respBytes.WriteByte(b)
 		respBytes.Write(msg.bytes)
 		respBytes.WriteRune(cr)
 		respBytes.WriteRune(lf)

@@ -41,7 +41,20 @@ var messageTypes = map[byte]MessageType{
 	arrayMessageByte:   ArrayMessage,
 }
 
+var messageTypeBytes = map[MessageType]byte{
+	StringMessage:  stringMessageByte,
+	ErrorMessage:   errorMessageByte,
+	IntegerMessage: integerMessageByte,
+	BulkMessage:    bulkMessageByte,
+	ArrayMessage:   arrayMessageByte,
+}
+
 func parseMessageType(b byte) (MessageType, bool) {
 	t, ok := messageTypes[b]
 	return t, ok
+}
+
+func messageTypeToByte(t MessageType) (byte, bool) {
+	b, ok := messageTypeBytes[t]
+	return b, ok
 }
