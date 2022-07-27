@@ -21,9 +21,17 @@ import (
 
 // Array represents a array message.
 type Array struct {
-	parser *Parser
-	index  int
-	size   int
+	index int
+	msgs  []*Message
+}
+
+// NewArray returns a new array message.
+func NewArray() *Array {
+	array := &Array{
+		index: 0,
+		msgs:  make([]*Message, 0),
+	}
+	return array
 }
 
 // newArrayWithParser returns a new array message.
@@ -36,41 +44,51 @@ func newArrayWithParser(parser *Parser) (*Array, error) {
 	if err != nil {
 		return nil, err
 	}
-	array := &Array{
-		parser: parser,
-		index:  0,
-		size:   num,
+	if num < 0 {
+		return NewArray(), nil
 	}
+
+	// Gets all array messages
+	msgs := make([]*Message, num)
+	for n := 0; n < num; n++ {
+		msg, err := parser.Next()
+		if err != nil {
+			return nil, err
+		}
+		msgs[n] = msg
+	}
+	array := &Array{
+		index: 0,
+		msgs:  msgs,
+	}
+
 	return array, nil
 }
 
 // Size returns the array size.
 func (array *Array) Size() int {
-	return array.size
+	return len(array.msgs)
 }
 
 // Next returns a next message.
 func (array *Array) Next() (*Message, error) {
-	if array.size <= array.index {
+	if array.Size() <= array.index {
 		return nil, nil
 	}
-	msg, err := array.parser.Next()
-	if err != nil {
-		return nil, err
-	}
+	msg := array.msgs[array.index]
 	array.index++
 	return msg, nil
 }
 
 // NextMessages returns all unread messages.
 func (array *Array) NextMessages() ([]*Message, error) {
-	unreadMsgCnt := array.size - array.index
+	unreadMsgCnt := array.Size() - array.index
 	if unreadMsgCnt <= 0 {
 		return []*Message{}, nil
 	}
 	unreadMsgs := make([]*Message, unreadMsgCnt)
 	for n := 0; n < unreadMsgCnt; n++ {
-		msg, err := array.parser.Next()
+		msg, err := array.Next()
 		if err != nil {
 			return nil, err
 		}
