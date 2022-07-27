@@ -58,3 +58,20 @@ func (array *Array) Next() (*Message, error) {
 	array.index++
 	return msg, nil
 }
+
+// NextMessages returns all unread messages.
+func (array *Array) NextMessages() ([]*Message, error) {
+	unreadMsgCnt := array.size - array.index
+	if unreadMsgCnt <= 0 {
+		return []*Message{}, nil
+	}
+	unreadMsgs := make([]*Message, unreadMsgCnt)
+	for n := 0; n < unreadMsgCnt; n++ {
+		msg, err := array.parser.Next()
+		if err != nil {
+			return nil, err
+		}
+		unreadMsgs[n] = msg
+	}
+	return unreadMsgs, nil
+}
