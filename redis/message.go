@@ -20,3 +20,8 @@ import (
 
 // Message represents a message of Redis serialization protocol.
 type Message = proto.Message
+
+// NewStringMessage creates a string message.
+func NewStringMessage(msg string) *Message {
+	return proto.NewMessageWithType(proto.StringMessage).SetBytes([]byte(msg))
+}
