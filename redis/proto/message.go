@@ -28,8 +28,8 @@ type Message struct {
 	array *Array
 }
 
-// newMessageWithType returns a new message instance with the specified type.
-func newMessageWithType(t MessageType) *Message {
+// NewMessageWithType returns a new message instance with the specified type.
+func NewMessageWithType(t MessageType) *Message {
 	msg := &Message{
 		Type:  t,
 		bytes: nil,
@@ -44,7 +44,7 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	if !ok {
 		return nil, fmt.Errorf(errorUnknownMessageType, b)
 	}
-	return newMessageWithType(t), nil
+	return NewMessageWithType(t), nil
 }
 
 // IsType returns true if the message type is the specified type, otherwise false.
