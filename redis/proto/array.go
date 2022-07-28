@@ -40,17 +40,17 @@ func newArrayWithParser(parser *Parser) (*Array, error) {
 	if err != nil {
 		return nil, err
 	}
-	num, err := strconv.Atoi(string(numBytes))
+	arraySize, err := strconv.Atoi(string(numBytes))
 	if err != nil {
 		return nil, err
 	}
-	if num < 0 {
+	if arraySize < 0 {
 		return NewArray(), nil
 	}
 
 	// Gets all array messages
-	msgs := make([]*Message, num)
-	for n := 0; n < num; n++ {
+	msgs := make([]*Message, arraySize)
+	for n := 0; n < arraySize; n++ {
 		msg, err := parser.Next()
 		if err != nil {
 			return nil, err
@@ -98,7 +98,23 @@ func (array *Array) NextMessages() ([]*Message, error) {
 }
 
 // RESPBytes returns the RESP byte representation.
-func (array *Array) RESPBytes() []byte {
+func (array *Array) RESPBytes() ([]byte, error) {
 	var respBytes bytes.Buffer
-	return respBytes.Bytes()
+
+	respBytes.WriteByte(arrayMessageByte)
+
+	arraySize := array.Size()
+	respBytes.WriteString(strconv.Itoa(arraySize))
+	respBytes.WriteRune(cr)
+	respBytes.WriteRune(lf)
+
+	for n := 0; n < arraySize; n++ {
+		bytes, err := array.msgs[n].Bytes()
+		if err != nil {
+			return respBytes.Bytes(), err
+		}
+		respBytes.Write(bytes)
+	}
+
+	return respBytes.Bytes(), nil
 }

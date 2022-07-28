@@ -145,7 +145,11 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		respBytes.Write(array.RESPBytes())
+		bytes, err := array.RESPBytes()
+		if err != nil {
+			return nil, err
+		}
+		respBytes.Write(bytes)
 	}
 
 	return respBytes.Bytes(), nil
