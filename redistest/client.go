@@ -16,6 +16,7 @@ package redistest
 
 import (
 	"fmt"
+	"time"
 
 	goredis "github.com/go-redis/redis"
 )
@@ -36,7 +37,10 @@ func NewClient() *Client {
 // Open opens a connection with the specified host.
 func (client *Client) Open(host string) error {
 	client.Client = goredis.NewClient(&goredis.Options{
-		Addr: fmt.Sprintf("%s:%d", host, DefaultPort),
+		Addr:         fmt.Sprintf("%s:%d", host, DefaultPort),
+		DialTimeout:  time.Second,
+		ReadTimeout:  time.Second * 60,
+		WriteTimeout: time.Second * 60,
 	})
 	status := client.Ping()
 	if err := status.Err(); err != nil {
