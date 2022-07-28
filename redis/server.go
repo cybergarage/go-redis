@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"fmt"
 	"io"
 	"net"
 	"strconv"
@@ -137,9 +138,10 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 		}
 		var resMsg *Message
 		resMsg, err = server.handleMessage(reqMsg)
-		if err == nil {
-			err = server.responseMessage(conn, resMsg)
+		if err != nil {
+			resMsg = NewErrorMessage(err)
 		}
+		err = server.responseMessage(conn, resMsg)
 		if err != nil {
 			log.Error(err.Error())
 		}
@@ -208,7 +210,8 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 
 	var resMsg *Message
 
-	if strings.ToUpper(cmd) == "PING" {
+	switch strings.ToUpper(cmd) {
+	case "PING":
 		if len(args) < 1 {
 			resMsg, err = server.systemCmdHandler.Ping("")
 		} else {
@@ -219,6 +222,8 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 			}
 			resMsg, err = server.systemCmdHandler.Ping(pingMsg)
 		}
+	default:
+		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
 
 	return resMsg, err
