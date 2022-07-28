@@ -145,8 +145,6 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 		switch {
 		case msg.bytes == nil:
 			respBytes.WriteString("-1")
-			respBytes.WriteRune(cr)
-			respBytes.WriteRune(lf)
 		case len(msg.bytes) == 0:
 			respBytes.WriteString("0")
 			respBytes.WriteRune(cr)
@@ -156,9 +154,9 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 			respBytes.WriteRune(cr)
 			respBytes.WriteRune(lf)
 			respBytes.Write(msg.bytes)
-			respBytes.WriteRune(cr)
-			respBytes.WriteRune(lf)
 		}
+		respBytes.WriteRune(cr)
+		respBytes.WriteRune(lf)
 	case ArrayMessage:
 		array, err := msg.Array()
 		if err != nil {
