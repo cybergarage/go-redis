@@ -17,5 +17,5 @@ package proto
 import "testing"
 
 func TestMessage(t *testing.T) {
-	newMessageWithType(StringMessage)
+	NewMessageWithType(StringMessage)
 }
