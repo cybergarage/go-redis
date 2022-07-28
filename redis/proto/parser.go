@@ -61,7 +61,12 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	// Skips a next line field.
 	parser.reader.Read(readByte)
 
-	return readBytes.Bytes(), nil
+	// Returns an empty byte array instead of nil
+	lenBytes := readBytes.Bytes()
+	if len(lenBytes) == 0 {
+		return make([]byte, 0), nil
+	}
+	return lenBytes, nil
 }
 
 // nextBulkMessage gets a next line bytes.
