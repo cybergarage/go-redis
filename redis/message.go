@@ -25,3 +25,8 @@ type Message = proto.Message
 func NewStringMessage(msg string) *Message {
 	return proto.NewMessageWithType(proto.StringMessage).SetBytes([]byte(msg))
 }
+
+// NewBulkMessage creates a bulk string message.
+func NewBulkMessage(msg string) *Message {
+	return proto.NewMessageWithType(proto.BulkMessage).SetBytes([]byte(msg))
+}
