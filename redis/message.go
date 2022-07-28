@@ -30,3 +30,8 @@ func NewStringMessage(msg string) *Message {
 func NewBulkMessage(msg string) *Message {
 	return proto.NewMessageWithType(proto.BulkMessage).SetBytes([]byte(msg))
 }
+
+// NewErrorMessage creates an error message.
+func NewErrorMessage(err error) *Message {
+	return proto.NewMessageWithType(proto.ErrorMessage).SetBytes([]byte(err.Error()))
+}
