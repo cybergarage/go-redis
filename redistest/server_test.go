@@ -19,16 +19,16 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	// server := NewServer()
+	server := NewServer()
 
-	// err := server.Start()
-	// if err != nil {
-	// 	t.Error(err)
-	// 	return
-	// }
+	err := server.Start()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
 	client := NewClient()
-	err := client.Open(LocalHost)
+	err = client.Open(LocalHost)
 	if err != nil {
 		t.Error(err)
 		return
@@ -51,9 +51,9 @@ func TestServer(t *testing.T) {
 		t.Error(err)
 	}
 
-	// err = server.Stop()
-	// if err != nil {
-	// 	t.Error(err)
-	// 	return
-	// }
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

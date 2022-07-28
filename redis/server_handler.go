@@ -15,5 +15,8 @@
 package redis
 
 func (server *Server) Ping(arg string) (*Message, error) {
-	return nil, nil
+	if len(arg) == 0 {
+		return NewStringMessage("PONG"), nil
+	}
+	return NewBulkMessage(arg), nil
 }
