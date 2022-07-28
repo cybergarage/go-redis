@@ -65,6 +65,11 @@ func newArrayWithParser(parser *Parser) (*Array, error) {
 	return array, nil
 }
 
+// Append adds a message into the array.
+func (array *Array) Append(msg *Message) {
+	array.msgs = append(array.msgs, msg)
+}
+
 // Size returns the array size.
 func (array *Array) Size() int {
 	return len(array.msgs)
