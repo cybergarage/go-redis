@@ -47,6 +47,12 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	return NewMessageWithType(t), nil
 }
 
+// SetBytes sets a byte array.
+func (msg *Message) SetBytes(bytes []byte) *Message {
+	msg.bytes = bytes
+	return msg
+}
+
 // IsType returns true if the message type is the specified type, otherwise false.
 func (msg *Message) IsType(t MessageType) bool {
 	return msg.Type == t
