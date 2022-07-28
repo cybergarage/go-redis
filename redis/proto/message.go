@@ -47,9 +47,15 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	return NewMessageWithType(t), nil
 }
 
-// SetBytes sets a byte array.
+// SetBytes sets a byte array to the message.
 func (msg *Message) SetBytes(bytes []byte) *Message {
 	msg.bytes = bytes
+	return msg
+}
+
+// SetArray sets an array to the message.
+func (msg *Message) SetArray(array *Array) *Message {
+	msg.array = array
 	return msg
 }
 
