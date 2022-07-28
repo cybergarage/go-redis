@@ -28,10 +28,26 @@ func testParserSingleMessages(t *testing.T, msgString string, compare func(*Mess
 		t.Errorf("%s %s", msgString, err)
 		return
 	}
+
 	if actual, ok := compare(msg, expected); !ok {
 		t.Errorf("%s != %s", actual, expected)
 		return
 	}
+
+	msgBytes, err := msg.RESPBytes()
+	if err != nil {
+		t.Errorf("%s %s", msgString, err)
+		return
+	}
+
+	if !bytes.Equal([]byte(msgString), msgBytes) {
+		msgString += string(cr)
+		msgString += string(lf)
+		if !bytes.Equal([]byte(msgString), msgBytes) {
+			t.Errorf("%s \n!=\n%s", string(msgBytes), msgString)
+		}
+	}
+
 	_, err = parser.Next()
 	if err != nil {
 		t.Errorf("%s %s", msgString, err)
