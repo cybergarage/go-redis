@@ -206,17 +206,20 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 		return nil, err
 	}
 
+	var resMsg *Message
+
 	if strings.ToUpper(cmd) == "PING" {
 		if len(args) < 1 {
-			server.systemCmdHandler.Ping("")
+			resMsg, err = server.systemCmdHandler.Ping("")
 		} else {
-			msg, err := args[0].String()
+			var pingMsg string
+			pingMsg, err = args[0].String()
 			if err != nil {
 				return nil, err
 			}
-			server.systemCmdHandler.Ping(msg)
+			resMsg, err = server.systemCmdHandler.Ping(pingMsg)
 		}
 	}
 
-	return nil, nil
+	return resMsg, err
 }
