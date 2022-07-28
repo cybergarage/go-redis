@@ -97,9 +97,9 @@ func (msg *Message) Bytes() ([]byte, error) {
 // String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
-	case StringMessage:
+	case StringMessage, BulkMessage:
 		return string(msg.bytes), nil
-	case ArrayMessage, BulkMessage, ErrorMessage, IntegerMessage:
+	case ArrayMessage, ErrorMessage, IntegerMessage:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
