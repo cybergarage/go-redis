@@ -36,6 +36,17 @@ func TestServer(t *testing.T) {
 
 	// ctx := context.Background()
 
+	msg := "Hello World!"
+	echo := client.Echo(msg)
+	if echo.Err() != nil {
+		t.Error(echo.Err())
+		return
+	}
+	if echo.Val() != msg {
+		t.Errorf("'%s' != '%s'", echo.Val(), msg)
+		return
+	}
+
 	err = client.Set("key", "value", 0).Err()
 	if err != nil {
 		t.Error(err)

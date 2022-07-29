@@ -23,4 +23,5 @@ type CommandHandler interface {
 // SystemCommandHandler is a hander interface for system commands.
 type SystemCommandHandler interface {
 	Ping(arg string) (*Message, error)
+	Echo(arg string) (*Message, error)
 }
