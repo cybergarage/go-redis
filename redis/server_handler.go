@@ -70,6 +70,11 @@ func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) 
 		}
 		return server.CommandHandler.Set(key, val, opt)
 	case "GET": // 1.0.0
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		return server.CommandHandler.Get(key)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
