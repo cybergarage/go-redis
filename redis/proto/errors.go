@@ -24,5 +24,5 @@ const (
 	errorInvalidBulkStringLength = "invalid bulk string length (%d != %d)"
 )
 
-// EOM is the error returned by Array::Next() when no more message is available.
-var EOM = errors.New("EOM")
+// ErrEOM is the error returned by Array::Next() when no more message is available.
+var ErrEOM = errors.New("EOM")
