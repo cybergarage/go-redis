@@ -24,3 +24,7 @@ func (server *Server) Ping(arg string) (*Message, error) {
 func (server *Server) Echo(arg string) (*Message, error) {
 	return NewBulkMessage(arg), nil
 }
+
+func (server *Server) Quit() (*Message, error) {
+	return NewStringMessage("OK"), errQuit
+}
