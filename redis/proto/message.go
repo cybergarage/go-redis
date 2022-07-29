@@ -119,9 +119,9 @@ func (msg *Message) Error() (error, error) {
 // Integer returns the message integer if the message type is integer, otherwise it returns an error.
 func (msg *Message) Integer() (int, error) {
 	switch msg.Type {
-	case IntegerMessage:
+	case IntegerMessage, StringMessage, BulkMessage:
 		return strconv.Atoi(string(msg.bytes))
-	case ArrayMessage, StringMessage, BulkMessage, ErrorMessage:
+	case ArrayMessage, ErrorMessage:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
