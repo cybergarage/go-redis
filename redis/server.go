@@ -211,7 +211,7 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 	var resMsg *Message
 
 	switch strings.ToUpper(cmd) {
-	case "PING":
+	case "PING": // 1.0.0
 		if len(args) < 1 {
 			resMsg, err = server.systemCmdHandler.Ping("")
 		} else {
