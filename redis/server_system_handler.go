@@ -20,3 +20,7 @@ func (server *Server) Ping(arg string) (*Message, error) {
 	}
 	return NewBulkMessage(arg), nil
 }
+
+func (server *Server) Echo(arg string) (*Message, error) {
+	return NewBulkMessage(arg), nil
+}

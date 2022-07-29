@@ -40,8 +40,12 @@ func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) 
 			}
 		}
 		return server.systemCmdHandler.Ping(arg)
-	default:
-		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
+	case "ECHO": // 1.0.0
+		msg, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "msg", err)
+		}
+		return server.systemCmdHandler.Echo(msg)
 	}
 
 	if server.CommandHandler == nil {
