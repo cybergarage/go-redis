@@ -123,8 +123,8 @@ func (array *Array) NextBytes() ([]byte, error) {
 	return msg.Bytes()
 }
 
-// String returns the message string if the message type is string, otherwise it returns an error.
-func (array *Array) String() (string, error) {
+// NextString returns the message string if the message type is string, otherwise it returns an error.
+func (array *Array) NextString() (string, error) {
 	msg, err := array.NextMessage()
 	if err != nil {
 		return "", err
@@ -132,8 +132,8 @@ func (array *Array) String() (string, error) {
 	return msg.String()
 }
 
-// Error returns the message error if the message type is error, otherwise it returns an error.
-func (array *Array) Error() (error, error) {
+// NextError returns the message error if the message type is error, otherwise it returns an error.
+func (array *Array) NextError() (error, error) {
 	msg, err := array.NextMessage()
 	if err != nil {
 		return nil, err
@@ -141,8 +141,8 @@ func (array *Array) Error() (error, error) {
 	return msg.Error()
 }
 
-// Integer returns the message integer if the message type is integer, otherwise it returns an error.
-func (array *Array) Integer() (int, error) {
+// NextInteger returns the message integer if the message type is integer, otherwise it returns an error.
+func (array *Array) NextInteger() (int, error) {
 	msg, err := array.NextMessage()
 	if err != nil {
 		return 0, err
@@ -150,8 +150,8 @@ func (array *Array) Integer() (int, error) {
 	return msg.Integer()
 }
 
-// Array returns the message array if the message type is array, otherwise it returns an error.
-func (array *Array) Array() (*Array, error) {
+// NextArray returns the message array if the message type is array, otherwise it returns an error.
+func (array *Array) NextArray() (*Array, error) {
 	msg, err := array.NextMessage()
 	if err != nil {
 		return nil, err
