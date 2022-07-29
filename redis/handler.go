@@ -24,5 +24,6 @@ type CommandHandler interface {
 type SystemCommandHandler interface {
 	Ping(ctx *DBContext, arg string) (*Message, error)
 	Echo(ctx *DBContext, arg string) (*Message, error)
+	Select(ctx *DBContext, index int) (*Message, error)
 	Quit(ctx *DBContext) (*Message, error)
 }

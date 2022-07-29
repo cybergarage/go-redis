@@ -46,6 +46,12 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
 		return server.systemCmdHandler.Echo(ctx, msg)
+	case "SELECT": // 1.0.0
+		id, err := args.NextInteger()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "id", err)
+		}
+		return server.systemCmdHandler.Select(ctx, id)
 	case "QUIT": // 1.0.0
 		return server.systemCmdHandler.Quit(ctx)
 	}

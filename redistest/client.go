@@ -41,6 +41,7 @@ func (client *Client) Open(host string) error {
 		DialTimeout:  time.Second,
 		ReadTimeout:  time.Second * 60,
 		WriteTimeout: time.Second * 60,
+		DB:           1,
 	})
 	status := client.Ping()
 	if err := status.Err(); err != nil {
