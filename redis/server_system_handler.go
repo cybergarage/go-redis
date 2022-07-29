@@ -14,17 +14,17 @@
 
 package redis
 
-func (server *Server) Ping(arg string) (*Message, error) {
+func (server *Server) Ping(ctx *DBContext, arg string) (*Message, error) {
 	if len(arg) == 0 {
 		return NewStringMessage("PONG"), nil
 	}
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Echo(arg string) (*Message, error) {
+func (server *Server) Echo(ctx *DBContext, arg string) (*Message, error) {
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Quit() (*Message, error) {
+func (server *Server) Quit(ctx *DBContext) (*Message, error) {
 	return NewStringMessage("OK"), errQuit
 }
