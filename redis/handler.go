@@ -16,6 +16,7 @@ package redis
 
 // CommandHandler is a hander interface for user commands.
 type CommandHandler interface {
+	Set(key string, val string, opt SetOption) (*Message, error)
 }
 
 // SystemCommandHandler is a hander interface for system commands.
