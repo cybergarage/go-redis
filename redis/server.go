@@ -15,11 +15,9 @@
 package redis
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"strconv"
-	"strings"
 
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-redis/redis/proto"
@@ -203,37 +201,5 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 		return nil, err
 	}
 
-	args, err := arrayMsg.NextMessages()
-	if err != nil {
-		return nil, err
-	}
-
-	var resMsg *Message
-
-	switch strings.ToUpper(cmd) {
-	case "PING": // 1.0.0
-		arg := ""
-		if 0 < len(args) {
-			arg, err = args[0].String()
-			if err != nil {
-				return nil, err
-			}
-		}
-		return server.systemCmdHandler.Ping(arg)
-	default:
-		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
-	}
-
-	if server.CommandHandler == nil {
-		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
-	}
-
-	switch strings.ToUpper(cmd) {
-	case "SET": // 1.0.0
-	case "GET": // 1.0.0
-	default:
-		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
-	}
-
-	return resMsg, err
+	return server.handleCommand(cmd, arrayMsg)
 }
