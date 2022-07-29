@@ -14,15 +14,19 @@
 
 package redis
 
-// CommandHandler is a hander interface for user commands.
-type CommandHandler interface {
-	Set(ctx *DBContext, key string, val string, opt SetOption) (*Message, error)
-	Get(ctx *DBContext, key string) (*Message, error)
+// DBContext represents a database connection context.
+type DBContext struct {
+	id int
 }
 
-// SystemCommandHandler is a hander interface for system commands.
-type SystemCommandHandler interface {
-	Ping(ctx *DBContext, arg string) (*Message, error)
-	Echo(ctx *DBContext, arg string) (*Message, error)
-	Quit(ctx *DBContext) (*Message, error)
+// newDBContext returns a database connection context.
+func newDBContext() *DBContext {
+	return &DBContext{
+		id: 0,
+	}
+}
+
+// ID returns the current selected database ID.
+func (ctx *DBContext) ID() int {
+	return ctx.id
 }

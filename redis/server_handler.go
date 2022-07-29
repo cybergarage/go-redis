@@ -25,7 +25,7 @@ import (
 type cmdArgs = *proto.Array
 
 // handleCommand handles a client command message.
-func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) {
+func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*Message, error) {
 	var resMsg *Message
 	var err error
 	now := time.Now()
@@ -39,15 +39,15 @@ func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) 
 				return nil, err
 			}
 		}
-		return server.systemCmdHandler.Ping(arg)
+		return server.systemCmdHandler.Ping(ctx, arg)
 	case "ECHO": // 1.0.0
 		msg, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
-		return server.systemCmdHandler.Echo(msg)
+		return server.systemCmdHandler.Echo(ctx, msg)
 	case "QUIT": // 1.0.0
-		return server.systemCmdHandler.Quit()
+		return server.systemCmdHandler.Quit(ctx)
 	}
 
 	if server.CommandHandler == nil {
@@ -74,13 +74,13 @@ func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) 
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "key", err)
 		}
-		return server.CommandHandler.Set(key, val, opt)
+		return server.CommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
 		key, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "key", err)
 		}
-		return server.CommandHandler.Get(key)
+		return server.CommandHandler.Get(ctx, key)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
