@@ -24,4 +24,5 @@ type CommandHandler interface {
 type SystemCommandHandler interface {
 	Ping(arg string) (*Message, error)
 	Echo(arg string) (*Message, error)
+	Quit() (*Message, error)
 }

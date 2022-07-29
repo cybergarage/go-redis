@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -22,6 +23,8 @@ const (
 	errorNotSupportedCommand = "'%s' is not supported"
 	errorMissingArgument     = "%s: missing argument (%s) %w"
 )
+
+var errQuit = errors.New("QUIT")
 
 func newMissingArgumentError(cmd string, arg string, err error) error {
 	return fmt.Errorf(errorMissingArgument, cmd, arg, err)
