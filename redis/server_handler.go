@@ -17,26 +17,24 @@ package redis
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-type args = *proto.Array
+type cmdArgs = *proto.Array
 
 // handleCommand handles a client command message.
-func (server *Server) handleCommand(cmd string, cmdArgs args) (*Message, error) {
-	args, err := cmdArgs.NextMessages()
-	if err != nil {
-		return nil, err
-	}
-
+func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) {
 	var resMsg *Message
+	var err error
+	now := time.Now()
 
 	switch strings.ToUpper(cmd) {
 	case "PING": // 1.0.0
 		arg := ""
-		if 0 < len(args) {
-			arg, err = args[0].String()
+		if msg, _ := args.Next(); msg != nil {
+			arg, err = msg.String()
 			if err != nil {
 				return nil, err
 			}
@@ -52,6 +50,25 @@ func (server *Server) handleCommand(cmd string, cmdArgs args) (*Message, error) 
 
 	switch strings.ToUpper(cmd) {
 	case "SET": // 1.0.0
+		opt := SetOption{
+			NX:      false,
+			XX:      false,
+			EX:      0,
+			PX:      0,
+			EXAT:    now,
+			PXAT:    now,
+			KEEPTTL: false,
+			GET:     false,
+		}
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		val, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		return server.CommandHandler.Set(key, val, opt)
 	case "GET": // 1.0.0
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
