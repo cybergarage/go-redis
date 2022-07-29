@@ -14,7 +14,15 @@
 
 package redis
 
+import (
+	"fmt"
+)
+
 const (
 	errorNotSupportedCommand = "'%s' is not supported"
-	errorMissingArgument     = "%s: missing argument (%s)"
+	errorMissingArgument     = "%s: missing argument (%s) %w"
 )
+
+func newMissingArgumentError(cmd string, arg string, err error) error {
+	return fmt.Errorf(errorMissingArgument, cmd, arg, err)
+}
