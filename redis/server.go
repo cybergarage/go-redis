@@ -212,16 +212,25 @@ func (server *Server) handleArrayMessage(arrayMsg *proto.Array) (*Message, error
 
 	switch strings.ToUpper(cmd) {
 	case "PING": // 1.0.0
-		if len(args) < 1 {
-			resMsg, err = server.systemCmdHandler.Ping("")
-		} else {
-			var pingMsg string
-			pingMsg, err = args[0].String()
+		arg := ""
+		if 0 < len(args) {
+			arg, err = args[0].String()
 			if err != nil {
 				return nil, err
 			}
-			resMsg, err = server.systemCmdHandler.Ping(pingMsg)
 		}
+		return server.systemCmdHandler.Ping(arg)
+	default:
+		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
+	}
+
+	if server.CommandHandler == nil {
+		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
+	}
+
+	switch strings.ToUpper(cmd) {
+	case "SET": // 1.0.0
+	case "GET": // 1.0.0
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
