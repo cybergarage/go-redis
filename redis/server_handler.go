@@ -14,9 +14,48 @@
 
 package redis
 
-func (server *Server) Ping(arg string) (*Message, error) {
-	if len(arg) == 0 {
-		return NewStringMessage("PONG"), nil
+import (
+	"fmt"
+	"strings"
+
+	"github.com/cybergarage/go-redis/redis/proto"
+)
+
+type args = *proto.Array
+
+// handleCommand handles a client command message.
+func (server *Server) handleCommand(cmd string, cmdArgs args) (*Message, error) {
+	args, err := cmdArgs.NextMessages()
+	if err != nil {
+		return nil, err
 	}
-	return NewBulkMessage(arg), nil
+
+	var resMsg *Message
+
+	switch strings.ToUpper(cmd) {
+	case "PING": // 1.0.0
+		arg := ""
+		if 0 < len(args) {
+			arg, err = args[0].String()
+			if err != nil {
+				return nil, err
+			}
+		}
+		return server.systemCmdHandler.Ping(arg)
+	default:
+		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
+	}
+
+	if server.CommandHandler == nil {
+		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
+	}
+
+	switch strings.ToUpper(cmd) {
+	case "SET": // 1.0.0
+	case "GET": // 1.0.0
+	default:
+		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
+	}
+
+	return resMsg, err
 }
