@@ -25,6 +25,11 @@ func (server *Server) Echo(ctx *DBContext, arg string) (*Message, error) {
 	return NewBulkMessage(arg), nil
 }
 
+func (server *Server) Select(ctx *DBContext, index int) (*Message, error) {
+	ctx.id = index
+	return NewStringMessage(OK), nil
+}
+
 func (server *Server) Quit(ctx *DBContext) (*Message, error) {
-	return NewStringMessage("OK"), errQuit
+	return NewStringMessage(OK), errQuit
 }
