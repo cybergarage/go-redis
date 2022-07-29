@@ -16,4 +16,5 @@ package redis
 
 const (
 	errorNotSupportedCommand = "'%s' is not supported"
+	errorMissingArgument     = "%s: missing argument (%s)"
 )
