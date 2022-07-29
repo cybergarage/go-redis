@@ -14,6 +14,8 @@
 
 package proto
 
+import "errors"
+
 const (
 	errorEmptyMessage            = "message is short (%d)"
 	errorUnknownMessageType      = "unknown message type (%c)"
@@ -21,3 +23,6 @@ const (
 	errorInvalidMessage          = "invalid message (%s)"
 	errorInvalidBulkStringLength = "invalid bulk string length (%d != %d)"
 )
+
+// EOM is the error returned by Array::Next() when no more message is available.
+var EOM = errors.New("EOM")
