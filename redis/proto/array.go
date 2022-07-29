@@ -85,6 +85,18 @@ func (array *Array) Next() (*Message, error) {
 	return msg, nil
 }
 
+// NextMessage returns the next message if any, otherwise it returns error.
+func (array *Array) NextMessage() (*Message, error) {
+	msg, err := array.Next()
+	if err != nil {
+		return nil, err
+	}
+	if msg == nil {
+		return nil, ErrEOM
+	}
+	return msg, nil
+}
+
 // NextMessages returns all unread messages.
 func (array *Array) NextMessages() ([]*Message, error) {
 	unreadMsgCnt := array.Size() - array.index
@@ -100,6 +112,51 @@ func (array *Array) NextMessages() ([]*Message, error) {
 		unreadMsgs[n] = msg
 	}
 	return unreadMsgs, nil
+}
+
+// NextBytes returns the next byte message.
+func (array *Array) NextBytes() ([]byte, error) {
+	msg, err := array.NextMessage()
+	if err != nil {
+		return nil, err
+	}
+	return msg.Bytes()
+}
+
+// String returns the message string if the message type is string, otherwise it returns an error.
+func (array *Array) String() (string, error) {
+	msg, err := array.NextMessage()
+	if err != nil {
+		return "", err
+	}
+	return msg.String()
+}
+
+// Error returns the message error if the message type is error, otherwise it returns an error.
+func (array *Array) Error() (error, error) {
+	msg, err := array.NextMessage()
+	if err != nil {
+		return nil, err
+	}
+	return msg.Error()
+}
+
+// Integer returns the message integer if the message type is integer, otherwise it returns an error.
+func (array *Array) Integer() (int, error) {
+	msg, err := array.NextMessage()
+	if err != nil {
+		return 0, err
+	}
+	return msg.Integer()
+}
+
+// Array returns the message array if the message type is array, otherwise it returns an error.
+func (array *Array) Array() (*Array, error) {
+	msg, err := array.NextMessage()
+	if err != nil {
+		return nil, err
+	}
+	return msg.Array()
 }
 
 // RESPBytes returns the RESP byte representation.
