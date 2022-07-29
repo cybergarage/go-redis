@@ -24,7 +24,7 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-// Server is an instance for Redisprotocols.
+// Server is an instance for Redis protocols.
 type Server struct {
 	Addr             string
 	Port             int
