@@ -57,6 +57,12 @@ func TestServer(t *testing.T) {
 		t.Error(err)
 	}
 
+	// // panic: not implemented
+	// err = client.Quit().Err()
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+
 	err = client.Close()
 	if err != nil {
 		t.Error(err)

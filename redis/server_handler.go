@@ -46,6 +46,8 @@ func (server *Server) handleCommand(cmd string, args cmdArgs) (*Message, error) 
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
 		return server.systemCmdHandler.Echo(msg)
+	case "QUIT": // 1.0.0
+		return server.systemCmdHandler.Quit()
 	}
 
 	if server.CommandHandler == nil {

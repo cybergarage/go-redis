@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"errors"
 	"io"
 	"net"
 	"strconv"
@@ -128,22 +129,29 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 	defer conn.Close()
 
 	parser := proto.NewParserWithReader(conn)
-	reqMsg, err := parser.Next()
+	reqMsg, parserErr := parser.Next()
 	for reqMsg != nil {
-		if err != nil {
-			log.Error(err.Error())
-			return err
+		if parserErr != nil {
+			log.Error(parserErr.Error())
+			return parserErr
 		}
 		var resMsg *Message
-		resMsg, err = server.handleMessage(reqMsg)
-		if err != nil {
-			resMsg = NewErrorMessage(err)
+		var reqErr error
+		resMsg, reqErr = server.handleMessage(reqMsg)
+		if reqErr != nil {
+			if !errors.Is(reqErr, errQuit) {
+				resMsg = NewErrorMessage(reqErr)
+			}
 		}
-		err = server.responseMessage(conn, resMsg)
-		if err != nil {
-			log.Error(err.Error())
+		resErr := server.responseMessage(conn, resMsg)
+		if resErr != nil {
+			log.Error(resErr.Error())
 		}
-		reqMsg, err = parser.Next()
+		if errors.Is(reqErr, errQuit) {
+			conn.Close()
+			return nil
+		}
+		reqMsg, parserErr = parser.Next()
 	}
 
 	return nil
