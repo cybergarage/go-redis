@@ -25,11 +25,18 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 
 	oldVal := ""
 	hasOldRecord := false
-	if opt.GET {
+	if opt.NX || opt.GET {
 		var currRecord *Record
 		currRecord, hasOldRecord = db.GetRecord(key)
-		if hasOldRecord {
-			oldVal = string(currRecord.Data)
+		switch {
+		case opt.NX:
+			if hasOldRecord {
+				return redis.NewIntegerMessage(0), nil
+			}
+		case opt.GET:
+			if hasOldRecord {
+				oldVal = string(currRecord.Data)
+			}
 		}
 
 	}
@@ -42,12 +49,16 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 	}
 	db.SetRecord(record)
 
-	if opt.GET {
+	switch {
+	case opt.NX:
+		return redis.NewIntegerMessage(1), nil
+	case opt.GET:
 		if hasOldRecord {
 			return redis.NewBulkMessage(oldVal), nil
 		}
 		return redis.NewNilMessage(), nil
 	}
+
 	return redis.NewOKMessage(), nil
 }
 

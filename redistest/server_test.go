@@ -84,6 +84,30 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("SetNx", func(t *testing.T) {
+		records := []struct {
+			key      string
+			val      string
+			expected bool
+		}{
+			{"key_setnx", "value0", true},
+			{"key_setnx", "value1", false},
+			{"key_setnx", "value2", false},
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+r.val, func(t *testing.T) {
+				res, err := client.SetNX(r.key, r.val, 0).Result()
+				if err != nil {
+					t.Error(err)
+				}
+				if res != r.expected {
+					t.Errorf("%t != %t", res, r.expected)
+				}
+			})
+		}
+	})
+
 	t.Run("GetSet", func(t *testing.T) {
 		records := []struct {
 			key      string
