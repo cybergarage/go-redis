@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /*
- go-redisd is an example of implementing a compatible Redis server using go-mysql.
+ go-redis-server is an example of implementing a compatible Redis server using go-mysql.
 	NAME
-	 go-redisd
+	 go-redis-server
 
 	SYNOPSIS
-	 go-redisd [OPTIONS]
+	 go-redis-server [OPTIONS]
 
 	OPTIONS
 	-v      : Enable verbose output.
@@ -37,11 +37,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/cybergarage/go-redis/examples/go-redisd/server"
+	"github.com/cybergarage/go-redis/examples/go-redis-server/server"
 )
 
 const (
-	programName = " go-redisd"
+	programName = " go-redis-server"
 )
 
 func main() {
