@@ -35,3 +35,8 @@ func NewBulkMessage(msg string) *Message {
 func NewErrorMessage(err error) *Message {
 	return proto.NewMessageWithType(proto.ErrorMessage).SetBytes([]byte(err.Error()))
 }
+
+// NewOKMessage creates a OK string message.
+func NewOKMessage() *Message {
+	return NewStringMessage(OK)
+}
