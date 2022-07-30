@@ -40,3 +40,8 @@ func NewErrorMessage(err error) *Message {
 func NewOKMessage() *Message {
 	return NewStringMessage(OK)
 }
+
+// NewNilMessage creates a nil bulk string message.
+func NewNilMessage() *Message {
+	return proto.NewMessageWithType(proto.BulkMessage).SetBytes(nil)
+}
