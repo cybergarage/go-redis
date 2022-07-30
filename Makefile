@@ -31,7 +31,7 @@ PKGS=\
 	${PKG_ID}/proto
 
 BIN_DIR=examples
-BIN_ID=${MODULE_ROOT}/${BIN_DIR}/go-redisd
+BIN_ID=${MODULE_ROOT}/${BIN_DIR}/go-redis-server
 BINS=\
 	${BIN_ID}
 
