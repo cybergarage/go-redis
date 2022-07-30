@@ -16,10 +16,13 @@ package server
 
 import "time"
 
-// Server represents a database record.
+// Record represents a database record.
 type Record struct {
 	Key       string
 	Data      []byte
 	Timestamp time.Time
 	TTL       time.Duration
 }
+
+// Records represents a database record map.
+type Records map[string]*Record
