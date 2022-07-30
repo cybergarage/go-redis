@@ -15,6 +15,8 @@
 package redis
 
 import (
+	"strconv"
+
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
@@ -44,4 +46,9 @@ func NewOKMessage() *Message {
 // NewNilMessage creates a nil bulk string message.
 func NewNilMessage() *Message {
 	return proto.NewMessageWithType(proto.BulkMessage).SetBytes(nil)
+}
+
+// NewIntegerMessage creates an integer message.
+func NewIntegerMessage(val int) *Message {
+	return proto.NewMessageWithType(proto.IntegerMessage).SetBytes([]byte(strconv.Itoa(val)))
 }
