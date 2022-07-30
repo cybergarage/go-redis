@@ -14,16 +14,11 @@
 
 package server
 
-// Database represents a database.
-type Database struct {
-	ID int
-	Records
-}
+// Databases represents a database map.
+type Databases map[int]*Database
 
-// NewDatabaseWithID returns a new database with the specified ID.
-func NewDatabaseWithID(id int) *Database {
-	return &Database{
-		ID:      id,
-		Records: Records{},
-	}
+// GetDatabase returns the database with the specified ID.
+func (dbs Databases) GetDatabase(id int) (*Database, bool) {
+	db, ok := dbs[id]
+	return db, ok
 }
