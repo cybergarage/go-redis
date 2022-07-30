@@ -22,6 +22,18 @@ import (
 
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
+
+	oldVal := ""
+	hasOldRecord := false
+	if opt.GET {
+		var currRecord *Record
+		currRecord, hasOldRecord = db.GetRecord(key)
+		if hasOldRecord {
+			oldVal = string(currRecord.Data)
+		}
+
+	}
+
 	record := &Record{
 		Key:       key,
 		Data:      []byte(val),
@@ -29,6 +41,13 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 		TTL:       0,
 	}
 	db.SetRecord(record)
+
+	if opt.GET {
+		if hasOldRecord {
+			return redis.NewBulkMessage(oldVal), nil
+		}
+		return redis.NewNilMessage(), nil
+	}
 	return redis.NewOKMessage(), nil
 }
 

@@ -78,7 +78,7 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		}
 		val, err := args.NextString()
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
+			return nil, newMissingArgumentError(cmd, "value", err)
 		}
 		return server.CommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
@@ -87,6 +87,26 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, newMissingArgumentError(cmd, "key", err)
 		}
 		return server.CommandHandler.Get(ctx, key)
+	case "GETSET": // 1.0.0
+		opt := SetOption{
+			NX:      false,
+			XX:      false,
+			EX:      0,
+			PX:      0,
+			EXAT:    now,
+			PXAT:    now,
+			KEEPTTL: false,
+			GET:     true,
+		}
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		val, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "value", err)
+		}
+		return server.CommandHandler.Set(ctx, key, val, opt)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
