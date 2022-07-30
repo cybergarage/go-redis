@@ -27,9 +27,9 @@ func (server *Server) Echo(ctx *DBContext, arg string) (*Message, error) {
 
 func (server *Server) Select(ctx *DBContext, index int) (*Message, error) {
 	ctx.id = index
-	return NewStringMessage(OK), nil
+	return NewOKMessage(), nil
 }
 
 func (server *Server) Quit(ctx *DBContext) (*Message, error) {
-	return NewStringMessage(OK), errQuit
+	return NewOKMessage(), errQuit
 }
