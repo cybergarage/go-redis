@@ -18,3 +18,6 @@ package server
 type Database struct {
 	ID int
 }
+
+// Databases represents a database map.
+type Databases map[int]*Database
