@@ -32,3 +32,13 @@ func NewServer() *Server {
 	}
 	return server
 }
+
+// GetDatabase returns the database with the specified ID.
+func (server *Server) GetDatabase(id int) *Database {
+	db, ok := server.Databases.GetDatabase(id)
+	if !ok {
+		db = NewDatabaseWithID(id)
+		server.Databases[id] = db
+	}
+	return db
+}
