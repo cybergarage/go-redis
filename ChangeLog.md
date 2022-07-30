@@ -4,4 +4,4 @@
 - Initial release  
 ###  Supported
 - PING, ECHO, SELECT, QUIT
-- SET, GET, GETSET
+- SET, GET, GETSET, SETNX

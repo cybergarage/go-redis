@@ -81,6 +81,26 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
 		return server.CommandHandler.Set(ctx, key, val, opt)
+	case "SETNX": // 1.0.0
+		opt := SetOption{
+			NX:      true,
+			XX:      false,
+			EX:      0,
+			PX:      0,
+			EXAT:    now,
+			PXAT:    now,
+			KEEPTTL: false,
+			GET:     false,
+		}
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		val, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "value", err)
+		}
+		return server.CommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
 		key, err := args.NextString()
 		if err != nil {
