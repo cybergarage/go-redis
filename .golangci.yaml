@@ -27,3 +27,4 @@ linters:
     - nestif
     - gochecknoglobals
     - exhaustivestruct
+    - scopelint
