@@ -14,10 +14,19 @@
 
 package server
 
+// Databases represents a database map.
+type Databases map[int]*Database
+
 // Database represents a database.
 type Database struct {
 	ID int
+	Records
 }
 
-// Databases represents a database map.
-type Databases map[int]*Database
+// NewDatabaseWithID returns a new database with the specified ID.
+func NewDatabaseWithID(id int) *Database {
+	return &Database{
+		ID:      id,
+		Records: Records{},
+	}
+}
