@@ -61,7 +61,9 @@ func TestServer(t *testing.T) {
 			val      string
 			expected string
 		}{
-			{"key", "value", "value"},
+			{"key_set", "value0", "value0"},
+			{"key_set", "value1", "value1"},
+			{"key_set", "value2", "value2"},
 		}
 
 		for _, r := range records {
@@ -77,6 +79,35 @@ func TestServer(t *testing.T) {
 				}
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
+				}
+			})
+		}
+	})
+
+	t.Run("GetSet", func(t *testing.T) {
+		records := []struct {
+			key      string
+			val      string
+			expected []byte
+		}{
+			{"key_getset", "value0", nil},
+			{"key_getset", "value1", []byte("value0")},
+			{"key_getset", "value2", []byte("value1")},
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+r.val, func(t *testing.T) {
+				res, err := client.GetSet(r.key, r.val).Result()
+				if r.expected == nil {
+					if err == nil {
+						t.Errorf("%s != %s", res, string(r.expected))
+					}
+					return
+				} else if err != nil {
+					t.Error(err)
+				}
+				if res != string(r.expected) {
+					t.Errorf("%s != %s", res, string(r.expected))
 				}
 			})
 		}
