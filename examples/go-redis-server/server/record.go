@@ -23,6 +23,3 @@ type Record struct {
 	Timestamp time.Time
 	TTL       time.Duration
 }
-
-// Records represents a database record map.
-type Records map[string]*Record
