@@ -15,31 +15,28 @@
 package server
 
 import (
+	"time"
+
 	"github.com/cybergarage/go-redis/redis"
 )
 
-// Server represents an example server.
-type Server struct {
-	*redis.Server
-	Databases
-}
-
-// NewServer returns an example server instance.
-func NewServer() *Server {
-	server := &Server{
-		Server:    redis.NewServer(),
-		Databases: Databases{},
+func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
+	db := server.GetDatabase(ctx.ID())
+	record := &Record{
+		Key:       key,
+		Data:      []byte(val),
+		Timestamp: time.Now(),
+		TTL:       0,
 	}
-	server.CommandHandler = server
-	return server
+	db.SetRecord(record)
+	return redis.NewOKMessage(), nil
 }
 
-// GetDatabase returns the database with the specified ID.
-func (server *Server) GetDatabase(id int) *Database {
-	db, ok := server.Databases.GetDatabase(id)
+func (server *Server) Get(ctx *redis.DBContext, key string) (*redis.Message, error) {
+	db := server.GetDatabase(ctx.ID())
+	record, ok := db.GetRecord(key)
 	if !ok {
-		db = NewDatabaseWithID(id)
-		server.Databases[id] = db
+		return redis.NewNilMessage(), nil
 	}
-	return db
+	return redis.NewStringMessage(string(record.Data)), nil
 }
