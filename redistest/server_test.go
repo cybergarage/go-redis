@@ -137,6 +137,13 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("YCSB", func(t *testing.T) {
+		err = ExecYCSB(t)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
 	// // panic: not implemented
 	// err = client.Quit().Err()
 	// if err != nil {
