@@ -8,3 +8,4 @@ O,GET,1.0.0,
 O,GETSET,1.0.0,
 O,SET,1.0.0,Any options are not supported yet
 O,SETNX,1.0.0,
+O,HSET,2.0.0,
