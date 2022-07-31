@@ -27,8 +27,11 @@ type SetOption struct {
 	GET     bool
 }
 
+type GetOption struct {
+}
+
 type HSetOption struct {
 }
 
-type GetOption struct {
+type HGetOption struct {
 }
