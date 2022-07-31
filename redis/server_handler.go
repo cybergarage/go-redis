@@ -56,7 +56,7 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		return server.systemCmdHandler.Quit(ctx)
 	}
 
-	if server.CommandHandler == nil {
+	if server.userCommandHandler == nil {
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
 
@@ -80,7 +80,7 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
-		return server.CommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "SETNX": // 1.0.0
 		opt := SetOption{
 			NX:      true,
@@ -100,13 +100,13 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
-		return server.CommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
 		key, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "key", err)
 		}
-		return server.CommandHandler.Get(ctx, key)
+		return server.userCommandHandler.Get(ctx, key)
 	case "GETSET": // 1.0.0
 		opt := SetOption{
 			NX:      false,
@@ -126,7 +126,7 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
-		return server.CommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(ctx, key, val, opt)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
