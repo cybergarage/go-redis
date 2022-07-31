@@ -28,3 +28,4 @@ linters:
     - gochecknoglobals
     - exhaustivestruct
     - scopelint
+    - typecheck
