@@ -143,6 +143,17 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
 		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
+	case "HGET": // 2.0.0
+		opt := HGetOption{}
+		hash, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "hash", err)
+		}
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		return server.userCommandHandler.HGet(ctx, hash, key, opt)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}
