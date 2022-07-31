@@ -19,7 +19,9 @@ import "time"
 // Record represents a database record.
 type Record struct {
 	Key       string
-	Data      []byte
+	Data      any
 	Timestamp time.Time
 	TTL       time.Duration
 }
+
+type DictionaryRecord = map[string]string
