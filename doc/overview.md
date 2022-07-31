@@ -10,6 +10,10 @@ The go-redis handles RESP (REdis Serialization Protocol) and interprets any comm
 
 The go-redis handles all system commands such as PING and SELECT automatically, and so the developers can easily implement their Redis compatible server only by simply handling user commands such as SET and GET.
 
+## Table of Contents
+
+- [How to implement a Redis compatible server?](server_impl.md)
+
 ## References
 
 - [Redis](https://redis.io)
