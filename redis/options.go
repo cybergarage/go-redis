@@ -26,3 +26,6 @@ type SetOption struct {
 	KEEPTTL bool
 	GET     bool
 }
+
+type GetOption struct {
+}
