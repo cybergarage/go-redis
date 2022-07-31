@@ -65,3 +65,11 @@ server := NewServer()
 ....
 server::Start()
 ```
+
+## Next Steps
+
+Let's check the following documentation to know the server implementation using go-redis in more detail.
+
+- [Inside of go-redis](server_inside.md)
+- Examples
+    - [go-redis-server](../examples/go-redis-server)
