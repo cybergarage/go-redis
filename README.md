@@ -1,5 +1,7 @@
 # go-redis
 
+[![test](https://github.com/cybergarage/go-redis/actions/workflows/make.yml/badge.svg)](https://github.com/cybergarage/go-redis/actions/workflows/make.yml)
+
 The go-redis is a database framework for implementing a Redis compatible database server easily.
 
 ## What is the go-redis?
