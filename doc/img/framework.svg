@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="381"
+   width="401"
    height="176"
    id="svg2"
    version="1.1"
@@ -834,7 +834,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="4.25"
      inkscape:cx="173.05882"
-     inkscape:cy="123.17647"
+     inkscape:cy="142"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -881,21 +881,21 @@
        y="8.8234949"
        x="-41"
        height="150"
-       width="295"
+       width="315"
        id="rect18008"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="54.000011"
        x="-25.999998"
        height="29.823483"
-       width="60"
+       width="75"
        id="rect3109"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="18.823502"
        x="-25.999998"
        height="24.999994"
-       width="165"
+       width="180"
        id="rect3129"
        style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
@@ -907,28 +907,28 @@
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="54.000011"
-       x="64"
+       x="80"
        height="29.823483"
        width="75"
        id="rect14031"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="104.00002"
-       x="64"
+       x="80"
        height="44.823463"
        width="75"
        id="rect14113"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="18.823503"
-       x="169"
+       x="185"
        height="24.999994"
        width="75"
        id="rect15257"
        style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="54.000031"
-       x="169"
+       x="185"
        height="44.823463"
        width="75"
        id="rect16215"
@@ -937,25 +937,40 @@
        y="-16.176504"
        x="-41"
        height="25"
-       width="295"
+       width="315"
        id="rect16225"
        style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
-       d="m 39.000001,68.823495 19.58822,-0.294098"
+       d="m 55.000001,68.823495 19.58822,-0.294098"
        id="path18532" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
-       d="m 104,88.823495 0.23527,9.823549"
+       d="m 120,88.823495 0.23527,9.823549"
        id="path18534" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
-       d="m 145,68.823495 19.58822,-0.294098"
+       d="m 161,68.823495 19.58822,-0.294098"
        id="path18616" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
        d="m -59,68.823495 28.000001,-0.294098"
        id="path18618" />
+    <rect
+       y="104.00002"
+       x="-26"
+       height="44.823463"
+       width="75"
+       id="rect1328"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
+       d="m 179,103.8235 -18.67647,15.5"
+       id="path3827" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#TriangleInM);marker-end:url(#TriangleOutM)"
+       d="m 75,85.8235 -18.67647,15.5"
+       id="path3989" />
   </g>
   <g
      inkscape:label="Text"
@@ -966,48 +981,48 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
-       x="190.05882"
+       x="198.05882"
        y="265.42102"
        id="text3115"><tspan
          sodipodi:role="line"
-         x="190.05882"
+         x="198.05882"
          y="265.42102"
          style="font-size:10px;line-height:1.25"
          id="tspan6185">RESP</tspan><tspan
          sodipodi:role="line"
-         x="190.05882"
+         x="198.05882"
          y="277.92102"
          style="font-size:10px;line-height:1.25"
          id="tspan11643">Parser</tspan><tspan
          sodipodi:role="line"
-         x="190.05882"
+         x="198.05882"
          y="284.74567"
          style="font-size:10px;line-height:1.25"
          id="tspan5357" /></text>
     <text
        id="text3125"
        y="265.77399"
-       x="287.52942"
+       x="303.52942"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
          id="tspan3127"
          y="265.77399"
-         x="287.52942"
+         x="303.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25">Command</tspan><tspan
          y="278.27399"
-         x="287.52942"
+         x="303.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan12849">Parser</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
-       x="242.35294"
+       x="252.35294"
        y="232.36217"
        id="text3131"><tspan
          y="232.36217"
-         x="242.35294"
+         x="252.35294"
          id="tspan3133"
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none">go-redis</tspan></text>
@@ -1030,53 +1045,53 @@
     <text
        id="text14119"
        y="315.77399"
-       x="287.52942"
+       x="303.52942"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
          id="tspan14115"
          y="315.77399"
-         x="287.52942"
+         x="303.52942"
          sodipodi:role="line"
-         style="font-size:10px;line-height:1.25">System</tspan><tspan
+         style="font-size:10px;line-height:1.25">Sugar</tspan><tspan
          y="328.27399"
-         x="287.52942"
+         x="303.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan14317">Command</tspan><tspan
          y="340.77399"
-         x="287.52942"
+         x="303.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan14117">Handler</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
-       x="391.05881"
+       x="407.05881"
        y="232.7151"
        id="text15261"><tspan
          y="232.7151"
-         x="391.05881"
+         x="407.05881"
          id="tspan15259"
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none">Developer</tspan></text>
     <text
        id="text16223"
        y="265.77399"
-       x="391.52942"
+       x="407.52942"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
        xml:space="preserve"><tspan
          id="tspan16217"
          y="265.77399"
-         x="391.52942"
+         x="407.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25">User</tspan><tspan
          y="278.27399"
-         x="391.52942"
+         x="407.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan16219">Command</tspan><tspan
          y="290.77399"
-         x="391.52942"
+         x="407.52942"
          sodipodi:role="line"
          style="font-size:10px;line-height:1.25"
          id="tspan16221">Handler</tspan></text>
@@ -1091,10 +1106,31 @@
          id="tspan16227"
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none">Redis-compatible Server</tspan></text>
+    <text
+       id="text1336"
+       y="315.77399"
+       x="197.52942"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:2.15385;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         id="tspan1330"
+         y="315.77399"
+         x="197.52942"
+         sodipodi:role="line"
+         style="font-size:10px;line-height:1.25">System</tspan><tspan
+         y="328.27399"
+         x="197.52942"
+         sodipodi:role="line"
+         style="font-size:10px;line-height:1.25"
+         id="tspan1332">Command</tspan><tspan
+         y="340.77399"
+         x="197.52942"
+         sodipodi:role="line"
+         style="font-size:10px;line-height:1.25"
+         id="tspan1334">Handler</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Logo"
-     transform="translate(74.499981,4.7048171)" />
+     transform="translate(74.499981,4.7048172)" />
 </svg>
