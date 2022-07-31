@@ -102,11 +102,12 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
+		opt := GetOption{}
 		key, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "key", err)
 		}
-		return server.userCommandHandler.Get(ctx, key)
+		return server.userCommandHandler.Get(ctx, key, opt)
 	case "GETSET": // 1.0.0
 		opt := SetOption{
 			NX:      false,

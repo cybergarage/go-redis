@@ -17,7 +17,7 @@ package redis
 // CommandHandler is a hander interface for user commands.
 type CommandHandler interface {
 	Set(ctx *DBContext, key string, val string, opt SetOption) (*Message, error)
-	Get(ctx *DBContext, key string) (*Message, error)
+	Get(ctx *DBContext, key string, opt GetOption) (*Message, error)
 }
 
 // SystemCommandHandler is a hander interface for system commands.
