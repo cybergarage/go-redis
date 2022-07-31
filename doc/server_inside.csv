@@ -1,0 +1,10 @@
+Supported,Command,Redis Version,Note
+O,ECHO,1.0.0,
+O,PING,1.0.0,
+O,QUIT,1.0.0,
+O,SELECT,1.0.0,
+Supported,Command,Redis Version,Note
+O,GET,1.0.0,
+O,GETSET,1.0.0,
+O,SET,1.0.0,Any options are not supported yet
+O,SETNX,1.0.0,
