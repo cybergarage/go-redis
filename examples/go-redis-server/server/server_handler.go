@@ -79,7 +79,35 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 }
 
 func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val string, opt redis.HSetOption) (*redis.Message, error) {
-	return nil, nil
+	db := server.GetDatabase(ctx.ID())
+	var dict DictionaryRecord
+	record, hasRecord := db.GetRecord(hash)
+	if hasRecord {
+		var ok bool
+		dict, ok = record.Data.(DictionaryRecord)
+		if !ok {
+			hasRecord = false
+		}
+	}
+	if !hasRecord {
+		dict := DictionaryRecord{}
+		dict[key] = val
+		record := &Record{
+			Key:       hash,
+			Data:      dict,
+			Timestamp: time.Now(),
+			TTL:       0,
+		}
+		db.SetRecord(record)
+		return redis.NewIntegerMessage(1), nil
+	}
+
+	_, hasKey := dict[key]
+	dict[key] = val
+	if hasKey {
+		return redis.NewIntegerMessage(0), nil
+	}
+	return redis.NewIntegerMessage(1), nil
 }
 
 func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt redis.HGetOption) (*redis.Message, error) {
