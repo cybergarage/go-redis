@@ -74,3 +74,7 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val string, opt redis.HSetOption) (*redis.Message, error) {
 	return nil, nil
 }
+
+func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt redis.HGetOption) (*redis.Message, error) {
+	return nil, nil
+}
