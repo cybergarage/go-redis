@@ -30,7 +30,7 @@ func NewServer() *Server {
 		Server:    redis.NewServer(),
 		Databases: Databases{},
 	}
-	server.CommandHandler = server
+	server.SetCommandHandler(server)
 	return server
 }
 
