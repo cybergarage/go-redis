@@ -128,6 +128,21 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, newMissingArgumentError(cmd, "value", err)
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
+	case "HSET": // 2.0.0
+		opt := HSetOption{}
+		hash, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "hash", err)
+		}
+		key, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "key", err)
+		}
+		val, err := args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "value", err)
+		}
+		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}

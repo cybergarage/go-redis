@@ -70,3 +70,7 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 	}
 	return redis.NewStringMessage(string(record.Data)), nil
 }
+
+func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val string, opt redis.HSetOption) (*redis.Message, error) {
+	return nil, nil
+}
