@@ -4,9 +4,11 @@ The go-redis is a database framework for implementing a Redis compatible databas
 
 ## What is the go-redis?
 
-The go-redis handles RESP (REdis Serialization Protocol) and interprets any commands based on the RESP so that all developers can develop Redis compatible servers easily.
+The go-redis handles RESP (REdis Serialization Protocol) and interprets any commands based on the RESP so that all developers can develop Redis compatible servers easily. Because the go-redis is a compatible framework based on RESP and Redis command specifications, all developers can connect to a compatible server based on the go-redis using general client drivers for Redis as the following.
 
-Because the go-redis is a compatible framework based on RESP and Redis command specifications, all developers can connect to a compatible server based on the go-redis using general client drivers for Redis.
+![](img/framework.png)
+
+The go-redis handles all system commands such as PING and SELECT automatically, and so the developers can easily implement their Redis compatible server only by simply handling user commands such as SET and GET.
 
 ## References
 
