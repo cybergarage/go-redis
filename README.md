@@ -12,8 +12,8 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 
 ## Table of Contents
 
-- [How to implement a Redis compatible server?](server_impl.md)
-- [Inside of go-redis](server_inside.md)
+- [How to implement a Redis compatible server?](doc/server_impl.md)
+- [Inside of go-redis](doc/server_inside.md)
 
 ## Examples
 
