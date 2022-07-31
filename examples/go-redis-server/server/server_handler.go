@@ -23,7 +23,7 @@ import (
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 
-	oldVal := ""
+	var oldVal []byte = nil
 	hasOldRecord := false
 	if opt.NX || opt.GET {
 		var currRecord *Record
@@ -35,7 +35,10 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 			}
 		case opt.GET:
 			if hasOldRecord {
-				oldVal = string(currRecord.Data)
+				stringData, ok := currRecord.Data.(string)
+				if ok {
+					oldVal = []byte(stringData)
+				}
 			}
 		}
 
@@ -43,7 +46,7 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 
 	record := &Record{
 		Key:       key,
-		Data:      []byte(val),
+		Data:      val,
 		Timestamp: time.Now(),
 		TTL:       0,
 	}
@@ -53,8 +56,8 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 	case opt.NX:
 		return redis.NewIntegerMessage(1), nil
 	case opt.GET:
-		if hasOldRecord {
-			return redis.NewBulkMessage(oldVal), nil
+		if hasOldRecord && oldVal != nil {
+			return redis.NewBulkMessage(string(oldVal)), nil
 		}
 		return redis.NewNilMessage(), nil
 	}
@@ -68,7 +71,11 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	return redis.NewStringMessage(string(record.Data)), nil
+	stringData, ok := record.Data.(string)
+	if ok {
+		return redis.NewStringMessage(stringData), nil
+	}
+	return redis.NewNilMessage(), nil
 }
 
 func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val string, opt redis.HSetOption) (*redis.Message, error) {
@@ -76,5 +83,18 @@ func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val st
 }
 
 func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt redis.HGetOption) (*redis.Message, error) {
-	return nil, nil
+	db := server.GetDatabase(ctx.ID())
+	record, ok := db.GetRecord(hash)
+	if !ok {
+		return redis.NewNilMessage(), nil
+	}
+	dict, ok := record.Data.(DictionaryRecord)
+	if !ok {
+		return redis.NewNilMessage(), nil
+	}
+	dictData, ok := dict[key]
+	if !ok {
+		return redis.NewNilMessage(), nil
+	}
+	return redis.NewStringMessage(dictData), nil
 }
