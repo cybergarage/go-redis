@@ -35,6 +35,7 @@ func NewClient() *Client {
 }
 
 // Open opens a connection with the specified host.
+// nolint: exhaustivestruct
 func (client *Client) Open(host string) error {
 	client.Client = goredis.NewClient(&goredis.Options{
 		Addr:         fmt.Sprintf("%s:%d", host, DefaultPort),
