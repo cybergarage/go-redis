@@ -72,7 +72,6 @@ func TestServer(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-
 				res, err := client.Get(r.key).Result()
 				if err != nil {
 					t.Error(err)
@@ -137,29 +136,57 @@ func TestServer(t *testing.T) {
 		}
 	})
 
-	t.Run("MSet", func(t *testing.T) {
+	t.Run("HSet", func(t *testing.T) {
 		records := []struct {
-			hash string
-			keys []string
-			vals []string
+			hash     string
+			key      string
+			val      string
+			expected string
 		}{
-			{"key_msetmget", []string{"key1", "key2"}, []string{"Hello", "World"}},
+			{"key_hset", "key1", "Hello", "Hello"},
+			{"key_hset", "key1", "World", "World"},
 		}
 
 		for _, r := range records {
-			t.Run(r.hash, func(t *testing.T) {
-				args := []string{}
-				for n, key := range r.keys {
-					args = append(args, key)
-					args = append(args, r.vals[n])
-				}
-				err := client.MSet(args).Err()
+			t.Run(r.key+":"+r.key+":"+r.val, func(t *testing.T) {
+				err := client.HSet(r.hash, r.key, r.val).Err()
 				if err != nil {
 					t.Error(err)
+				}
+				res, err := client.HGet(r.hash, r.key).Result()
+				if err != nil {
+					t.Error(err)
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
 				}
 			})
 		}
 	})
+
+	// t.Run("HMSet", func(t *testing.T) {
+	// 	records := []struct {
+	// 		hash string
+	// 		keys []string
+	// 		vals []string
+	// 	}{
+	// 		{"key_msetmget", []string{"key1", "key2"}, []string{"Hello", "World"}},
+	// 	}
+
+	// 	for _, r := range records {
+	// 		t.Run(r.hash, func(t *testing.T) {
+	// 			args := []string{}
+	// 			for n, key := range r.keys {
+	// 				args = append(args, key)
+	// 				args = append(args, r.vals[n])
+	// 			}
+	// 			err := client.HSet(r.hash, args).Err()
+	// 			if err != nil {
+	// 				t.Error(err)
+	// 			}
+	// 		})
+	// 	}
+	// })
 
 	t.Run("YCSB", func(t *testing.T) {
 		err = ExecYCSB(t)
