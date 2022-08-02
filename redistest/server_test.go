@@ -137,6 +137,30 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("MSet", func(t *testing.T) {
+		records := []struct {
+			hash string
+			keys []string
+			vals []string
+		}{
+			{"key_msetmget", []string{"key1", "key2"}, []string{"Hello", "World"}},
+		}
+
+		for _, r := range records {
+			t.Run(r.hash, func(t *testing.T) {
+				args := []string{}
+				for n, key := range r.keys {
+					args = append(args, key)
+					args = append(args, r.vals[n])
+				}
+				err := client.MSet(args).Err()
+				if err != nil {
+					t.Error(err)
+				}
+			})
+		}
+	})
+
 	t.Run("YCSB", func(t *testing.T) {
 		err = ExecYCSB(t)
 		if err != nil {
