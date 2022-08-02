@@ -26,7 +26,6 @@ linters:
     - gomnd
     - nestif
     - gochecknoglobals
-    - exhaustivestruct
     - scopelint
     - typecheck
     - exhaustruct
