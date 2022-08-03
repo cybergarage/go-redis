@@ -64,6 +64,22 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 
 	// Parser commands for user commands.
 
+	parseHashArg := func(args cmdArgs) (string, error) {
+		hash, err := args.NextString()
+		if err != nil {
+			return "", newMissingArgumentError(cmd, "hash", err)
+		}
+		return hash, nil
+	}
+
+	parseKeyArg := func(args cmdArgs) (string, error) {
+		key, err := args.NextString()
+		if err != nil {
+			return "", newMissingArgumentError(cmd, "key", err)
+		}
+		return key, nil
+	}
+
 	parseSetArgs := func(args cmdArgs) (string, string, error) {
 		key, err := args.NextString()
 		if err != nil {
@@ -113,9 +129,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
 		opt := GetOption{}
-		key, err := args.NextString()
+		key, err := parseKeyArg(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
+			return nil, err
 		}
 		return server.userCommandHandler.Get(ctx, key, opt)
 	case "GETSET": // 1.0.0
@@ -136,9 +152,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "HSET": // 2.0.0
 		opt := HSetOption{}
-		hash, err := args.NextString()
+		hash, err := parseHashArg(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "hash", err)
+			return nil, err
 		}
 		key, val, err := parseSetArgs(args)
 		if err != nil {
@@ -147,13 +163,13 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
 	case "HGET": // 2.0.0
 		opt := HGetOption{}
-		hash, err := args.NextString()
+		hash, err := parseHashArg(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "hash", err)
+			return nil, err
 		}
-		key, err := args.NextString()
+		key, err := parseKeyArg(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
+			return nil, err
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
 	default:
