@@ -26,23 +26,26 @@ import (
 
 // Server is an instance for Redis protocols.
 type Server struct {
-	Addr               string
-	Port               int
-	tcpListener        net.Listener
-	systemCmdHandler   SystemCommandHandler
-	userCommandHandler CommandHandler
+	Addr                 string
+	Port                 int
+	tcpListener          net.Listener
+	systemCommandHandler SystemCommandHandler
+	userCommandHandler   CommandHandler
+	commandExecutors     commandExecutors
 }
 
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Addr:               "",
-		Port:               DefaultPort,
-		tcpListener:        nil,
-		systemCmdHandler:   nil,
-		userCommandHandler: nil,
+		Addr:                 "",
+		Port:                 DefaultPort,
+		tcpListener:          nil,
+		systemCommandHandler: nil,
+		userCommandHandler:   nil,
+		commandExecutors:     commandExecutors{},
 	}
-	server.systemCmdHandler = server
+	server.initCoreCommandExecutors()
+	server.systemCommandHandler = server
 	return server
 }
 
