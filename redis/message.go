@@ -52,3 +52,8 @@ func NewNilMessage() *Message {
 func NewIntegerMessage(val int) *Message {
 	return proto.NewMessageWithType(proto.IntegerMessage).SetBytes([]byte(strconv.Itoa(val)))
 }
+
+// NewArrayMessage creates an array message.
+func NewArrayMessage() *Message {
+	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(proto.NewArray())
+}
