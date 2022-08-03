@@ -45,6 +45,7 @@ func NewServer() *Server {
 		commandExecutors:     Executors{},
 	}
 	server.registerCoreExecutors()
+	server.registerSugarExecutors()
 	server.systemCommandHandler = server
 	return server
 }
