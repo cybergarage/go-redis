@@ -31,7 +31,7 @@ type Server struct {
 	tcpListener          net.Listener
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   CommandHandler
-	commandExecutors     commandExecutors
+	commandExecutors     Executors
 }
 
 // NewServer returns a new server instance.
@@ -42,7 +42,7 @@ func NewServer() *Server {
 		tcpListener:          nil,
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
-		commandExecutors:     commandExecutors{},
+		commandExecutors:     Executors{},
 	}
 	server.initCoreCommandExecutors()
 	server.systemCommandHandler = server
