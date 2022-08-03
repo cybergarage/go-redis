@@ -21,12 +21,12 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-type commandArgs = *proto.Array
-type commandExecutor func(*DBContext, string, commandArgs) (*Message, error)
+type Arguments = *proto.Array
+type commandExecutor func(*DBContext, string, Arguments) (*Message, error)
 type commandExecutors map[string]commandExecutor
 
 // handleCommand handles a client command message.
-func (server *Server) handleCommand(ctx *DBContext, cmd string, args commandArgs) (*Message, error) {
+func (server *Server) handleCommand(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 	if server.userCommandHandler == nil {
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
