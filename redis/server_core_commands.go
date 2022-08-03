@@ -21,12 +21,11 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-// handleCommand handles a client command message.
 // nolint: gocyclo, maintidx
-func (server *Server) initCoreCommandExecutors() {
+func (server *Server) registerCoreExecutors() {
 	// Sets connection management commands.
 
-	server.commandExecutors["PING"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("PING", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		arg := ""
 		var err error
 		if msg, _ := args.Next(); msg != nil {
@@ -36,27 +35,27 @@ func (server *Server) initCoreCommandExecutors() {
 			}
 		}
 		return server.systemCommandHandler.Ping(ctx, arg)
-	}
+	})
 
-	server.commandExecutors["ECHO"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ECHO", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		msg, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
 		return server.systemCommandHandler.Echo(ctx, msg)
-	}
+	})
 
-	server.commandExecutors["SELECT"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SELECT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		id, err := args.NextInteger()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "id", err)
 		}
 		return server.systemCommandHandler.Select(ctx, id)
-	}
+	})
 
-	server.commandExecutors["QUIT"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("QUIT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		return server.systemCommandHandler.Quit(ctx)
-	}
+	})
 
 	// Sets string commands.
 
@@ -122,7 +121,7 @@ func (server *Server) initCoreCommandExecutors() {
 		return keys, nil
 	}
 
-	server.commandExecutors["SET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		now := time.Now()
 		opt := SetOption{
 			NX:      false,
@@ -139,9 +138,9 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
-	}
+	})
 
-	server.commandExecutors["SETNX"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		now := time.Now()
 		opt := SetOption{
 			NX:      true,
@@ -158,16 +157,18 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
-	}
-	server.commandExecutors["GET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("GET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := GetOption{}
 		key, err := parseKeyArg(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		return server.userCommandHandler.Get(ctx, key, opt)
-	}
-	server.commandExecutors["GETSET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("GETSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		now := time.Now()
 		opt := SetOption{
 			NX:      false,
@@ -184,11 +185,11 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
-	}
+	})
 
 	// Sets hash commands.
 
-	server.commandExecutors["HSET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{}
 		hash, err := parseHashArg(cmd, args)
 		if err != nil {
@@ -199,8 +200,9 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
-	}
-	server.commandExecutors["HGET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("HGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HGetOption{}
 		hash, err := parseHashArg(cmd, args)
 		if err != nil {
@@ -211,15 +213,17 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
-	}
-	server.commandExecutors["HGETALL"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("HGETALL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		hash, err := parseHashArg(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		return server.userCommandHandler.HGetAll(ctx, hash)
-	}
-	server.commandExecutors["HMSET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("HMSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HMSetOption{}
 		hash, err := parseHashArg(cmd, args)
 		if err != nil {
@@ -230,8 +234,9 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HMSet(ctx, hash, dir, opt)
-	}
-	server.commandExecutors["HMGET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("HMGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HMGetOption{}
 		hash, err := parseHashArg(cmd, args)
 		if err != nil {
@@ -242,8 +247,9 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HMGet(ctx, hash, keys, opt)
-	}
-	server.commandExecutors["MSET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("MSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := MSetOption{
 			NX: false,
 		}
@@ -252,8 +258,9 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.MSet(ctx, dir, opt)
-	}
-	server.commandExecutors["MSETNX"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("MSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := MSetOption{
 			NX: true,
 		}
@@ -262,13 +269,14 @@ func (server *Server) initCoreCommandExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.MSet(ctx, dir, opt)
-	}
-	server.commandExecutors["MGET"] = func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	})
+
+	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := MGetOption{}
 		keys, err := parseMGetArgs(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		return server.userCommandHandler.MGet(ctx, keys, opt)
-	}
+	})
 }

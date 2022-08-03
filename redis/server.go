@@ -44,7 +44,7 @@ func NewServer() *Server {
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
 	}
-	server.initCoreCommandExecutors()
+	server.registerCoreExecutors()
 	server.systemCommandHandler = server
 	return server
 }
@@ -52,6 +52,11 @@ func NewServer() *Server {
 // SetCommandHandler sets a user handler to handle user commands.
 func (server *Server) SetCommandHandler(handler CommandHandler) {
 	server.userCommandHandler = handler
+}
+
+// RegisterExexutor sets a command executor.
+func (server *Server) RegisterExexutor(cmd string, executor Executor) {
+	server.commandExecutors[cmd] = executor
 }
 
 // Start starts the server.
