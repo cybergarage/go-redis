@@ -14,17 +14,27 @@
 
 package redis
 
-// CommandHandler is a hander interface for user commands.
-type CommandHandler interface {
+// StringHandler is a core command hander interface for string commands.
+type StringCommandHandler interface {
 	Set(ctx *DBContext, key string, val string, opt SetOption) (*Message, error)
 	Get(ctx *DBContext, key string, opt GetOption) (*Message, error)
 	MSet(ctx *DBContext, dict map[string]string, opt MSetOption) (*Message, error)
 	MGet(ctx *DBContext, keys []string, opt MGetOption) (*Message, error)
+}
+
+// HashCommandHandler is a core command hander interface for hash commands.
+type HashCommandHandler interface {
 	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
 	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
 	HGetAll(ctx *DBContext, key string) (*Message, error)
 	HMSet(ctx *DBContext, key string, dict map[string]string, opt HMSetOption) (*Message, error)
 	HMGet(ctx *DBContext, key string, fields []string, opt HMGetOption) (*Message, error)
+}
+
+// CommandHandler is a command hander interface for user commands.
+type CommandHandler interface {
+	StringCommandHandler
+	HashCommandHandler
 }
 
 // SystemCommandHandler is a hander interface for system commands.
