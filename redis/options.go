@@ -30,15 +30,21 @@ type SetOption struct {
 type GetOption struct {
 }
 
+type MSetOption struct {
+	NX bool
+}
+
+type MGetOption struct {
+}
+
 type HSetOption struct {
 }
 
 type HGetOption struct {
 }
 
-type MSetOption struct {
-	NX bool
+type HMSetOption struct {
 }
 
-type MGetOption struct {
+type HMGetOption struct {
 }
