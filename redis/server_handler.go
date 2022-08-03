@@ -30,6 +30,8 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 	var err error
 	now := time.Now()
 
+	// Handles system commands.
+
 	switch strings.ToUpper(cmd) {
 	case "PING": // 1.0.0
 		arg := ""
@@ -60,6 +62,22 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
 
+	// Parser commands for user commands.
+
+	parseSetArgs := func(args cmdArgs) (string, string, error) {
+		key, err := args.NextString()
+		if err != nil {
+			return "", "", newMissingArgumentError(cmd, "key", err)
+		}
+		val, err := args.NextString()
+		if err != nil {
+			return "", "", newMissingArgumentError(cmd, "value", err)
+		}
+		return key, val, err
+	}
+
+	// Handles user commands.
+
 	switch strings.ToUpper(cmd) {
 	case "SET": // 1.0.0
 		opt := SetOption{
@@ -72,13 +90,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			KEEPTTL: false,
 			GET:     false,
 		}
-		key, err := args.NextString()
+		key, val, err := parseSetArgs(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
-		}
-		val, err := args.NextString()
-		if err != nil {
-			return nil, newMissingArgumentError(cmd, "value", err)
+			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "SETNX": // 1.0.0
@@ -92,13 +106,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			KEEPTTL: false,
 			GET:     false,
 		}
-		key, err := args.NextString()
+		key, val, err := parseSetArgs(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
-		}
-		val, err := args.NextString()
-		if err != nil {
-			return nil, newMissingArgumentError(cmd, "value", err)
+			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "GET": // 1.0.0
@@ -119,13 +129,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			KEEPTTL: false,
 			GET:     true,
 		}
-		key, err := args.NextString()
+		key, val, err := parseSetArgs(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
-		}
-		val, err := args.NextString()
-		if err != nil {
-			return nil, newMissingArgumentError(cmd, "value", err)
+			return nil, err
 		}
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	case "HSET": // 2.0.0
@@ -134,13 +140,9 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "hash", err)
 		}
-		key, err := args.NextString()
+		key, val, err := parseSetArgs(args)
 		if err != nil {
-			return nil, newMissingArgumentError(cmd, "key", err)
-		}
-		val, err := args.NextString()
-		if err != nil {
-			return nil, newMissingArgumentError(cmd, "value", err)
+			return nil, err
 		}
 		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
 	case "HGET": // 2.0.0
