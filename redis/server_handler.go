@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -25,6 +26,7 @@ import (
 type cmdArgs = *proto.Array
 
 // handleCommand handles a client command message.
+// nolint: gocyclo, maintidx
 func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*Message, error) {
 	var resMsg *Message
 	var err error
@@ -90,6 +92,40 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return "", "", newMissingArgumentError(cmd, "value", err)
 		}
 		return key, val, err
+	}
+
+	parseMSetArgs := func(args cmdArgs) (map[string]string, error) {
+		var key, val string
+		var err error
+		dir := map[string]string{}
+		key, err = args.NextString()
+		for err == nil {
+			val, err = args.NextString()
+			if err != nil {
+				newMissingArgumentError(cmd, key, err)
+			}
+			dir[key] = val
+			key, err = args.NextString()
+		}
+		if !errors.Is(err, proto.ErrEOM) {
+			return nil, err
+		}
+		return dir, nil
+	}
+
+	parseMGetArgs := func(args cmdArgs) ([]string, error) {
+		var key string
+		var err error
+		keys := []string{}
+		key, err = args.NextString()
+		for err == nil {
+			keys = append(keys, key)
+			key, err = args.NextString()
+		}
+		if !errors.Is(err, proto.ErrEOM) {
+			return nil, err
+		}
+		return keys, nil
 	}
 
 	// Handles user commands.
@@ -172,6 +208,20 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, err
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
+	case "MSET": // 1.0.1
+		opt := MSetOption{}
+		dir, err := parseMSetArgs(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MSet(ctx, dir, opt)
+	case "MGET": // 1.0.1
+		opt := MGetOption{}
+		keys, err := parseMGetArgs(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MGet(ctx, keys, opt)
 	default:
 		resMsg = NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd))
 	}

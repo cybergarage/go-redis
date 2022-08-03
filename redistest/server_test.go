@@ -15,9 +15,11 @@
 package redistest
 
 import (
+	"strings"
 	"testing"
 )
 
+// nolint: maintidx, gocyclo
 func TestServer(t *testing.T) {
 	server := NewServer()
 
@@ -144,11 +146,10 @@ func TestServer(t *testing.T) {
 			expected string
 		}{
 			{"key_hset", "key1", "Hello", "Hello"},
-			{"key_hset", "key1", "World", "World"},
 		}
 
 		for _, r := range records {
-			t.Run(r.key+":"+r.key+":"+r.val, func(t *testing.T) {
+			t.Run(r.hash+":"+r.key+":"+r.val, func(t *testing.T) {
 				err := client.HSet(r.hash, r.key, r.val).Err()
 				if err != nil {
 					t.Error(err)
@@ -164,6 +165,44 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("MSet", func(t *testing.T) {
+		records := []struct {
+			keys []string
+			vals []string
+		}{
+			{[]string{"key1_mset"}, []string{"Hello"}},
+			{[]string{"key1_mset", "key2_mset"}, []string{"Hello", "World"}},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				args := []string{}
+				for n, key := range r.keys {
+					args = append(args, key)
+					args = append(args, r.vals[n])
+				}
+				err := client.MSet(args).Err()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				res, err := client.MGet(r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(res) != len(r.vals) {
+					t.Errorf("%d != %d", len(res), len(r.vals))
+					return
+				}
+				for n, val := range r.vals {
+					if res[n] != val {
+						t.Errorf("%s != %s", res[n], val)
+					}
+				}
+			})
+		}
+	})
+
 	// t.Run("HMSet", func(t *testing.T) {
 	// 	records := []struct {
 	// 		hash string
@@ -172,7 +211,6 @@ func TestServer(t *testing.T) {
 	// 	}{
 	// 		{"key_msetmget", []string{"key1", "key2"}, []string{"Hello", "World"}},
 	// 	}
-
 	// 	for _, r := range records {
 	// 		t.Run(r.hash, func(t *testing.T) {
 	// 			args := []string{}

@@ -126,3 +126,37 @@ func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt re
 	}
 	return redis.NewStringMessage(dictData), nil
 }
+
+func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
+	now := time.Now()
+	setOpt := redis.SetOption{
+		NX:      true,
+		XX:      false,
+		EX:      0,
+		PX:      0,
+		EXAT:    now,
+		PXAT:    now,
+		KEEPTTL: false,
+		GET:     false,
+	}
+	for key, val := range dict {
+		if _, err := server.Set(ctx, key, val, setOpt); err != nil {
+			return nil, err
+		}
+	}
+	return redis.NewOKMessage(), nil
+}
+
+func (server *Server) MGet(ctx *redis.DBContext, keys []string, opt redis.MGetOption) (*redis.Message, error) {
+	getOpt := redis.GetOption{}
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for _, key := range keys {
+		msg, err := server.Get(ctx, key, getOpt)
+		if err != nil {
+			return nil, err
+		}
+		array.Append(msg)
+	}
+	return arrayMsg, nil
+}
