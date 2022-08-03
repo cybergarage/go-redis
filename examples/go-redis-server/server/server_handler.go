@@ -128,6 +128,20 @@ func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt re
 }
 
 func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
+	if opt.NX {
+		getOpt := redis.GetOption{}
+		for key, _ := range dict {
+			res, err := server.Get(ctx, key, getOpt)
+			if err != nil {
+				return nil, err
+			}
+			if !res.IsNil() {
+				return redis.NewIntegerMessage(0), nil
+			}
+		}
+
+	}
+
 	now := time.Now()
 	setOpt := redis.SetOption{
 		NX:      true,
@@ -143,6 +157,10 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 		if _, err := server.Set(ctx, key, val, setOpt); err != nil {
 			return nil, err
 		}
+	}
+
+	if opt.NX {
+		return redis.NewIntegerMessage(1), nil
 	}
 	return redis.NewOKMessage(), nil
 }
