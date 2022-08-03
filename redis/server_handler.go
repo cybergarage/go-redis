@@ -209,7 +209,18 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
 	case "MSET": // 1.0.1
-		opt := MSetOption{}
+		opt := MSetOption{
+			NX: false,
+		}
+		dir, err := parseMSetArgs(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MSet(ctx, dir, opt)
+	case "MSETNX": // 1.0.1
+		opt := MSetOption{
+			NX: true,
+		}
 		dir, err := parseMSetArgs(args)
 		if err != nil {
 			return nil, err
