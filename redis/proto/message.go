@@ -89,6 +89,14 @@ func (msg *Message) IsArray() bool {
 	return msg.IsType(ArrayMessage)
 }
 
+// IsNil returns true if the message type is bulk and the message bytes are nil, otherwise false.
+func (msg *Message) IsNil() bool {
+	if !msg.IsBulk() {
+		return false
+	}
+	return (msg.bytes == nil)
+}
+
 // Bytes returns the message raw bytes.
 func (msg *Message) Bytes() ([]byte, error) {
 	return msg.bytes, nil
