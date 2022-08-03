@@ -187,7 +187,13 @@ func (server *Server) handleMessage(ctx *DBContext, msg *proto.Message) (*Messag
 
 // responseMessage returns the response message to the request connection.
 func (server *Server) responseMessage(conn io.Writer, msg *Message) error {
-	bytes, err := msg.RESPBytes()
+	var bytes []byte
+	var err error
+	if msg != nil {
+		bytes, err = msg.RESPBytes()
+	} else {
+		bytes, err = NewErrorMessage(errSystem).Bytes()
+	}
 	if err != nil {
 		return err
 	}
