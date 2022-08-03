@@ -6,7 +6,7 @@
 ## v0.9.x (2022-xx-xx)
 ###  Supported
 - MSET, MSETNX, MGET
-- HSET, HGET
+- HSET, HGET, HMSET, HMGET
 
 ## v0.9.0 (2022-07-31)
 - Initial release  

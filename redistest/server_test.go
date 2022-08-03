@@ -232,28 +232,42 @@ func TestServer(t *testing.T) {
 		}
 	})
 
-	// t.Run("HMSet", func(t *testing.T) {
-	// 	records := []struct {
-	// 		hash string
-	// 		keys []string
-	// 		vals []string
-	// 	}{
-	// 		{"key_msetmget", []string{"key1", "key2"}, []string{"Hello", "World"}},
-	// 	}
-	// 	for _, r := range records {
-	// 		t.Run(r.hash, func(t *testing.T) {
-	// 			args := []string{}
-	// 			for n, key := range r.keys {
-	// 				args = append(args, key)
-	// 				args = append(args, r.vals[n])
-	// 			}
-	// 			err := client.HSet(r.hash, args).Err()
-	// 			if err != nil {
-	// 				t.Error(err)
-	// 			}
-	// 		})
-	// 	}
-	// })
+	t.Run("HMSet", func(t *testing.T) {
+		records := []struct {
+			hash string
+			keys []string
+			vals []string
+		}{
+			{"myhash_hmset", []string{"field1", "field2"}, []string{"Hello", "World"}},
+		}
+		for _, r := range records {
+			t.Run(r.hash+":"+strings.Join(r.keys, ","), func(t *testing.T) {
+				args := map[string]interface{}{}
+				for n, key := range r.keys {
+					args[key] = r.vals[n]
+				}
+				err := client.HMSet(r.hash, args).Err()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				res, err := client.HMGet(r.hash, r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(res) != len(r.vals) {
+					t.Errorf("%d != %d", len(res), len(r.vals))
+					return
+				}
+				for n, val := range r.vals {
+					if res[n] != val {
+						t.Errorf("%s != %s", res[n], val)
+					}
+				}
+			})
+		}
+	})
 
 	t.Run("YCSB", func(t *testing.T) {
 		err = ExecYCSB(t)
