@@ -208,6 +208,28 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, err
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
+	case "HMSET": // 2.0.0
+		opt := HMSetOption{}
+		hash, err := parseHashArg(args)
+		if err != nil {
+			return nil, err
+		}
+		dir, err := parseMSetArgs(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HMSet(ctx, hash, dir, opt)
+	case "HMGET": // 2.0.0
+		opt := HMGetOption{}
+		hash, err := parseHashArg(args)
+		if err != nil {
+			return nil, err
+		}
+		keys, err := parseMGetArgs(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HMGet(ctx, hash, keys, opt)
 	case "MSET": // 1.0.1
 		opt := MSetOption{
 			NX: false,

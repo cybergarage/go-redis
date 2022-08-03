@@ -12,3 +12,5 @@ O,SET,1.0.0,Any options are not supported yet
 O,SETNX,1.0.0,
 O,HSET,2.0.0,
 O,HGET,2.0.0,
+O,HMSET,2.0.0,
+O,HMGET,2.0.0,
