@@ -78,10 +78,10 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 	return redis.NewNilMessage(), nil
 }
 
-func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val string, opt redis.HSetOption) (*redis.Message, error) {
+func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 	var dict DictionaryRecord
-	record, hasRecord := db.GetRecord(hash)
+	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
 		dict, ok = record.Data.(DictionaryRecord)
@@ -91,9 +91,9 @@ func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val st
 	}
 	if !hasRecord {
 		dict := DictionaryRecord{}
-		dict[key] = val
+		dict[field] = val
 		record := &Record{
-			Key:       hash,
+			Key:       key,
 			Data:      dict,
 			Timestamp: time.Now(),
 			TTL:       0,
@@ -102,17 +102,17 @@ func (server *Server) HSet(ctx *redis.DBContext, hash string, key string, val st
 		return redis.NewIntegerMessage(1), nil
 	}
 
-	_, hasKey := dict[key]
-	dict[key] = val
+	_, hasKey := dict[field]
+	dict[field] = val
 	if hasKey {
 		return redis.NewIntegerMessage(0), nil
 	}
 	return redis.NewIntegerMessage(1), nil
 }
 
-func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt redis.HGetOption) (*redis.Message, error) {
+func (server *Server) HGet(ctx *redis.DBContext, key string, field string, opt redis.HGetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
-	record, ok := db.GetRecord(hash)
+	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
@@ -120,11 +120,34 @@ func (server *Server) HGet(ctx *redis.DBContext, hash string, key string, opt re
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	dictData, ok := dict[key]
+	dictData, ok := dict[field]
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
 	return redis.NewStringMessage(dictData), nil
+}
+
+func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message, error) {
+	arrayMsg := redis.NewArrayMessage()
+
+	db := server.GetDatabase(ctx.ID())
+	record, ok := db.GetRecord(key)
+	if !ok {
+		return arrayMsg, nil
+	}
+
+	dict, ok := record.Data.(DictionaryRecord)
+	if !ok {
+		return arrayMsg, nil
+	}
+
+	array, _ := arrayMsg.Array()
+	for key, val := range dict {
+		array.Append(redis.NewBulkMessage(key))
+		array.Append(redis.NewBulkMessage(val))
+	}
+
+	return arrayMsg, nil
 }
 
 func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
@@ -179,22 +202,22 @@ func (server *Server) MGet(ctx *redis.DBContext, keys []string, opt redis.MGetOp
 	return arrayMsg, nil
 }
 
-func (server *Server) HMSet(ctx *redis.DBContext, hash string, dict map[string]string, opt redis.HMSetOption) (*redis.Message, error) {
+func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]string, opt redis.HMSetOption) (*redis.Message, error) {
 	hsetOpt := redis.HSetOption{}
-	for key, val := range dict {
-		if _, err := server.HSet(ctx, hash, key, val, hsetOpt); err != nil {
+	for field, val := range dict {
+		if _, err := server.HSet(ctx, key, field, val, hsetOpt); err != nil {
 			return nil, err
 		}
 	}
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) HMGet(ctx *redis.DBContext, hash string, keys []string, opt redis.HMGetOption) (*redis.Message, error) {
+func (server *Server) HMGet(ctx *redis.DBContext, key string, fields []string, opt redis.HMGetOption) (*redis.Message, error) {
 	hgetOpt := redis.HGetOption{}
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
-	for _, key := range keys {
-		msg, err := server.HGet(ctx, hash, key, hgetOpt)
+	for _, field := range fields {
+		msg, err := server.HGet(ctx, key, field, hgetOpt)
 		if err != nil {
 			return nil, err
 		}

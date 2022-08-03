@@ -269,6 +269,41 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("HGetAll", func(t *testing.T) {
+		records := []struct {
+			hash     string
+			key      string
+			val      string
+			expected map[string]string
+		}{
+			{"myhash_hgetall", "field1", "Hello", map[string]string{"field1": "Hello"}},
+			{"myhash_hgetall", "field2", "World", map[string]string{"field1": "Hello", "field2": "World"}},
+		}
+
+		for _, r := range records {
+			t.Run(r.hash+":"+r.key+":"+r.val, func(t *testing.T) {
+				err := client.HSet(r.hash, r.key, r.val).Err()
+				if err != nil {
+					t.Error(err)
+				}
+				res, err := client.HGetAll(r.hash).Result()
+				if err != nil {
+					t.Error(err)
+				}
+				for ekey, eval := range r.expected {
+					rval, ok := res[ekey]
+					if !ok {
+						t.Errorf("%s", ekey)
+						return
+					}
+					if rval != eval {
+						t.Errorf("%s != %s", rval, eval)
+					}
+				}
+			})
+		}
+	})
+
 	t.Run("YCSB", func(t *testing.T) {
 		err = ExecYCSB(t)
 		if err != nil {
