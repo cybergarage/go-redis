@@ -171,7 +171,7 @@ func (array *Array) RESPBytes() ([]byte, error) {
 	respBytes.WriteRune(lf)
 
 	for n := 0; n < arraySize; n++ {
-		bytes, err := array.msgs[n].Bytes()
+		bytes, err := array.msgs[n].RESPBytes()
 		if err != nil {
 			return respBytes.Bytes(), err
 		}
