@@ -37,6 +37,7 @@ type HGetOption struct {
 }
 
 type MSetOption struct {
+	NX bool
 }
 
 type MGetOption struct {

@@ -203,6 +203,35 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("MSetNX", func(t *testing.T) {
+		records := []struct {
+			keys     []string
+			vals     []string
+			expected bool
+		}{
+			{[]string{"key1_msetnx", "key2_msetnx"}, []string{"Hello", "there"}, true},
+			{[]string{"key2_msetnx", "key3_msetnx"}, []string{"new", "world"}, false},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				args := []string{}
+				for n, key := range r.keys {
+					args = append(args, key)
+					args = append(args, r.vals[n])
+				}
+				res, err := client.MSetNX(args).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%t != %t", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	// t.Run("HMSet", func(t *testing.T) {
 	// 	records := []struct {
 	// 		hash string
