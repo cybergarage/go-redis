@@ -20,10 +20,11 @@ type CommandHandler interface {
 	Get(ctx *DBContext, key string, opt GetOption) (*Message, error)
 	MSet(ctx *DBContext, dict map[string]string, opt MSetOption) (*Message, error)
 	MGet(ctx *DBContext, keys []string, opt MGetOption) (*Message, error)
-	HSet(ctx *DBContext, hash string, key string, val string, opt HSetOption) (*Message, error)
-	HGet(ctx *DBContext, hash string, key string, opt HGetOption) (*Message, error)
-	HMSet(ctx *DBContext, hash string, dict map[string]string, opt HMSetOption) (*Message, error)
-	HMGet(ctx *DBContext, hash string, keys []string, opt HMGetOption) (*Message, error)
+	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
+	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
+	HGetAll(ctx *DBContext, key string) (*Message, error)
+	HMSet(ctx *DBContext, key string, dict map[string]string, opt HMSetOption) (*Message, error)
+	HMGet(ctx *DBContext, key string, fields []string, opt HMGetOption) (*Message, error)
 }
 
 // SystemCommandHandler is a hander interface for system commands.

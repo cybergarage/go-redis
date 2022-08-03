@@ -208,6 +208,12 @@ func (server *Server) handleCommand(ctx *DBContext, cmd string, args cmdArgs) (*
 			return nil, err
 		}
 		return server.userCommandHandler.HGet(ctx, hash, key, opt)
+	case "HGETALL": // 2.0.0
+		hash, err := parseHashArg(args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HGetAll(ctx, hash)
 	case "HMSET": // 2.0.0
 		opt := HMSetOption{}
 		hash, err := parseHashArg(args)
