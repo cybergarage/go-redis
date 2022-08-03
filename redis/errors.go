@@ -25,6 +25,7 @@ const (
 )
 
 var errQuit = errors.New("QUIT")
+var errSystem = errors.New("internal system error")
 
 func newMissingArgumentError(cmd string, arg string, err error) error {
 	return fmt.Errorf(errorMissingArgument, cmd, arg, err)

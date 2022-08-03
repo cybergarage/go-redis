@@ -35,3 +35,9 @@ type HSetOption struct {
 
 type HGetOption struct {
 }
+
+type MSetOption struct {
+}
+
+type MGetOption struct {
+}
