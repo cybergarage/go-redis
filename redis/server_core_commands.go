@@ -15,10 +15,7 @@
 package redis
 
 import (
-	"errors"
 	"time"
-
-	"github.com/cybergarage/go-redis/redis/proto"
 )
 
 // nolint: gocyclo, maintidx
@@ -58,68 +55,6 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	// Sets string commands.
-
-	parseHashArg := func(cmd string, args Arguments) (string, error) {
-		hash, err := args.NextString()
-		if err != nil {
-			return "", newMissingArgumentError(cmd, "hash", err)
-		}
-		return hash, nil
-	}
-
-	parseKeyArg := func(cmd string, args Arguments) (string, error) {
-		key, err := args.NextString()
-		if err != nil {
-			return "", newMissingArgumentError(cmd, "key", err)
-		}
-		return key, nil
-	}
-
-	parseSetArgs := func(cmd string, args Arguments) (string, string, error) {
-		key, err := args.NextString()
-		if err != nil {
-			return "", "", newMissingArgumentError(cmd, "key", err)
-		}
-		val, err := args.NextString()
-		if err != nil {
-			return "", "", newMissingArgumentError(cmd, "value", err)
-		}
-		return key, val, err
-	}
-
-	parseMSetArgs := func(cmd string, args Arguments) (map[string]string, error) {
-		var key, val string
-		var err error
-		dir := map[string]string{}
-		key, err = args.NextString()
-		for err == nil {
-			val, err = args.NextString()
-			if err != nil {
-				newMissingArgumentError(cmd, key, err)
-			}
-			dir[key] = val
-			key, err = args.NextString()
-		}
-		if !errors.Is(err, proto.ErrEOM) {
-			return nil, err
-		}
-		return dir, nil
-	}
-
-	parseMGetArgs := func(cmd string, args Arguments) ([]string, error) {
-		var key string
-		var err error
-		keys := []string{}
-		key, err = args.NextString()
-		for err == nil {
-			keys = append(keys, key)
-			key, err = args.NextString()
-		}
-		if !errors.Is(err, proto.ErrEOM) {
-			return nil, err
-		}
-		return keys, nil
-	}
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		now := time.Now()
