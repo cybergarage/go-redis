@@ -97,6 +97,40 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("EXISTS", func(t *testing.T) {
+		if err := client.Set("key1_exists", "val", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			keys     []string
+			expected int64
+		}{
+			{[]string{"nosuchkey"}, 0},
+			{[]string{"key1_exists"}, 1},
+			{[]string{"key2_exists"}, 1},
+			{[]string{"key1_exists", "key2_exists"}, 2},
+			{[]string{"key1_exists", "key2_exists", "nosuchkey"}, 2},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				res, err := client.Exists(r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("TYPE", func(t *testing.T) {
 		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
 			t.Error(err)
