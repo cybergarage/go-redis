@@ -14,10 +14,6 @@
 
 package redis
 
-import (
-	"time"
-)
-
 // nolint: gocyclo, maintidx
 func (server *Server) registerCoreExecutors() {
 	// Registers connection management commands.
@@ -57,17 +53,7 @@ func (server *Server) registerCoreExecutors() {
 	// Registers string commands.
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		now := time.Now()
-		opt := SetOption{
-			NX:      false,
-			XX:      false,
-			EX:      0,
-			PX:      0,
-			EXAT:    now,
-			PXAT:    now,
-			KEEPTTL: false,
-			GET:     false,
-		}
+		opt := newDefaultSetOption()
 		key, val, err := parseSetArgs(cmd, args)
 		if err != nil {
 			return nil, err
@@ -76,17 +62,8 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		now := time.Now()
-		opt := SetOption{
-			NX:      true,
-			XX:      false,
-			EX:      0,
-			PX:      0,
-			EXAT:    now,
-			PXAT:    now,
-			KEEPTTL: false,
-			GET:     false,
-		}
+		opt := newDefaultSetOption()
+		opt.NX = true
 		key, val, err := parseSetArgs(cmd, args)
 		if err != nil {
 			return nil, err
@@ -104,17 +81,8 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("GETSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		now := time.Now()
-		opt := SetOption{
-			NX:      false,
-			XX:      false,
-			EX:      0,
-			PX:      0,
-			EXAT:    now,
-			PXAT:    now,
-			KEEPTTL: false,
-			GET:     true,
-		}
+		opt := newDefaultSetOption()
+		opt.GET = true
 		key, val, err := parseSetArgs(cmd, args)
 		if err != nil {
 			return nil, err
