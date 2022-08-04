@@ -36,6 +36,14 @@ func nextKeyArgument(cmd string, args Arguments) (string, error) {
 	return key, nil
 }
 
+func nextIntegerArgument(cmd string, args Arguments) (int, error) {
+	val, err := args.NextInteger()
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, "key", err)
+	}
+	return val, nil
+}
+
 func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	key, err := args.NextString()
 	if err != nil {
