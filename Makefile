@@ -56,7 +56,7 @@ version:
 	@pushd ${PKG_SRC_DIR} && ./version.gen > version.go && popd
 
 format: version
-	gofmt -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
+	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
 	go vet ${PKG_ID} ${TEST_PKG_ID} ${BINS}
