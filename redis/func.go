@@ -20,7 +20,7 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-func parseHashArg(cmd string, args Arguments) (string, error) {
+func nextHashArgument(cmd string, args Arguments) (string, error) {
 	hash, err := args.NextString()
 	if err != nil {
 		return "", newMissingArgumentError(cmd, "hash", err)
@@ -28,7 +28,7 @@ func parseHashArg(cmd string, args Arguments) (string, error) {
 	return hash, nil
 }
 
-func parseKeyArg(cmd string, args Arguments) (string, error) {
+func nextKeyArgument(cmd string, args Arguments) (string, error) {
 	key, err := args.NextString()
 	if err != nil {
 		return "", newMissingArgumentError(cmd, "key", err)
@@ -36,7 +36,7 @@ func parseKeyArg(cmd string, args Arguments) (string, error) {
 	return key, nil
 }
 
-func parseSetArgs(cmd string, args Arguments) (string, string, error) {
+func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	key, err := args.NextString()
 	if err != nil {
 		return "", "", newMissingArgumentError(cmd, "key", err)
@@ -48,7 +48,7 @@ func parseSetArgs(cmd string, args Arguments) (string, string, error) {
 	return key, val, err
 }
 
-func parseMSetArgs(cmd string, args Arguments) (map[string]string, error) {
+func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 	var key, val string
 	var err error
 	dir := map[string]string{}
@@ -67,7 +67,7 @@ func parseMSetArgs(cmd string, args Arguments) (map[string]string, error) {
 	return dir, nil
 }
 
-func parseMGetArgs(cmd string, args Arguments) ([]string, error) {
+func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
 	var key string
 	var err error
 	keys := []string{}

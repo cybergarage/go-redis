@@ -19,7 +19,7 @@ func (server *Server) registerSugarExecutors() {
 	// Registers string commands.
 
 	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, appendVal, err := parseSetArgs(cmd, args)
+		key, appendVal, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
