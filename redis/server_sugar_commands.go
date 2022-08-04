@@ -14,6 +14,39 @@
 
 package redis
 
+import "time"
+
 // nolint: gocyclo, maintidx
 func (server *Server) registerSugarExecutors() {
+	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, appendVal, err := parseSetArgs(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		getOpt := GetOption{}
+		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		if err != nil {
+			return nil, err
+		}
+		newVal := appendVal
+		if getVal, err := getRet.String(); err == nil {
+			newVal = getVal + appendVal
+		}
+		now := time.Now()
+		opt := SetOption{
+			NX:      false,
+			XX:      false,
+			EX:      0,
+			PX:      0,
+			EXAT:    now,
+			PXAT:    now,
+			KEEPTTL: false,
+			GET:     false,
+		}
+		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
+		if err != nil {
+			return nil, err
+		}
+		return NewIntegerMessage(len(newVal)), nil
+	})
 }
