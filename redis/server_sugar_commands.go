@@ -94,4 +94,16 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return incdecExecutor(ctx, cmd, key, -1)
 	})
+
+	server.RegisterExexutor("DECRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		inc, err := nextIntegerArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return incdecExecutor(ctx, cmd, key, -inc)
+	})
 }
