@@ -16,6 +16,14 @@ package redis
 
 import "time"
 
+type ExpireOption struct {
+	Time time.Time
+	NX   bool
+	XX   bool
+	GT   bool
+	LT   bool
+}
+
 type SetOption struct {
 	EX      time.Duration
 	PX      time.Duration
