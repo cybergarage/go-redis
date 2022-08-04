@@ -14,10 +14,10 @@
 
 package redis
 
-import "time"
-
 // nolint: gocyclo, maintidx
 func (server *Server) registerSugarExecutors() {
+	// Registers string commands.
+
 	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, appendVal, err := parseSetArgs(cmd, args)
 		if err != nil {
@@ -32,17 +32,7 @@ func (server *Server) registerSugarExecutors() {
 		if getVal, err := getRet.String(); err == nil {
 			newVal = getVal + appendVal
 		}
-		now := time.Now()
-		opt := SetOption{
-			NX:      false,
-			XX:      false,
-			EX:      0,
-			PX:      0,
-			EXAT:    now,
-			PXAT:    now,
-			KEEPTTL: false,
-			GET:     false,
-		}
+		opt := newDefaultSetOption()
 		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
 		if err != nil {
 			return nil, err

@@ -48,3 +48,17 @@ type HMSetOption struct {
 
 type HMGetOption struct {
 }
+
+func newDefaultSetOption() SetOption {
+	now := time.Now()
+	return SetOption{
+		NX:      false,
+		XX:      false,
+		EX:      0,
+		PX:      0,
+		EXAT:    now,
+		PXAT:    now,
+		KEEPTTL: false,
+		GET:     false,
+	}
+}
