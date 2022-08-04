@@ -20,6 +20,10 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
+func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
+	return nil, nil
+}
+
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 
