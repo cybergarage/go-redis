@@ -7,7 +7,7 @@ Supported,Generic Command,Redis Version,Note
 -,COPY,6.2.0
 O,DEL,1.0.0,
 -,DUMP,2.6.0
--,EXISTS,1.0.0
+O,EXISTS,1.0.0
 -,EXPIRE,1.0.0
 -,EXPIREAT,1.2.0
 -,EXPIRETIME,7.0.0

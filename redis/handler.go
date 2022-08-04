@@ -18,6 +18,7 @@ package redis
 type GenericCommandHandler interface {
 	// 1.0.0
 	Del(ctx *DBContext, keys []string) (*Message, error)
+	Exists(ctx *DBContext, keys []string) (*Message, error)
 	Type(ctx *DBContext, key string) (*Message, error)
 }
 

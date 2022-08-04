@@ -30,6 +30,18 @@ func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, 
 	return redis.NewIntegerMessage(removedCount), nil
 }
 
+func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
+	db := server.GetDatabase(ctx.ID())
+	existCount := 0
+	for _, key := range keys {
+		_, ok := db.GetRecord(key)
+		if ok {
+			existCount++
+		}
+	}
+	return redis.NewIntegerMessage(existCount), nil
+}
+
 func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 	record, ok := db.GetRecord(key)
