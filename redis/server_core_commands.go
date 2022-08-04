@@ -53,11 +53,19 @@ func (server *Server) registerCoreExecutors() {
 	// Generic commands.
 
 	server.RegisterExexutor("DEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		keys, err := nextMGetArguments(cmd, args)
+		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		return server.userCommandHandler.Del(ctx, keys)
+	})
+
+	server.RegisterExexutor("EXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		keys, err := nextKeysArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Exists(ctx, keys)
 	})
 
 	server.RegisterExexutor("TYPE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
@@ -163,7 +171,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		keys, err := nextMGetArguments(cmd, args)
+		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -194,7 +202,7 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := MGetOption{}
-		keys, err := nextMGetArguments(cmd, args)
+		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}

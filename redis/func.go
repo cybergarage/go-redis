@@ -36,6 +36,21 @@ func nextKeyArgument(cmd string, args Arguments) (string, error) {
 	return key, nil
 }
 
+func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
+	var key string
+	var err error
+	keys := []string{}
+	key, err = args.NextString()
+	for err == nil {
+		keys = append(keys, key)
+		key, err = args.NextString()
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return nil, err
+	}
+	return keys, nil
+}
+
 func nextIntegerArgument(cmd string, args Arguments) (int, error) {
 	val, err := args.NextInteger()
 	if err != nil {
@@ -73,19 +88,4 @@ func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 		return nil, err
 	}
 	return dir, nil
-}
-
-func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
-	var key string
-	var err error
-	keys := []string{}
-	key, err = args.NextString()
-	for err == nil {
-		keys = append(keys, key)
-		key, err = args.NextString()
-	}
-	if !errors.Is(err, proto.ErrEOM) {
-		return nil, err
-	}
-	return keys, nil
 }
