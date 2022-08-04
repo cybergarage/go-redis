@@ -62,6 +62,41 @@ func TestServer(t *testing.T) {
 		})
 	})
 
+	// Generic commands
+
+	t.Run("DEL", func(t *testing.T) {
+		records := []struct {
+			keys     []string
+			expected int64
+		}{
+			{[]string{"key1_del", "key2_del"}, 2},
+			{[]string{"key1_del"}, 0},
+			{[]string{"key1_del", "key2_del", "key3_del"}, 1},
+			{[]string{"key2_del"}, 0},
+		}
+		for _, r := range records {
+			for _, key := range r.keys {
+				err = client.Set(key, key, 0).Err()
+				if err != nil {
+					t.Error(err)
+				}
+			}
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				res, err := client.Del(r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	// String commands
 
 	t.Run("String", func(t *testing.T) {
