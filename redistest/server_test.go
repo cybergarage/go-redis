@@ -21,7 +21,7 @@ import (
 )
 
 // nolint: maintidx, gocyclo
-func TestCommand(t *testing.T) {
+func TestServer(t *testing.T) {
 	server := NewServer()
 
 	err := server.Start()
@@ -65,6 +65,29 @@ func TestCommand(t *testing.T) {
 	// String commands
 
 	t.Run("String", func(t *testing.T) {
+		t.Run("APPEND", func(t *testing.T) {
+			records := []struct {
+				key      string
+				val      string
+				expected int64
+			}{
+				{"key_append", "Hello", 5},
+				{"key_append", " World", 11},
+			}
+
+			for _, r := range records {
+				t.Run(r.key+":"+r.val, func(t *testing.T) {
+					res, err := client.Append(r.key, r.val).Result()
+					if err != nil {
+						t.Error(err)
+					}
+					if res != r.expected {
+						t.Errorf("%d != %d", res, r.expected)
+					}
+				})
+			}
+		})
+
 		t.Run("DECR", func(t *testing.T) {
 			key := "mykey_decr"
 			startVal := 10
@@ -91,19 +114,23 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("APPEND", func(t *testing.T) {
+		t.Run("DECRBY", func(t *testing.T) {
+			key := "mykey_decrby"
+			startVal := 10
+			err = client.Set(key, strconv.Itoa(startVal), 0).Err()
+			if err != nil {
+				t.Error(err)
+			}
+			decVal := 3
 			records := []struct {
-				key      string
-				val      string
 				expected int64
 			}{
-				{"key_append", "Hello", 5},
-				{"key_append", " World", 11},
+				{int64(startVal - decVal)},
+				{int64(startVal - (decVal * 2))},
 			}
-
 			for _, r := range records {
-				t.Run(r.key+":"+r.val, func(t *testing.T) {
-					res, err := client.Append(r.key, r.val).Result()
+				t.Run(key+":"+strconv.Itoa(int(r.expected)), func(t *testing.T) {
+					res, err := client.DecrBy(key, int64(decVal)).Result()
 					if err != nil {
 						t.Error(err)
 					}
