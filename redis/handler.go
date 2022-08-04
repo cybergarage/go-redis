@@ -16,7 +16,9 @@ package redis
 
 // GenericCommandHandler represents a hander interface for genelic commands.
 type GenericCommandHandler interface {
+	// 1.0.0
 	Del(ctx *DBContext, keys []string) (*Message, error)
+	Type(ctx *DBContext, key string) (*Message, error)
 }
 
 // StringHandler represents a core command hander interface for string commands.

@@ -60,6 +60,14 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Del(ctx, keys)
 	})
 
+	server.RegisterExexutor("TYPE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Type(ctx, key)
+	})
+
 	// String commands.
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
