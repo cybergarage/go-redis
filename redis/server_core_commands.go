@@ -54,7 +54,7 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
-		key, val, err := parseSetArgs(cmd, args)
+		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -64,7 +64,7 @@ func (server *Server) registerCoreExecutors() {
 	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.NX = true
-		key, val, err := parseSetArgs(cmd, args)
+		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("GET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := GetOption{}
-		key, err := parseKeyArg(cmd, args)
+		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +83,7 @@ func (server *Server) registerCoreExecutors() {
 	server.RegisterExexutor("GETSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.GET = true
-		key, val, err := parseSetArgs(cmd, args)
+		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -94,11 +94,11 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{}
-		hash, err := parseHashArg(cmd, args)
+		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		key, val, err := parseSetArgs(cmd, args)
+		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -107,11 +107,11 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("HGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HGetOption{}
-		hash, err := parseHashArg(cmd, args)
+		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		key, err := parseKeyArg(cmd, args)
+		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -119,7 +119,7 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("HGETALL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		hash, err := parseHashArg(cmd, args)
+		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -128,11 +128,11 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("HMSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HMSetOption{}
-		hash, err := parseHashArg(cmd, args)
+		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		dir, err := parseMSetArgs(cmd, args)
+		dir, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -141,11 +141,11 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("HMGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HMGetOption{}
-		hash, err := parseHashArg(cmd, args)
+		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		keys, err := parseMGetArgs(cmd, args)
+		keys, err := nextMGetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -156,7 +156,7 @@ func (server *Server) registerCoreExecutors() {
 		opt := MSetOption{
 			NX: false,
 		}
-		dir, err := parseMSetArgs(cmd, args)
+		dir, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -167,7 +167,7 @@ func (server *Server) registerCoreExecutors() {
 		opt := MSetOption{
 			NX: true,
 		}
-		dir, err := parseMSetArgs(cmd, args)
+		dir, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +176,7 @@ func (server *Server) registerCoreExecutors() {
 
 	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := MGetOption{}
-		keys, err := parseMGetArgs(cmd, args)
+		keys, err := nextMGetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
