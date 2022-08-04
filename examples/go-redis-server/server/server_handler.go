@@ -21,7 +21,10 @@ import (
 )
 
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 
 	var oldVal []byte = nil
 	hasOldRecord := false
@@ -65,7 +68,10 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 }
 
 func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewNilMessage(), nil
@@ -79,7 +85,11 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 
 // nolint: ifshort
 func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
 	var dict HashData
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
@@ -111,7 +121,10 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 }
 
 func (server *Server) HGet(ctx *redis.DBContext, key string, field string, opt redis.HGetOption) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewNilMessage(), nil
@@ -130,7 +143,10 @@ func (server *Server) HGet(ctx *redis.DBContext, key string, field string, opt r
 func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message, error) {
 	arrayMsg := redis.NewArrayMessage()
 
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return arrayMsg, nil
