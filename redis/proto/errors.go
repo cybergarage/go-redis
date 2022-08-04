@@ -26,3 +26,6 @@ const (
 
 // ErrEOM is the error returned by Array::Next() when no more message is available.
 var ErrEOM = errors.New("EOM")
+
+// ErrNil is the error returned by Message::String() when the bytes are nil.
+var ErrNil = errors.New("NIL")
