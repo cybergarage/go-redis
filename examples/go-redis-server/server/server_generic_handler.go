@@ -19,7 +19,10 @@ import (
 )
 
 func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	removedCount := 0
 	for _, key := range keys {
 		err := db.RemoveRecord(key)
@@ -31,7 +34,10 @@ func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, 
 }
 
 func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	existCount := 0
 	for _, key := range keys {
 		_, ok := db.GetRecord(key)
@@ -43,7 +49,10 @@ func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Messag
 }
 
 func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewStringMessage("none"), nil
