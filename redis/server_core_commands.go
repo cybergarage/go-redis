@@ -20,7 +20,7 @@ import (
 
 // nolint: gocyclo, maintidx
 func (server *Server) registerCoreExecutors() {
-	// Sets connection management commands.
+	// Registers connection management commands.
 
 	server.RegisterExexutor("PING", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		arg := ""
@@ -54,7 +54,7 @@ func (server *Server) registerCoreExecutors() {
 		return server.systemCommandHandler.Quit(ctx)
 	})
 
-	// Sets string commands.
+	// Registers string commands.
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		now := time.Now()
@@ -122,7 +122,7 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	})
 
-	// Sets hash commands.
+	// Registers hash commands.
 
 	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{}
