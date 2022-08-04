@@ -97,6 +97,38 @@ func TestServer(t *testing.T) {
 		}
 	})
 
+	t.Run("TYPE", func(t *testing.T) {
+		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		err := client.HSet("key2_type", "key", "val").Err()
+		if err != nil {
+			t.Error(err)
+		}
+		records := []struct {
+			key      string
+			expected string
+		}{
+			{"key0_type", "none"},
+			{"key1_type", "string"},
+			{"key2_type", "hash"},
+		}
+		for _, r := range records {
+			t.Run(r.key+":"+r.expected, func(t *testing.T) {
+				res, err := client.Type(r.key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	// String commands
 
 	t.Run("String", func(t *testing.T) {

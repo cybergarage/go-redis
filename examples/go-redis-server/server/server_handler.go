@@ -20,18 +20,6 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
-func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	db := server.GetDatabase(ctx.ID())
-	removedCount := 0
-	for _, key := range keys {
-		err := db.RemoveRecord(key)
-		if err == nil {
-			removedCount++
-		}
-	}
-	return redis.NewIntegerMessage(removedCount), nil
-}
-
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 
@@ -92,17 +80,17 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 // nolint: ifshort
 func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
-	var dict DictionaryRecord
+	var dict HashData
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
-		dict, ok = record.Data.(DictionaryRecord)
+		dict, ok = record.Data.(HashData)
 		if !ok {
 			hasRecord = false
 		}
 	}
 	if !hasRecord {
-		dict := DictionaryRecord{}
+		dict := HashData{}
 		dict[field] = val
 		record := &Record{
 			Key:       key,
@@ -128,7 +116,7 @@ func (server *Server) HGet(ctx *redis.DBContext, key string, field string, opt r
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	dict, ok := record.Data.(DictionaryRecord)
+	dict, ok := record.Data.(HashData)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
@@ -148,7 +136,7 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 		return arrayMsg, nil
 	}
 
-	dict, ok := record.Data.(DictionaryRecord)
+	dict, ok := record.Data.(HashData)
 	if !ok {
 		return arrayMsg, nil
 	}

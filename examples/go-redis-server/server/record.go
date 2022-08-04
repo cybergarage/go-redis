@@ -24,4 +24,4 @@ type Record struct {
 	TTL       time.Duration
 }
 
-type DictionaryRecord = map[string]string
+type HashData = map[string]string
