@@ -106,6 +106,9 @@ func (msg *Message) Bytes() ([]byte, error) {
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
 	case StringMessage, BulkMessage:
+		if msg.bytes == nil {
+			return "", ErrNil
+		}
 		return string(msg.bytes), nil
 	case ArrayMessage, ErrorMessage, IntegerMessage:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
