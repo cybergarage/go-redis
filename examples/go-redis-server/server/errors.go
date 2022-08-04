@@ -14,28 +14,8 @@
 
 package server
 
-import "fmt"
+import (
+	"errors"
+)
 
-// Records represents a database record map.
-type Records map[string]*Record
-
-// SetRecord sets the specified record into the records.
-func (rmap Records) SetRecord(record *Record) error {
-	rmap[record.Key] = record
-	return nil
-}
-
-// GetRecord gets a record with the specified key.
-func (rmap Records) GetRecord(key string) (*Record, bool) {
-	record, ok := rmap[key]
-	return record, ok
-}
-
-// RemoveRecord removes a record with the specified key.
-func (rmap Records) RemoveRecord(key string) error {
-	if _, ok := rmap[key]; !ok {
-		return fmt.Errorf("%w : %s", ErrNotFound, key)
-	}
-	delete(rmap, key)
-	return nil
-}
+var ErrNotFound = errors.New("not found")

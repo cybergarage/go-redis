@@ -45,7 +45,6 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 				}
 			}
 		}
-
 	}
 
 	record := &Record{
@@ -82,6 +81,7 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 	return redis.NewNilMessage(), nil
 }
 
+// nolint: ifshort
 func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
 	db := server.GetDatabase(ctx.ID())
 	var dict DictionaryRecord
@@ -157,7 +157,7 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
 	if opt.NX {
 		getOpt := redis.GetOption{}
-		for key, _ := range dict {
+		for key := range dict {
 			res, err := server.Get(ctx, key, getOpt)
 			if err != nil {
 				return nil, err
@@ -166,7 +166,6 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 				return redis.NewIntegerMessage(0), nil
 			}
 		}
-
 	}
 
 	now := time.Now()
