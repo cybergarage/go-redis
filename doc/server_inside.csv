@@ -4,6 +4,7 @@ O,PING,1.0.0,
 O,QUIT,1.0.0,
 O,SELECT,1.0.0,
 Supported,Command,Redis Version,Note
+O,APPEND,2.0.0,
 O,GET,1.0.0,
 O,GETSET,1.0.0,
 O,MGET,1.0.1,
