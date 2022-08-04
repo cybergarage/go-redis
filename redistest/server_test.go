@@ -15,6 +15,7 @@
 package redistest
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -41,7 +42,7 @@ func TestCommand(t *testing.T) {
 	// Connection commands
 
 	t.Run("Connection", func(t *testing.T) {
-		t.Run("Echo", func(t *testing.T) {
+		t.Run("ECHO", func(t *testing.T) {
 			msgs := []string{
 				"Hello World!",
 			}
@@ -64,7 +65,33 @@ func TestCommand(t *testing.T) {
 	// String commands
 
 	t.Run("String", func(t *testing.T) {
-		t.Run("Append", func(t *testing.T) {
+		t.Run("DECR", func(t *testing.T) {
+			key := "mykey_decr"
+			startVal := 10
+			err = client.Set(key, strconv.Itoa(startVal), 0).Err()
+			if err != nil {
+				t.Error(err)
+			}
+			records := []struct {
+				expected int64
+			}{
+				{int64(startVal - 1)},
+				{int64(startVal - 2)},
+			}
+			for _, r := range records {
+				t.Run(key+":"+strconv.Itoa(int(r.expected)), func(t *testing.T) {
+					res, err := client.Decr(key).Result()
+					if err != nil {
+						t.Error(err)
+					}
+					if res != r.expected {
+						t.Errorf("%d != %d", res, r.expected)
+					}
+				})
+			}
+		})
+
+		t.Run("APPEND", func(t *testing.T) {
 			records := []struct {
 				key      string
 				val      string
@@ -87,7 +114,7 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("Set", func(t *testing.T) {
+		t.Run("SET", func(t *testing.T) {
 			records := []struct {
 				key      string
 				val      string
@@ -115,7 +142,7 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("SetNx", func(t *testing.T) {
+		t.Run("SETNX", func(t *testing.T) {
 			records := []struct {
 				key      string
 				val      string
@@ -139,7 +166,7 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("GetSet", func(t *testing.T) {
+		t.Run("GETSET", func(t *testing.T) {
 			records := []struct {
 				key      string
 				val      string
@@ -167,39 +194,8 @@ func TestCommand(t *testing.T) {
 				})
 			}
 		})
-	})
 
-	// Hash commands
-
-	t.Run("Hash", func(t *testing.T) {
-		t.Run("HSet", func(t *testing.T) {
-			records := []struct {
-				hash     string
-				key      string
-				val      string
-				expected string
-			}{
-				{"key_hset", "key1", "Hello", "Hello"},
-			}
-
-			for _, r := range records {
-				t.Run(r.hash+":"+r.key+":"+r.val, func(t *testing.T) {
-					err := client.HSet(r.hash, r.key, r.val).Err()
-					if err != nil {
-						t.Error(err)
-					}
-					res, err := client.HGet(r.hash, r.key).Result()
-					if err != nil {
-						t.Error(err)
-					}
-					if res != r.expected {
-						t.Errorf("%s != %s", res, r.expected)
-					}
-				})
-			}
-		})
-
-		t.Run("MSet", func(t *testing.T) {
+		t.Run("MSET", func(t *testing.T) {
 			records := []struct {
 				keys []string
 				vals []string
@@ -237,7 +233,7 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("MSetNX", func(t *testing.T) {
+		t.Run("MSETNX", func(t *testing.T) {
 			records := []struct {
 				keys     []string
 				vals     []string
@@ -265,8 +261,39 @@ func TestCommand(t *testing.T) {
 				})
 			}
 		})
+	})
 
-		t.Run("HMSet", func(t *testing.T) {
+	// Hash commands
+
+	t.Run("Hash", func(t *testing.T) {
+		t.Run("HSET", func(t *testing.T) {
+			records := []struct {
+				hash     string
+				key      string
+				val      string
+				expected string
+			}{
+				{"key_hset", "key1", "Hello", "Hello"},
+			}
+
+			for _, r := range records {
+				t.Run(r.hash+":"+r.key+":"+r.val, func(t *testing.T) {
+					err := client.HSet(r.hash, r.key, r.val).Err()
+					if err != nil {
+						t.Error(err)
+					}
+					res, err := client.HGet(r.hash, r.key).Result()
+					if err != nil {
+						t.Error(err)
+					}
+					if res != r.expected {
+						t.Errorf("%s != %s", res, r.expected)
+					}
+				})
+			}
+		})
+
+		t.Run("HMSET", func(t *testing.T) {
 			records := []struct {
 				hash string
 				keys []string
@@ -303,7 +330,7 @@ func TestCommand(t *testing.T) {
 			}
 		})
 
-		t.Run("HGetAll", func(t *testing.T) {
+		t.Run("HGETALL", func(t *testing.T) {
 			records := []struct {
 				hash     string
 				key      string
