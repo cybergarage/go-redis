@@ -31,9 +31,14 @@ PKGS=\
 	${PKG_ID}/proto
 
 BIN_DIR=examples
-BIN_ID=${MODULE_ROOT}/${BIN_DIR}/go-redis-server
+BIN_ID=${MODULE_ROOT}/${BIN_DIR}
+BIN_SERVER=go-redis-server
+BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
+BIN_SRCS=\
+	${BIN_DIR}/${BIN_SERVER} \
+	${BIN_DIR}/${BIN_SERVER}/server
 BINS=\
-	${BIN_ID}
+	${BIN_SERVER_ID}
 
 TEST_PKG_NAME=${PKG_NAME}test
 TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
@@ -54,10 +59,10 @@ format: version
 	gofmt -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
-	go vet ${PKG_ID} ${TEST_PKG_ID} ${BIN_ID}
+	go vet ${PKG_ID} ${TEST_PKG_ID} ${BINS}
 
 lint: vet
-	golangci-lint run ${PKG_SRCS} ${TEST_PKG_SRCS}
+	golangci-lint run ${PKG_SRCS} ${BIN_SRCS} ${TEST_PKG_SRCS}
 
 build:
 	go build -v ${PKGS}
