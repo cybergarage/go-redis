@@ -16,7 +16,7 @@ package redis
 
 // nolint: gocyclo, maintidx
 func (server *Server) registerCoreExecutors() {
-	// Registers connection management commands.
+	// Connection management commands.
 
 	server.RegisterExexutor("PING", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		arg := ""
@@ -50,7 +50,17 @@ func (server *Server) registerCoreExecutors() {
 		return server.systemCommandHandler.Quit(ctx)
 	})
 
-	// Registers string commands.
+	// Generic commands.
+
+	server.RegisterExexutor("DEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		keys, err := nextMGetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Del(ctx, keys)
+	})
+
+	// String commands.
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
@@ -90,7 +100,7 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Set(ctx, key, val, opt)
 	})
 
-	// Registers hash commands.
+	// Hash commands.
 
 	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{}

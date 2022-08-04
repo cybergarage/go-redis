@@ -21,7 +21,15 @@ import (
 )
 
 func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	return nil, nil
+	db := server.GetDatabase(ctx.ID())
+	removedCount := 0
+	for _, key := range keys {
+		err := db.RemoveRecord(key)
+		if err == nil {
+			removedCount++
+		}
+	}
+	return redis.NewIntegerMessage(removedCount), nil
 }
 
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
