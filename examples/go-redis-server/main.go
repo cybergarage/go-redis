@@ -32,11 +32,11 @@ package main
 
 import (
 	"flag"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-redis/examples/go-redis-server/server"
 )
 
@@ -51,7 +51,7 @@ func main() {
 
 	server := server.NewServer()
 	if err := server.Start(); err != nil {
-		log.Printf("%s couldn't be started (%s)", programName, err.Error())
+		log.Error("%s couldn't be started (%s)", programName, err.Error())
 		os.Exit(1)
 	}
 
@@ -70,15 +70,15 @@ func main() {
 			s := <-sigCh
 			switch s {
 			case syscall.SIGHUP:
-				log.Printf("caught SIGHUP, restarting...")
+				log.Info("caught SIGHUP, restarting...")
 				if err := server.Restart(); err != nil {
-					log.Printf("%s couldn't be restarted (%s)", programName, err.Error())
+					log.Error("%s couldn't be restarted (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 			case syscall.SIGINT, syscall.SIGTERM:
-				log.Printf("Caught %s, stopping...", s.String())
+				log.Info("caught %s, stopping...", s.String())
 				if err := server.Stop(); err != nil {
-					log.Printf("%s couldn't be stopped (%s)", programName, err.Error())
+					log.Error("%s couldn't be stopped (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 				exitCh <- 0
