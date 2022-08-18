@@ -19,6 +19,7 @@ type GenericCommandHandler interface {
 	// 1.0.0
 	Del(ctx *DBContext, keys []string) (*Message, error)
 	Exists(ctx *DBContext, keys []string) (*Message, error)
+	Expire(ctx *DBContext, key string, opt ExpireOption) (*Message, error)
 	Type(ctx *DBContext, key string) (*Message, error)
 }
 
