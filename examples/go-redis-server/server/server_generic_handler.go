@@ -15,6 +15,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/cybergarage/go-redis/redis"
 )
 
@@ -46,6 +48,20 @@ func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Messag
 		}
 	}
 	return redis.NewIntegerMessage(existCount), nil
+}
+
+func (server *Server) Expire(ctx *redis.DBContext, key string, opt redis.ExpireOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return redis.NewIntegerMessage(0), nil
+	}
+	record, ok := db.GetRecord(key)
+	if !ok {
+		return redis.NewIntegerMessage(0), nil
+	}
+	now := time.Now()
+	record.TTL = opt.Time.Sub(now)
+	return redis.NewIntegerMessage(1), nil
 }
 
 func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, error) {
