@@ -76,6 +76,14 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Type(ctx, key)
 	})
 
+	server.RegisterExexutor("TTL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.TTL(ctx, key)
+	})
+
 	// String commands.
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
