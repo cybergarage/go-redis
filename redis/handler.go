@@ -21,6 +21,7 @@ type GenericCommandHandler interface {
 	Exists(ctx *DBContext, keys []string) (*Message, error)
 	Expire(ctx *DBContext, key string, opt ExpireOption) (*Message, error)
 	Type(ctx *DBContext, key string) (*Message, error)
+	TTL(ctx *DBContext, key string) (*Message, error)
 }
 
 // StringHandler represents a core command hander interface for string commands.
