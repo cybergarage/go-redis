@@ -64,103 +64,8 @@ func TestServer(t *testing.T) {
 
 	// Generic commands
 
-	t.Run("DEL", func(t *testing.T) {
-		records := []struct {
-			keys     []string
-			expected int64
-		}{
-			{[]string{"key1_del", "key2_del"}, 2},
-			{[]string{"key1_del"}, 0},
-			{[]string{"key1_del", "key2_del", "key3_del"}, 1},
-			{[]string{"key2_del"}, 0},
-		}
-		for _, r := range records {
-			for _, key := range r.keys {
-				err = client.Set(key, key, 0).Err()
-				if err != nil {
-					t.Error(err)
-				}
-			}
-		}
-		for _, r := range records {
-			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
-				res, err := client.Del(r.keys...).Result()
-				if err != nil {
-					t.Error(err)
-					return
-				}
-				if res != r.expected {
-					t.Errorf("%d != %d", res, r.expected)
-					return
-				}
-			})
-		}
-	})
-
-	t.Run("EXISTS", func(t *testing.T) {
-		if err := client.Set("key1_exists", "val", 0).Err(); err != nil {
-			t.Error(err)
-			return
-		}
-		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
-			t.Error(err)
-			return
-		}
-		records := []struct {
-			keys     []string
-			expected int64
-		}{
-			{[]string{"nosuchkey"}, 0},
-			{[]string{"key1_exists"}, 1},
-			{[]string{"key2_exists"}, 1},
-			{[]string{"key1_exists", "key2_exists"}, 2},
-			{[]string{"key1_exists", "key2_exists", "nosuchkey"}, 2},
-		}
-		for _, r := range records {
-			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
-				res, err := client.Exists(r.keys...).Result()
-				if err != nil {
-					t.Error(err)
-					return
-				}
-				if res != r.expected {
-					t.Errorf("%d != %d", res, r.expected)
-					return
-				}
-			})
-		}
-	})
-
-	t.Run("TYPE", func(t *testing.T) {
-		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
-			t.Error(err)
-			return
-		}
-		err := client.HSet("key2_type", "key", "val").Err()
-		if err != nil {
-			t.Error(err)
-		}
-		records := []struct {
-			key      string
-			expected string
-		}{
-			{"key0_type", "none"},
-			{"key1_type", "string"},
-			{"key2_type", "hash"},
-		}
-		for _, r := range records {
-			t.Run(r.key+":"+r.expected, func(t *testing.T) {
-				res, err := client.Type(r.key).Result()
-				if err != nil {
-					t.Error(err)
-					return
-				}
-				if res != r.expected {
-					t.Errorf("%s != %s", res, r.expected)
-					return
-				}
-			})
-		}
+	t.Run("Generic", func(t *testing.T) {
+		testGeneric(t, server, client)
 	})
 
 	// String commands
@@ -517,4 +422,116 @@ func TestServer(t *testing.T) {
 		t.Error(err)
 		return
 	}
+}
+
+func testGeneric(t *testing.T, server *Server, client *Client) {
+	t.Helper()
+
+	var err error
+
+	t.Run("DEL", func(t *testing.T) {
+		records := []struct {
+			keys     []string
+			expected int64
+		}{
+			{[]string{"key1_del", "key2_del"}, 2},
+			{[]string{"key1_del"}, 0},
+			{[]string{"key1_del", "key2_del", "key3_del"}, 1},
+			{[]string{"key2_del"}, 0},
+		}
+		for _, r := range records {
+			for _, key := range r.keys {
+				err = client.Set(key, key, 0).Err()
+				if err != nil {
+					t.Error(err)
+				}
+			}
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				res, err := client.Del(r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("EXISTS", func(t *testing.T) {
+		if err := client.Set("key1_exists", "val", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			keys     []string
+			expected int64
+		}{
+			{[]string{"nosuchkey"}, 0},
+			{[]string{"key1_exists"}, 1},
+			{[]string{"key2_exists"}, 1},
+			{[]string{"key1_exists", "key2_exists"}, 2},
+			{[]string{"key1_exists", "key2_exists", "nosuchkey"}, 2},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
+				res, err := client.Exists(r.keys...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("EXPIRE", func(t *testing.T) {
+		if err := client.Set("mykey_expire", "Hello World", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+	})
+
+	t.Run("TYPE", func(t *testing.T) {
+		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		err := client.HSet("key2_type", "key", "val").Err()
+		if err != nil {
+			t.Error(err)
+		}
+		records := []struct {
+			key      string
+			expected string
+		}{
+			{"key0_type", "none"},
+			{"key1_type", "string"},
+			{"key2_type", "hash"},
+		}
+		for _, r := range records {
+			t.Run(r.key+":"+r.expected, func(t *testing.T) {
+				res, err := client.Type(r.key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
 }
