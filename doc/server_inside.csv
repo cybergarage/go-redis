@@ -32,7 +32,7 @@ O,EXPIREAT,1.2.0
 -,SORT,1.0.0
 -,SORT_RO,7.0.0,
 -,TOUCH,3.2.1,
--,TTL,1.0.0,
+O,TTL,1.0.0,
 O,TYPE,1.0.0,
 -,UNLINK,4.0.0,
 -,WAIT,3.0.0,

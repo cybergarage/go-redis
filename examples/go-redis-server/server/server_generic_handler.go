@@ -81,3 +81,25 @@ func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, er
 	}
 	return redis.NewStringMessage("none"), nil
 }
+
+func (server *Server) TTL(ctx *redis.DBContext, key string) (*redis.Message, error) {
+	const ttlRecordNotFound int = -2
+	const ttlRecordNotSet int = -1
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	record, ok := db.GetRecord(key)
+	if !ok {
+		return redis.NewIntegerMessage(ttlRecordNotFound), nil
+	}
+	if record.TTL <= 0 {
+		return redis.NewIntegerMessage(ttlRecordNotSet), nil
+	}
+	now := time.Now()
+	ttl := record.Timestamp.Add(record.TTL).Sub(now)
+	if ttl < 0 {
+		return redis.NewIntegerMessage(ttlRecordNotFound), nil
+	}
+	return redis.NewIntegerMessage(int(ttl)), nil
+}
