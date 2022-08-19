@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-redis/redis"
+	"github.com/cybergarage/go-redis/redis/regexp"
 )
 
 func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
@@ -80,6 +81,22 @@ func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, er
 		return redis.NewStringMessage("hash"), nil
 	}
 	return redis.NewStringMessage("none"), nil
+}
+
+func (server *Server) Keys(ctx *redis.DBContext, pattern string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	r := regexp.MustCompile(pattern)
+	matchKeys := []string{}
+	for _, key := range db.Keys() {
+		if !r.MatchString(key) {
+			continue
+		}
+		matchKeys = append(matchKeys, key)
+	}
+	return redis.NewStringArrayMessage(matchKeys), nil
 }
 
 func (server *Server) TTL(ctx *redis.DBContext, key string) (*redis.Message, error) {
