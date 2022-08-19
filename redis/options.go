@@ -57,6 +57,10 @@ type HMSetOption struct {
 type HMGetOption struct {
 }
 
+type RenameOption struct {
+	NX bool
+}
+
 func newDefaultSetOption() SetOption {
 	now := time.Now()
 	return SetOption{
