@@ -79,6 +79,23 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Expire(ctx, key, opt)
 	})
 
+	server.RegisterExexutor("EXPIREAT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		ttl, err := nextIntegerArgument(cmd, "ttl", args)
+		if err != nil {
+			return nil, err
+		}
+		ttlTime := time.Unix(int64(ttl), 0)
+		opt, err := nextExpireArgument(cmd, ttlTime, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Expire(ctx, key, opt)
+	})
+
 	server.RegisterExexutor("EXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {

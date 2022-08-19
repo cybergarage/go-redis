@@ -426,6 +426,7 @@ func TestServer(t *testing.T) {
 	}
 }
 
+// nolint: maintidx, gocyclo
 func testGeneric(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
@@ -509,7 +510,7 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 			sleep    time.Duration
 			expected time.Duration
 		}{
-			{expire: 2 * time.Second, sleep: 1 * time.Second, expected: 1 * time.Second},
+			{expire: 3 * time.Second, sleep: 1 * time.Second, expected: 1 * time.Second},
 			{expire: 1 * time.Second, sleep: 2 * time.Second, expected: -2 * time.Second},
 			{expire: 0 * time.Second, sleep: 1 * time.Second, expected: -2 * time.Second},
 		}
@@ -517,6 +518,52 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 			t.Run(fmt.Sprintf("ex:%d, slp:%d", r.expire/time.Second, r.sleep/time.Second), func(t *testing.T) {
 				if 0 < r.expire {
 					ok, err := client.Expire(key, r.expire).Result()
+					if err != nil {
+						t.Error(err)
+						return
+					}
+					if !ok {
+						t.Errorf("%t", ok)
+						return
+					}
+				}
+				if 0 < r.sleep {
+					time.Sleep(r.sleep)
+				}
+
+				ttl, err := client.TTL(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if (ttl != r.expected) && (ttl < r.expected) {
+					t.Errorf("%d < %d", ttl, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("EXPIREAT", func(t *testing.T) {
+		key := "mykey_expire"
+		if err := client.Set(key, "Hello World", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			expire   time.Duration
+			sleep    time.Duration
+			expected time.Duration
+		}{
+			{expire: 3 * time.Second, sleep: 1 * time.Second, expected: 1 * time.Second},
+			{expire: 1 * time.Second, sleep: 2 * time.Second, expected: -2 * time.Second},
+			{expire: 0 * time.Second, sleep: 1 * time.Second, expected: -2 * time.Second},
+		}
+		now := time.Now()
+		for _, r := range records {
+			t.Run(fmt.Sprintf("ex:%d, slp:%d", r.expire/time.Second, r.sleep/time.Second), func(t *testing.T) {
+				if 0 < r.expire {
+					ok, err := client.ExpireAt(key, now.Add(r.expire)).Result()
 					if err != nil {
 						t.Error(err)
 						return
