@@ -60,6 +60,14 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Del(ctx, keys)
 	})
 
+	server.RegisterExexutor("EXPIRE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		keys, err := nextKeysArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Exists(ctx, keys)
+	})
+
 	server.RegisterExexutor("EXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
