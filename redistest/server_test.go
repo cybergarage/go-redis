@@ -590,6 +590,48 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("KEYS", func(t *testing.T) {
+		args := []string{"firstname_keys", "Jack", "lastname_keys", "Stuntman", "age_keys", "35"}
+		err := client.MSet(args).Err()
+		if err != nil {
+			t.Error(err)
+		}
+		records := []struct {
+			pattern  string
+			expected []string
+		}{
+			{"*name*_keys", []string{"lastname_keys", "firstname_keys"}},
+			{"a??_keys", []string{"age_keys"}},
+			{"*_keys", []string{"lastname_keys", "firstname_keys", "age_keys"}},
+		}
+		for _, r := range records {
+			t.Run(r.pattern, func(t *testing.T) {
+				res, err := client.Keys(r.pattern).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(res) != len(r.expected) {
+					t.Skipf("%s: %s != %s", r.pattern, res, r.expected)
+					return
+				}
+				for _, ex := range r.expected {
+					found := false
+					for _, re := range res {
+						if ex == re {
+							found = true
+							continue
+						}
+					}
+					if !found {
+						t.Skipf("%s: %s != %s", r.pattern, res, r.expected)
+						return
+					}
+				}
+			})
+		}
+	})
+
 	t.Run("TYPE", func(t *testing.T) {
 		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
 			t.Error(err)

@@ -104,6 +104,14 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Exists(ctx, keys)
 	})
 
+	server.RegisterExexutor("KEYS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		pattern, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Keys(ctx, pattern)
+	})
+
 	server.RegisterExexutor("TYPE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
