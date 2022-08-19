@@ -20,7 +20,7 @@ import "fmt"
 type Records map[string]*Record
 
 // Keys returns all key names.
-func (rmap Records) Keys(record *Record) []string {
+func (rmap Records) Keys() []string {
 	keys := []string{}
 	for key := range rmap {
 		keys = append(keys, key)
