@@ -51,10 +51,10 @@ func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
 	return keys, nil
 }
 
-func nextIntegerArgument(cmd string, args Arguments) (int, error) {
+func nextIntegerArgument(cmd string, key string, args Arguments) (int, error) {
 	val, err := args.NextInteger()
 	if err != nil {
-		return 0, newMissingArgumentError(cmd, "key", err)
+		return 0, newMissingArgumentError(cmd, key, err)
 	}
 	return val, nil
 }
