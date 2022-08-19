@@ -25,9 +25,11 @@ PKG_ID=${MODULE_ROOT}/${PKG_NAME}
 PKG_SRC_DIR=${PKG_NAME}
 PKG_SRCS=\
         ${PKG_SRC_DIR} \
+        ${PKG_SRC_DIR}/regexp \
         ${PKG_SRC_DIR}/proto
 PKGS=\
 	${PKG_ID} \
+	${PKG_ID}/regexp \
 	${PKG_ID}/proto
 
 BIN_DIR=examples
