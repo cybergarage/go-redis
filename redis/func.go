@@ -22,20 +22,28 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
-func nextHashArgument(cmd string, args Arguments) (string, error) {
+func nextIntegerArgument(cmd string, name string, args Arguments) (int, error) {
+	val, err := args.NextInteger()
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	return val, nil
+}
+
+func nextStringArgument(cmd string, name string, args Arguments) (string, error) {
 	hash, err := args.NextString()
 	if err != nil {
-		return "", newMissingArgumentError(cmd, "hash", err)
+		return "", newMissingArgumentError(cmd, name, err)
 	}
 	return hash, nil
 }
 
+func nextHashArgument(cmd string, args Arguments) (string, error) {
+	return nextStringArgument(cmd, "hash", args)
+}
+
 func nextKeyArgument(cmd string, args Arguments) (string, error) {
-	key, err := args.NextString()
-	if err != nil {
-		return "", newMissingArgumentError(cmd, "key", err)
-	}
-	return key, nil
+	return nextStringArgument(cmd, "key", args)
 }
 
 func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
@@ -51,14 +59,6 @@ func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
 		return nil, err
 	}
 	return keys, nil
-}
-
-func nextIntegerArgument(cmd string, key string, args Arguments) (int, error) {
-	val, err := args.NextInteger()
-	if err != nil {
-		return 0, newMissingArgumentError(cmd, key, err)
-	}
-	return val, nil
 }
 
 func nextSetArguments(cmd string, args Arguments) (string, string, error) {
