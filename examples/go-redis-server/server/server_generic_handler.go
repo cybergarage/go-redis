@@ -101,5 +101,5 @@ func (server *Server) TTL(ctx *redis.DBContext, key string) (*redis.Message, err
 	if ttl < 0 {
 		return redis.NewIntegerMessage(ttlRecordNotFound), nil
 	}
-	return redis.NewIntegerMessage(int(ttl)), nil
+	return redis.NewIntegerMessage(int(ttl / time.Second)), nil
 }
