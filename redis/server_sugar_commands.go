@@ -100,7 +100,7 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		inc, err := nextIntegerArgument(cmd, args)
+		inc, err := nextIntegerArgument(cmd, "decrement", args)
 		if err != nil {
 			return nil, err
 		}

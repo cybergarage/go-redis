@@ -14,6 +14,8 @@
 
 package redis
 
+import "time"
+
 // nolint: gocyclo, maintidx
 func (server *Server) registerCoreExecutors() {
 	// Connection management commands.
@@ -61,11 +63,20 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("EXPIRE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		keys, err := nextKeysArguments(cmd, args)
+		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Exists(ctx, keys)
+		ttl, err := nextIntegerArgument(cmd, "ttl", args)
+		if err != nil {
+			return nil, err
+		}
+		ttlTime := time.Now().Add(time.Duration(ttl) * time.Second)
+		opt, err := nextExpireArgument(cmd, ttlTime, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Expire(ctx, key, opt)
 	})
 
 	server.RegisterExexutor("EXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
