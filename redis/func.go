@@ -16,6 +16,8 @@ package redis
 
 import (
 	"errors"
+	"strings"
+	"time"
 
 	"github.com/cybergarage/go-redis/redis/proto"
 )
@@ -88,4 +90,34 @@ func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 		return nil, err
 	}
 	return dir, nil
+}
+
+func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption, error) {
+	opt := ExpireOption{
+		Time: ttl,
+		NX:   false,
+		XX:   false,
+		GT:   false,
+		LT:   false,
+	}
+	var err error
+	arg, err := args.NextString()
+	if err == nil {
+		switch strings.ToUpper(arg) {
+		case "NX":
+			opt.NX = true
+		case "XX":
+			opt.XX = true
+		case "GT":
+			opt.GT = true
+		case "LT":
+			opt.LT = true
+		default:
+			return opt, newUnkownArgumentError(cmd, arg)
+		}
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return opt, err
+	}
+	return opt, nil
 }
