@@ -15,9 +15,11 @@
 package redistest
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 // nolint: maintidx, gocyclo
@@ -497,9 +499,47 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 	})
 
 	t.Run("EXPIRE", func(t *testing.T) {
-		if err := client.Set("mykey_expire", "Hello World", 0).Err(); err != nil {
+		key := "mykey_expire"
+		if err := client.Set(key, "Hello World", 0).Err(); err != nil {
 			t.Error(err)
 			return
+		}
+		records := []struct {
+			expire   time.Duration
+			sleep    time.Duration
+			expected time.Duration
+		}{
+			{expire: 2 * time.Second, sleep: 1 * time.Second, expected: 1 * time.Second},
+			{expire: 1 * time.Second, sleep: 2 * time.Second, expected: -2 * time.Second},
+			{expire: 0 * time.Second, sleep: 1 * time.Second, expected: -2 * time.Second},
+		}
+		for _, r := range records {
+			t.Run(fmt.Sprintf("ex:%d, slp:%d", r.expire/time.Second, r.sleep/time.Second), func(t *testing.T) {
+				if 0 < r.expire {
+					ok, err := client.Expire(key, r.expire).Result()
+					if err != nil {
+						t.Error(err)
+						return
+					}
+					if !ok {
+						t.Errorf("%t", ok)
+						return
+					}
+				}
+				if 0 < r.sleep {
+					time.Sleep(r.sleep)
+				}
+
+				ttl, err := client.TTL(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if (ttl != r.expected) && (ttl < r.expected) {
+					t.Errorf("%d < %d", ttl, r.expected)
+					return
+				}
+			})
 		}
 	})
 
