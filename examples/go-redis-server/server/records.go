@@ -19,6 +19,15 @@ import "fmt"
 // Records represents a database record map.
 type Records map[string]*Record
 
+// Keys returns all key names.
+func (rmap Records) Keys(record *Record) []string {
+	keys := []string{}
+	for key := range rmap {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
 // SetRecord sets the specified record into the records.
 func (rmap Records) SetRecord(record *Record) error {
 	rmap[record.Key] = record
