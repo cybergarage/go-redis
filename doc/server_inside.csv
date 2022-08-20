@@ -82,5 +82,5 @@ O,SET,1.0.0,Any options are not supported yet
 -,SETEX,2.0.0,
 O,SETNX,2.0.0,
 -,SERANGE,2.2.0,
--,STRLEN,2.2.0,
+O,STRLEN,2.2.0,
 -,SUBSTR,1.0.0,

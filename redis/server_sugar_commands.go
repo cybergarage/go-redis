@@ -126,4 +126,21 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return incdecExecutor(ctx, cmd, key, inc)
 	})
+
+	server.RegisterExexutor("STRLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		getOpt := GetOption{}
+		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+		getVal, err := getRet.String()
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+		return NewIntegerMessage(len(getVal)), nil
+	})
 }
