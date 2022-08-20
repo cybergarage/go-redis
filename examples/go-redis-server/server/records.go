@@ -48,3 +48,21 @@ func (rmap Records) RemoveRecord(key string) error {
 	delete(rmap, key)
 	return nil
 }
+
+// RenameRecord renames the specified key record to the specified new record.
+func (rmap Records) RenameRecord(key string, newkey string) error {
+	record, ok := rmap.GetRecord(key)
+	if !ok {
+		return fmt.Errorf("%w: %s", ErrNotFound, key)
+	}
+	record.Key = newkey
+	err := rmap.SetRecord(record)
+	if err != nil {
+		return err
+	}
+	err = rmap.RemoveRecord(key)
+	if err != nil {
+		return err
+	}
+	return nil
+}
