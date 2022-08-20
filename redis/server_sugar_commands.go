@@ -106,4 +106,24 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return incdecExecutor(ctx, cmd, key, -inc)
 	})
+
+	server.RegisterExexutor("INCR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return incdecExecutor(ctx, cmd, key, 1)
+	})
+
+	server.RegisterExexutor("INCRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		inc, err := nextIntegerArgument(cmd, "increment", args)
+		if err != nil {
+			return nil, err
+		}
+		return incdecExecutor(ctx, cmd, key, inc)
+	})
 }
