@@ -128,6 +128,7 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 				err = client.Set(key, key, 0).Err()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 			}
 		}
@@ -433,9 +434,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.Append(r.key, r.val).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
 				}
 			})
 		}
@@ -459,9 +462,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.Decr(key).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
 				}
 			})
 		}
@@ -486,9 +491,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.DecrBy(key, int64(decVal)).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
 				}
 			})
 		}
@@ -512,9 +519,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.Incr(key).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
 				}
 			})
 		}
@@ -539,9 +548,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.IncrBy(key, int64(incVal)).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
 				}
 			})
 		}
@@ -659,13 +670,16 @@ func testString(t *testing.T, server *Server, client *Client) {
 				err := client.Set(r.key, r.val, 0).Err()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				res, err := client.Get(r.key).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
+					return
 				}
 			})
 		}
@@ -687,9 +701,11 @@ func testString(t *testing.T, server *Server, client *Client) {
 				res, err := client.SetNX(r.key, r.val, 0).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
+					return
 				}
 			})
 		}
@@ -710,6 +726,7 @@ func testString(t *testing.T, server *Server, client *Client) {
 					_, err := client.Set(r.key, r.val, 0).Result()
 					if err != nil {
 						t.Error(err)
+						return
 					}
 				}
 				res, err := client.StrLen(r.key).Result()
@@ -719,6 +736,38 @@ func testString(t *testing.T, server *Server, client *Client) {
 				}
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("SUBSTR(GETRANGE)", func(t *testing.T) {
+		key := "mykey_substr"
+		_, err := client.Set(key, "This is a string", 0).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			start    int64
+			end      int64
+			expected string
+		}{
+			{0, 3, "This"},
+			{-3, -1, "ing"},
+			{0, -1, "This is a string"},
+			{10, 100, "string"},
+		}
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%d:%d", r.start, r.end), func(t *testing.T) {
+				res, err := client.GetRange(key, r.start, r.end).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
 					return
 				}
 			})
@@ -745,13 +794,16 @@ func testHash(t *testing.T, server *Server, client *Client) {
 				err := client.HSet(r.hash, r.key, r.val).Err()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				res, err := client.HGet(r.hash, r.key).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
+					return
 				}
 			})
 		}
@@ -810,10 +862,12 @@ func testHash(t *testing.T, server *Server, client *Client) {
 				err := client.HSet(r.hash, r.key, r.val).Err()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				res, err := client.HGetAll(r.hash).Result()
 				if err != nil {
 					t.Error(err)
+					return
 				}
 				for ekey, eval := range r.expected {
 					rval, ok := res[ekey]

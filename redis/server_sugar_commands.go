@@ -18,29 +18,7 @@ import "strconv"
 
 // nolint: gocyclo, maintidx
 func (server *Server) registerSugarExecutors() {
-	// Registers string commands.
-
-	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, appendVal, err := nextSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
-		if err != nil {
-			return nil, err
-		}
-		newVal := appendVal
-		if getVal, err := getRet.String(); err == nil {
-			newVal = getVal + appendVal
-		}
-		opt := newDefaultSetOption()
-		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
-		if err != nil {
-			return nil, err
-		}
-		return NewIntegerMessage(len(newVal)), nil
-	})
+	// common internal functions
 
 	incdecExecutor := func(ctx *DBContext, cmd string, key string, val int) (*Message, error) {
 		getOpt := GetOption{}
@@ -64,6 +42,69 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return NewIntegerMessage(newVal), nil
 	}
+
+	getRangeExecutor := func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		rageValidiator := func(val int, max int) int {
+			if val < 0 {
+				val = max + val
+				if val < 0 {
+					return 0
+				}
+			}
+			if max < val {
+				val = max - 1
+			}
+			return val
+		}
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		start, err := nextIntegerArgument(cmd, "start", args)
+		if err != nil {
+			return nil, err
+		}
+		end, err := nextIntegerArgument(cmd, "end", args)
+		if err != nil {
+			return nil, err
+		}
+		getOpt := GetOption{}
+		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		if err != nil {
+			return NewNilMessage(), nil
+		}
+		getVal, err := getRet.String()
+		if err != nil {
+			return NewNilMessage(), nil
+		}
+		start = rageValidiator(start, len(getVal))
+		end = rageValidiator(end, len(getVal))
+		return NewBulkMessage(getVal[start:(end + 1)]), nil
+	}
+
+	// Registers string commands.
+
+	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, appendVal, err := nextSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		getOpt := GetOption{}
+		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		if err != nil {
+			return nil, err
+		}
+		newVal := appendVal
+		if getVal, err := getRet.String(); err == nil {
+			newVal = getVal + appendVal
+		}
+		opt := newDefaultSetOption()
+		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
+		if err != nil {
+			return nil, err
+		}
+		return NewIntegerMessage(len(newVal)), nil
+	})
 
 	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, appendVal, err := nextSetArguments(cmd, args)
@@ -107,6 +148,10 @@ func (server *Server) registerSugarExecutors() {
 		return incdecExecutor(ctx, cmd, key, -inc)
 	})
 
+	server.RegisterExexutor("GETRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		return getRangeExecutor(ctx, cmd, args)
+	})
+
 	server.RegisterExexutor("INCR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
@@ -142,5 +187,9 @@ func (server *Server) registerSugarExecutors() {
 			return NewIntegerMessage(0), nil
 		}
 		return NewIntegerMessage(len(getVal)), nil
+	})
+
+	server.RegisterExexutor("SUBSTR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		return getRangeExecutor(ctx, cmd, args)
 	})
 }
