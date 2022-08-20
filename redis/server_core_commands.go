@@ -120,6 +120,30 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Type(ctx, key)
 	})
 
+	server.RegisterExexutor("RENAME", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		newkey, err := nextStringArgument(cmd, "newkey", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Rename(ctx, key, newkey, RenameOption{NX: false})
+	})
+
+	server.RegisterExexutor("RENAMENX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		newkey, err := nextStringArgument(cmd, "newkey", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Rename(ctx, key, newkey, RenameOption{NX: true})
+	})
+
 	server.RegisterExexutor("TTL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {

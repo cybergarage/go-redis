@@ -632,6 +632,74 @@ func testGeneric(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("RENAME", func(t *testing.T) {
+		if err := client.Set("mykey_rename", "Hello", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			key      string
+			newkey   string
+			expected string
+		}{
+			{"mykey_rename", "myotherkey_rename", "Hello"},
+		}
+		for _, r := range records {
+			t.Run(r.key+"->"+r.newkey, func(t *testing.T) {
+				_, err := client.Rename(r.key, r.newkey).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				res, err := client.Get(r.newkey).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("RENAMENX", func(t *testing.T) {
+		if err := client.Set("mykey_renamenx", "Hello", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		if err := client.Set("myotherkey_renamenx", "World", 0).Err(); err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			key      string
+			newkey   string
+			expected string
+		}{
+			{"mykey_renamenx", "myotherkey_renamenx", "World"},
+		}
+		for _, r := range records {
+			t.Run(r.key+"->"+r.newkey, func(t *testing.T) {
+				_, err := client.RenameNX(r.key, r.newkey).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				res, err := client.Get(r.newkey).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("TYPE", func(t *testing.T) {
 		if err := client.Set("key1_type", "key1_type", 0).Err(); err != nil {
 			t.Error(err)

@@ -21,6 +21,7 @@ type GenericCommandHandler interface {
 	Exists(ctx *DBContext, keys []string) (*Message, error)
 	Expire(ctx *DBContext, key string, opt ExpireOption) (*Message, error)
 	Keys(ctx *DBContext, pattern string) (*Message, error)
+	Rename(ctx *DBContext, key string, newkey string, opt RenameOption) (*Message, error)
 	Type(ctx *DBContext, key string) (*Message, error)
 	TTL(ctx *DBContext, key string) (*Message, error)
 }

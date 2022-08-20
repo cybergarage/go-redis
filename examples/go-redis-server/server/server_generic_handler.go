@@ -99,6 +99,26 @@ func (server *Server) Keys(ctx *redis.DBContext, pattern string) (*redis.Message
 	return redis.NewStringArrayMessage(matchKeys), nil
 }
 
+func (server *Server) Rename(ctx *redis.DBContext, key string, newkey string, opt redis.RenameOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	if opt.NX {
+		if _, ok := db.GetRecord(newkey); ok {
+			return redis.NewIntegerMessage(0), nil
+		}
+	}
+	err = db.RenameRecord(key, newkey)
+	if err != nil {
+		return nil, err
+	}
+	if opt.NX {
+		return redis.NewIntegerMessage(1), nil
+	}
+	return redis.NewOKMessage(), nil
+}
+
 func (server *Server) TTL(ctx *redis.DBContext, key string) (*redis.Message, error) {
 	const ttlRecordNotFound int = -2
 	const ttlRecordNotSet int = -1
