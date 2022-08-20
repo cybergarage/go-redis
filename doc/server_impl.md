@@ -20,7 +20,7 @@ type Server struct {
 
 ### STEP2: Implementing your user command handler
 
-Next, implement your user command handler such as SET and GET according to the [CommandHandler](../../redis/handler.go) interface of the go-redis as the following:
+Next, implement your user command handler such as SET and GET according to the [CommandHandler](../redis/handler.go) interface of the go-redis as the following:
 
 ```
 func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
