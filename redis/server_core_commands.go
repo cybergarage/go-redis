@@ -154,25 +154,6 @@ func (server *Server) registerCoreExecutors() {
 
 	// String commands.
 
-	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := newDefaultSetOption()
-		key, val, err := nextSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.Set(ctx, key, val, opt)
-	})
-
-	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := newDefaultSetOption()
-		opt.NX = true
-		key, val, err := nextSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.Set(ctx, key, val, opt)
-	})
-
 	server.RegisterExexutor("GET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := GetOption{}
 		key, err := nextKeyArgument(cmd, args)
@@ -182,9 +163,59 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.Get(ctx, key, opt)
 	})
 
+	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := newDefaultSetOption()
+		key, val, err := nextSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Set(ctx, key, val, opt)
+	})
+
 	server.RegisterExexutor("GETSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.GET = true
+		key, val, err := nextSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Set(ctx, key, val, opt)
+	})
+
+	server.RegisterExexutor("MSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := MSetOption{
+			NX: false,
+		}
+		dir, err := nextMSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MSet(ctx, dir, opt)
+	})
+
+	server.RegisterExexutor("MSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := MSetOption{
+			NX: true,
+		}
+		dir, err := nextMSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MSet(ctx, dir, opt)
+	})
+
+	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := MGetOption{}
+		keys, err := nextKeysArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.MGet(ctx, keys, opt)
+	})
+
+	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := newDefaultSetOption()
+		opt.NX = true
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
@@ -252,36 +283,5 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HMGet(ctx, hash, keys, opt)
-	})
-
-	server.RegisterExexutor("MSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := MSetOption{
-			NX: false,
-		}
-		dir, err := nextMSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.MSet(ctx, dir, opt)
-	})
-
-	server.RegisterExexutor("MSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := MSetOption{
-			NX: true,
-		}
-		dir, err := nextMSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.MSet(ctx, dir, opt)
-	})
-
-	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := MGetOption{}
-		keys, err := nextKeysArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.MGet(ctx, keys, opt)
 	})
 }
