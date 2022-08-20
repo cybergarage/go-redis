@@ -547,58 +547,6 @@ func testString(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
-	t.Run("SET", func(t *testing.T) {
-		records := []struct {
-			key      string
-			val      string
-			expected string
-		}{
-			{"key_set", "value0", "value0"},
-			{"key_set", "value1", "value1"},
-			{"key_set", "value2", "value2"},
-		}
-
-		for _, r := range records {
-			t.Run(r.key+":"+r.val, func(t *testing.T) {
-				err := client.Set(r.key, r.val, 0).Err()
-				if err != nil {
-					t.Error(err)
-				}
-				res, err := client.Get(r.key).Result()
-				if err != nil {
-					t.Error(err)
-				}
-				if res != r.expected {
-					t.Errorf("%s != %s", res, r.expected)
-				}
-			})
-		}
-	})
-
-	t.Run("SETNX", func(t *testing.T) {
-		records := []struct {
-			key      string
-			val      string
-			expected bool
-		}{
-			{"key_setnx", "value0", true},
-			{"key_setnx", "value1", false},
-			{"key_setnx", "value2", false},
-		}
-
-		for _, r := range records {
-			t.Run(r.key+":"+r.val, func(t *testing.T) {
-				res, err := client.SetNX(r.key, r.val, 0).Result()
-				if err != nil {
-					t.Error(err)
-				}
-				if res != r.expected {
-					t.Errorf("%t != %t", res, r.expected)
-				}
-			})
-		}
-	})
-
 	t.Run("GETSET", func(t *testing.T) {
 		records := []struct {
 			key      string
@@ -689,6 +637,88 @@ func testString(t *testing.T, server *Server, client *Client) {
 				}
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("SET", func(t *testing.T) {
+		records := []struct {
+			key      string
+			val      string
+			expected string
+		}{
+			{"key_set", "value0", "value0"},
+			{"key_set", "value1", "value1"},
+			{"key_set", "value2", "value2"},
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+r.val, func(t *testing.T) {
+				err := client.Set(r.key, r.val, 0).Err()
+				if err != nil {
+					t.Error(err)
+				}
+				res, err := client.Get(r.key).Result()
+				if err != nil {
+					t.Error(err)
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+				}
+			})
+		}
+	})
+
+	t.Run("SETNX", func(t *testing.T) {
+		records := []struct {
+			key      string
+			val      string
+			expected bool
+		}{
+			{"key_setnx", "value0", true},
+			{"key_setnx", "value1", false},
+			{"key_setnx", "value2", false},
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+r.val, func(t *testing.T) {
+				res, err := client.SetNX(r.key, r.val, 0).Result()
+				if err != nil {
+					t.Error(err)
+				}
+				if res != r.expected {
+					t.Errorf("%t != %t", res, r.expected)
+				}
+			})
+		}
+	})
+
+	t.Run("STRLEN", func(t *testing.T) {
+		records := []struct {
+			key      string
+			val      string
+			expected int64
+		}{
+			{"mykey_strlen", "Hello world", 11},
+			{"nonexisting_strlen", "", 0},
+		}
+		for _, r := range records {
+			t.Run(r.key, func(t *testing.T) {
+				if 0 < len(r.val) {
+					_, err := client.Set(r.key, r.val, 0).Result()
+					if err != nil {
+						t.Error(err)
+					}
+				}
+				res, err := client.StrLen(r.key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
 					return
 				}
 			})
