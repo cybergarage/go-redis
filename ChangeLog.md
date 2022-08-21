@@ -1,12 +1,14 @@
 # Changelog
 
-## v1.0.0
-- Major commands under Redis 3.0 are supported
+## v1.1.0 (2022-xx-xx)
+- Support major set, sorted set and list commands
 
-## v0.9.x (2022-xx-xx)
+## v1.0.0 (2022-08-21)
+- Support major generic, string and hash commands
 ###  Supported
-- MSET, MSETNX, MGET
-- HSET, HGET, HGETALL, HMSET, HMGET
+- DEL, EXISTS, EXPIRE, EXPIREAT, KEYS, RENAME, RENAMENX, TTL, TYPE
+- APPEND, DECR, DECRBY, GETRANGE, INCR, INCRBY, MGET, MSET, MSETNX, STRLEN, SUBSTR
+- HDEL, HEXISTS, HGET, HGETALL, HKEYS, HLEN, HMGET, HMSET, HSET, HSETNX, HSTRLEN, HVALS
 
 ## v0.9.0 (2022-07-31)
 - Initial release  
