@@ -205,12 +205,11 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := MGetOption{}
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MGet(ctx, keys, opt)
+		return server.userCommandHandler.MGet(ctx, keys)
 	})
 
 	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
