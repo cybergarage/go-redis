@@ -779,6 +779,37 @@ func testString(t *testing.T, server *Server, client *Client) {
 func testHash(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
+	t.Run("HDEL", func(t *testing.T) {
+		key := "myhash_hdel"
+		fields := []string{"field1", "field2"}
+		err := client.HSet(key, fields[0], "foo").Err()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			fields   []string
+			expected int64
+		}{
+			{[]string{fields[0]}, 1},
+			{[]string{fields[1]}, 0},
+			{[]string{fields[0]}, 0},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.fields, ","), func(t *testing.T) {
+				res, err := client.HDel(key, r.fields...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("HSET", func(t *testing.T) {
 		records := []struct {
 			hash     string
