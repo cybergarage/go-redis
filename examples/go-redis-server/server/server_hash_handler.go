@@ -75,6 +75,10 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 	}
 
 	_, hasKey := dict[field]
+	if opt.NX && hasKey {
+		return redis.NewIntegerMessage(0), nil
+	}
+
 	dict[field] = val
 	if hasKey {
 		return redis.NewIntegerMessage(0), nil
@@ -129,7 +133,9 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 }
 
 func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]string, opt redis.HMSetOption) (*redis.Message, error) {
-	hsetOpt := redis.HSetOption{}
+	hsetOpt := redis.HSetOption{
+		NX: false,
+	}
 	for field, val := range dict {
 		if _, err := server.HSet(ctx, key, field, val, hsetOpt); err != nil {
 			return nil, err

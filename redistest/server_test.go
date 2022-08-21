@@ -905,23 +905,54 @@ func testHash(t *testing.T, server *Server, client *Client) {
 	})
 
 	t.Run("HSET", func(t *testing.T) {
+		key := "key_hset"
 		records := []struct {
-			hash     string
-			key      string
-			val      string
+			field    string
+			value    string
 			expected string
 		}{
-			{"key_hset", "key1", "Hello", "Hello"},
+			{"field1", "Hello", "Hello"},
 		}
 
 		for _, r := range records {
-			t.Run(r.hash+":"+r.key+":"+r.val, func(t *testing.T) {
-				err := client.HSet(r.hash, r.key, r.val).Err()
+			t.Run(key+":"+r.field+":"+r.value, func(t *testing.T) {
+				err := client.HSet(key, r.field, r.value).Err()
 				if err != nil {
 					t.Error(err)
 					return
 				}
-				res, err := client.HGet(r.hash, r.key).Result()
+				res, err := client.HGet(key, r.field).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("HSETNX", func(t *testing.T) {
+		key := "key_hsetnx"
+		records := []struct {
+			field    string
+			value    string
+			expected string
+		}{
+			{"field", "Hello", "Hello"},
+			{"field", "World", "Hello"},
+		}
+
+		for _, r := range records {
+			t.Run(key+":"+r.field+":"+r.value, func(t *testing.T) {
+				err := client.HSetNX(key, r.field, r.value).Err()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				res, err := client.HGet(key, r.field).Result()
 				if err != nil {
 					t.Error(err)
 					return
