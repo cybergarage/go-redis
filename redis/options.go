@@ -55,9 +55,6 @@ type HGetOption struct {
 type HMSetOption struct {
 }
 
-type HMGetOption struct {
-}
-
 type RenameOption struct {
 	NX bool
 }

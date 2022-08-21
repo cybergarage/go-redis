@@ -41,7 +41,7 @@ type HashCommandHandler interface {
 	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
 	HGetAll(ctx *DBContext, key string) (*Message, error)
 	HMSet(ctx *DBContext, key string, dict map[string]string, opt HMSetOption) (*Message, error)
-	HMGet(ctx *DBContext, key string, fields []string, opt HMGetOption) (*Message, error)
+	HMGet(ctx *DBContext, key string, fields []string) (*Message, error)
 }
 
 // CommandHandler represents a command hander interface for user commands.
