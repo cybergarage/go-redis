@@ -810,6 +810,36 @@ func testHash(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("HEXISTS", func(t *testing.T) {
+		key := "myhash_exists"
+		fields := []string{"field1", "field2"}
+		err := client.HSet(key, fields[0], "foo").Err()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		records := []struct {
+			field    string
+			expected bool
+		}{
+			{fields[0], true},
+			{fields[1], false},
+		}
+		for _, r := range records {
+			t.Run(r.field, func(t *testing.T) {
+				res, err := client.HExists(key, r.field).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%t != %t", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("HSET", func(t *testing.T) {
 		records := []struct {
 			hash     string
