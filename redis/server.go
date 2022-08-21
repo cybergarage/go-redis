@@ -231,5 +231,5 @@ func (server *Server) handleArrayMessage(ctx *DBContext, arrayMsg *proto.Array) 
 		return nil, err
 	}
 
-	return server.handleCommand(ctx, cmd, arrayMsg)
+	return server.executeCommand(ctx, cmd, arrayMsg)
 }
