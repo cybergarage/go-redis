@@ -289,7 +289,6 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("HMSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := HMSetOption{}
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -298,7 +297,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HMSet(ctx, hash, dir, opt)
+		return server.userCommandHandler.HMSet(ctx, hash, dir)
 	})
 
 	server.RegisterExexutor("HMGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {

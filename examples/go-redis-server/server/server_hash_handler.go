@@ -132,7 +132,7 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 	return arrayMsg, nil
 }
 
-func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]string, opt redis.HMSetOption) (*redis.Message, error) {
+func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]string) (*redis.Message, error) {
 	hsetOpt := redis.HSetOption{
 		NX: false,
 	}

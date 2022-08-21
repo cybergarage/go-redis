@@ -40,7 +40,7 @@ type HashCommandHandler interface {
 	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
 	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
 	HGetAll(ctx *DBContext, key string) (*Message, error)
-	HMSet(ctx *DBContext, key string, dict map[string]string, opt HMSetOption) (*Message, error)
+	HMSet(ctx *DBContext, key string, dict map[string]string) (*Message, error)
 	HMGet(ctx *DBContext, key string, fields []string) (*Message, error)
 }
 
