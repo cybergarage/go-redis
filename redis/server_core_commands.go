@@ -259,7 +259,24 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := HSetOption{}
+		opt := HSetOption{
+			NX: false,
+		}
+		hash, err := nextHashArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		key, val, err := nextSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
+	})
+
+	server.RegisterExexutor("HSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := HSetOption{
+			NX: true,
+		}
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
