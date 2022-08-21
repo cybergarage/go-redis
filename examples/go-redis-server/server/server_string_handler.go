@@ -120,7 +120,7 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) MGet(ctx *redis.DBContext, keys []string, opt redis.MGetOption) (*redis.Message, error) {
+func (server *Server) MGet(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
 	getOpt := redis.GetOption{}
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
