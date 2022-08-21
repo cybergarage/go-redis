@@ -210,6 +210,7 @@ func (server *Server) registerSugarExecutors() {
 		retMsg := NewArrayMessage()
 		nextMsg, err := arrayMsg.Next()
 		for nextMsg != nil {
+			// Appends a next key
 			key, err := nextMsg.String()
 			if err != nil {
 				break
@@ -220,6 +221,44 @@ func (server *Server) registerSugarExecutors() {
 			if err != nil {
 				break
 			}
+			// Reads a next key string
+			nextMsg, err = arrayMsg.Next()
+			if err != nil {
+				break
+			}
+		}
+		if err != nil {
+			return nil, err
+		}
+		return retMsg, nil
+	})
+
+	server.RegisterExexutor("HVALS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		getAllRet, err := server.userCommandHandler.HGetAll(ctx, key)
+		if err != nil {
+			return NewArrayMessage(), nil
+		}
+		arrayMsg, err := getAllRet.Array()
+		if err != nil {
+			return NewArrayMessage(), nil
+		}
+		retMsg := NewArrayMessage()
+		nextMsg, err := arrayMsg.Next()
+		for nextMsg != nil {
+			// Skips a next key, and adds a next value string
+			nextMsg, err = arrayMsg.Next()
+			if nextMsg == nil || err != nil {
+				break
+			}
+			val, err := nextMsg.String()
+			if err != nil {
+				break
+			}
+			retMsg.Append(NewBulkMessage(val))
 			// Reads a next key string
 			nextMsg, err = arrayMsg.Next()
 			if err != nil {

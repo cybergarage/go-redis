@@ -776,7 +776,7 @@ func testString(t *testing.T, server *Server, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo
+// nolint: maintidx, gocyclo, dupl
 func testHash(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
@@ -970,6 +970,36 @@ func testHash(t *testing.T, server *Server, client *Client) {
 					if rval != eval {
 						t.Errorf("%s != %s", rval, eval)
 					}
+				}
+			})
+		}
+	})
+
+	t.Run("HVALS", func(t *testing.T) {
+		key := "myhash_hvals"
+		records := []struct {
+			fields []string
+			values []string
+		}{
+			{[]string{"field1", "field2"}, []string{"Hello", "World"}},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.fields, ","), func(t *testing.T) {
+				for n, field := range r.fields {
+					err := client.HSet(key, field, r.values[n]).Err()
+					if err != nil {
+						t.Error(err)
+						return
+					}
+				}
+				res, err := client.HVals(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !reflect.DeepEqual(res, r.values) {
+					t.Errorf("%s != %s", res, r.fields)
+					return
 				}
 			})
 		}
