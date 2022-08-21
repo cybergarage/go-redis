@@ -144,7 +144,7 @@ func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]st
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) HMGet(ctx *redis.DBContext, key string, fields []string, opt redis.HMGetOption) (*redis.Message, error) {
+func (server *Server) HMGet(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
 	hgetOpt := redis.HGetOption{}
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
