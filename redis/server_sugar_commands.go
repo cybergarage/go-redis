@@ -193,4 +193,42 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return NewIntegerMessage(1), nil
 	})
+
+	server.RegisterExexutor("HKEYS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		getAllRet, err := server.userCommandHandler.HGetAll(ctx, key)
+		if err != nil {
+			return NewArrayMessage(), nil
+		}
+		arrayMsg, err := getAllRet.Array()
+		if err != nil {
+			return NewArrayMessage(), nil
+		}
+		retMsg := NewArrayMessage()
+		nextMsg, err := arrayMsg.Next()
+		for nextMsg != nil {
+			key, err := nextMsg.String()
+			if err != nil {
+				break
+			}
+			retMsg.Append(NewBulkMessage(key))
+			// Skips a next value string
+			_, err = arrayMsg.Next()
+			if err != nil {
+				break
+			}
+			// Reads a next key string
+			nextMsg, err = arrayMsg.Next()
+			if err != nil {
+				break
+			}
+		}
+		if err != nil {
+			return nil, err
+		}
+		return retMsg, nil
+	})
 }

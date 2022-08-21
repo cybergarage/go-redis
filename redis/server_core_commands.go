@@ -237,19 +237,6 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.HDel(ctx, hash, keys)
 	})
 
-	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := HSetOption{}
-		hash, err := nextHashArgument(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		key, val, err := nextSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
-	})
-
 	server.RegisterExexutor("HGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HGetOption{}
 		hash, err := nextHashArgument(cmd, args)
@@ -269,6 +256,19 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.HGetAll(ctx, hash)
+	})
+
+	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := HSetOption{}
+		hash, err := nextHashArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		key, val, err := nextSetArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
 	})
 
 	server.RegisterExexutor("HMSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
