@@ -16,6 +16,7 @@ package redistest
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -834,6 +835,36 @@ func testHash(t *testing.T, server *Server, client *Client) {
 				}
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("HKEYS", func(t *testing.T) {
+		key := "myhash_hkeys"
+		records := []struct {
+			fields []string
+			values []string
+		}{
+			{[]string{"field1", "field2"}, []string{"Hello", "World"}},
+		}
+		for _, r := range records {
+			t.Run(strings.Join(r.fields, ","), func(t *testing.T) {
+				for n, field := range r.fields {
+					err := client.HSet(key, field, r.values[n]).Err()
+					if err != nil {
+						t.Error(err)
+						return
+					}
+				}
+				res, err := client.HKeys(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !reflect.DeepEqual(res, r.fields) {
+					t.Errorf("%s != %s", res, r.fields)
 					return
 				}
 			})
