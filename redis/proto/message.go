@@ -102,6 +102,16 @@ func (msg *Message) Bytes() ([]byte, error) {
 	return msg.bytes, nil
 }
 
+// Append appends a message to the array message.
+func (msg *Message) Append(arrayMsg *Message) error {
+	array, err := msg.Array()
+	if err != nil {
+		return err
+	}
+	array.Append(arrayMsg)
+	return nil
+}
+
 // String returns the message string if the message type is string, otherwise it returns an error.
 func (msg *Message) String() (string, error) {
 	switch msg.Type {
