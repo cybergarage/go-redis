@@ -42,9 +42,6 @@ type MSetOption struct {
 	NX bool
 }
 
-type MGetOption struct {
-}
-
 type HSetOption struct {
 	NX bool
 }
