@@ -38,7 +38,7 @@ type StringCommandHandler interface {
 type HashCommandHandler interface {
 	HDel(ctx *DBContext, key string, fields []string) (*Message, error)
 	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
-	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
+	HGet(ctx *DBContext, key string, field string) (*Message, error)
 	HGetAll(ctx *DBContext, key string) (*Message, error)
 	HMSet(ctx *DBContext, key string, dict map[string]string) (*Message, error)
 	HMGet(ctx *DBContext, key string, fields []string) (*Message, error)
