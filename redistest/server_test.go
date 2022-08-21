@@ -871,6 +871,39 @@ func testHash(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("HLEN", func(t *testing.T) {
+		key := "myhash_hlen"
+		records := []struct {
+			field    string
+			value    string
+			expected int
+		}{
+			{"", "", 0},
+			{"field1", "Hello", 1},
+			{"field2", "World", 2},
+		}
+		for _, r := range records {
+			t.Run(r.field, func(t *testing.T) {
+				if 0 < len(r.field) {
+					err := client.HSet(key, r.field, r.value).Err()
+					if err != nil {
+						t.Error(err)
+						return
+					}
+				}
+				res, err := client.HLen(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != int64(r.expected) {
+					t.Errorf("%d != %d", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("HSET", func(t *testing.T) {
 		records := []struct {
 			hash     string
