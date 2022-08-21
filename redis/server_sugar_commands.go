@@ -147,12 +147,7 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("STRLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, err := nextKeyArgument(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		getRet, err := server.executeCommand(ctx, "GET", args)
 		if err != nil {
 			return NewIntegerMessage(0), nil
 		}
@@ -170,16 +165,7 @@ func (server *Server) registerSugarExecutors() {
 	// Registers sugar hash commands.
 
 	server.RegisterExexutor("HEXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := HGetOption{}
-		key, err := nextKeyArgument(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		field, err := nextStringArgument(cmd, "field", args)
-		if err != nil {
-			return nil, err
-		}
-		getRet, err := server.userCommandHandler.HGet(ctx, key, field, opt)
+		getRet, err := server.executeCommand(ctx, "HGET", args)
 		if err != nil {
 			return NewIntegerMessage(0), nil
 		}
@@ -191,13 +177,9 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("HKEYS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, err := nextKeyArgument(cmd, args)
+		getAllRet, err := server.executeCommand(ctx, "HGETALL", args)
 		if err != nil {
 			return nil, err
-		}
-		getAllRet, err := server.userCommandHandler.HGetAll(ctx, key)
-		if err != nil {
-			return NewArrayMessage(), nil
 		}
 		arrayMsg, err := getAllRet.Array()
 		if err != nil {
@@ -257,13 +239,9 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("HVALS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, err := nextKeyArgument(cmd, args)
+		getAllRet, err := server.executeCommand(ctx, "HGETALL", args)
 		if err != nil {
 			return nil, err
-		}
-		getAllRet, err := server.userCommandHandler.HGetAll(ctx, key)
-		if err != nil {
-			return NewArrayMessage(), nil
 		}
 		arrayMsg, err := getAllRet.Array()
 		if err != nil {
