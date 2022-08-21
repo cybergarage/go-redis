@@ -225,6 +225,18 @@ func (server *Server) registerCoreExecutors() {
 
 	// Hash commands.
 
+	server.RegisterExexutor("HDEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		hash, err := nextHashArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		keys, err := nextKeysArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.HDel(ctx, hash, keys)
+	})
+
 	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{}
 		hash, err := nextHashArgument(cmd, args)

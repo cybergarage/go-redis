@@ -36,6 +36,7 @@ type StringCommandHandler interface {
 
 // HashCommandHandler represents a core command hander interface for hash commands.
 type HashCommandHandler interface {
+	HDel(ctx *DBContext, key string, fields []string) (*Message, error)
 	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
 	HGet(ctx *DBContext, key string, field string, opt HGetOption) (*Message, error)
 	HGetAll(ctx *DBContext, key string) (*Message, error)
