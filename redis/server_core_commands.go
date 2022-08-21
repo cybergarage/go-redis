@@ -238,7 +238,6 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("HGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := HGetOption{}
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -247,7 +246,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HGet(ctx, hash, key, opt)
+		return server.userCommandHandler.HGet(ctx, hash, key)
 	})
 
 	server.RegisterExexutor("HGETALL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
