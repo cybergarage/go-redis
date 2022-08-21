@@ -25,8 +25,8 @@ type Arguments = *proto.Array
 type Executor func(*DBContext, string, Arguments) (*Message, error)
 type Executors map[string]Executor
 
-// handleCommand handles a client command message.
-func (server *Server) handleCommand(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+// executeCommand handles a client command message.
+func (server *Server) executeCommand(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 	if server.userCommandHandler == nil {
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}

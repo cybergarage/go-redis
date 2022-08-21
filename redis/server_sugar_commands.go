@@ -43,45 +43,6 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(newVal), nil
 	}
 
-	getRangeExecutor := func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		rageValidiator := func(val int, max int) int {
-			if val < 0 {
-				val = max + val
-				if val < 0 {
-					return 0
-				}
-			}
-			if max < val {
-				val = max - 1
-			}
-			return val
-		}
-		key, err := nextKeyArgument(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		start, err := nextIntegerArgument(cmd, "start", args)
-		if err != nil {
-			return nil, err
-		}
-		end, err := nextIntegerArgument(cmd, "end", args)
-		if err != nil {
-			return nil, err
-		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
-		if err != nil {
-			return NewNilMessage(), nil
-		}
-		getVal, err := getRet.String()
-		if err != nil {
-			return NewNilMessage(), nil
-		}
-		start = rageValidiator(start, len(getVal))
-		end = rageValidiator(end, len(getVal))
-		return NewBulkMessage(getVal[start:(end + 1)]), nil
-	}
-
 	// Registers sugar string commands.
 
 	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
@@ -127,7 +88,42 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("GETRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		return getRangeExecutor(ctx, cmd, args)
+		rageValidiator := func(val int, max int) int {
+			if val < 0 {
+				val = max + val
+				if val < 0 {
+					return 0
+				}
+			}
+			if max < val {
+				val = max - 1
+			}
+			return val
+		}
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		start, err := nextIntegerArgument(cmd, "start", args)
+		if err != nil {
+			return nil, err
+		}
+		end, err := nextIntegerArgument(cmd, "end", args)
+		if err != nil {
+			return nil, err
+		}
+		getOpt := GetOption{}
+		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		if err != nil {
+			return NewNilMessage(), nil
+		}
+		getVal, err := getRet.String()
+		if err != nil {
+			return NewNilMessage(), nil
+		}
+		start = rageValidiator(start, len(getVal))
+		end = rageValidiator(end, len(getVal))
+		return NewBulkMessage(getVal[start:(end + 1)]), nil
 	})
 
 	server.RegisterExexutor("INCR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
@@ -168,7 +164,7 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("SUBSTR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		return getRangeExecutor(ctx, cmd, args)
+		return server.executeCommand(ctx, "GETRANGE", args)
 	})
 
 	// Registers sugar hash commands.
@@ -234,7 +230,7 @@ func (server *Server) registerSugarExecutors() {
 	})
 
 	server.RegisterExexutor("HLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		retMsg, err := server.handleCommand(ctx, "HKEYS", args)
+		retMsg, err := server.executeCommand(ctx, "HKEYS", args)
 		if err != nil {
 			return nil, err
 		}
