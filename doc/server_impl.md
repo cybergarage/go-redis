@@ -31,7 +31,7 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption) (*redis.Message, error) {
+func (server *Server) Get(ctx *redis.DBContext, key string) (*redis.Message, error) {
 	dbID := ctx.ID()
 
     ....
