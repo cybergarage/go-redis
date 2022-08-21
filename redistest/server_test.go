@@ -1008,6 +1008,41 @@ func testHash(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("HSTRLEN", func(t *testing.T) {
+		key := "myhash_hstrlen"
+		records := []struct {
+			field string
+			value string
+		}{
+			{"f1", "HelloWorld"},
+			{"f2", "99"},
+			{"f3", "-256"},
+		}
+		args := map[string]interface{}{}
+		for _, r := range records {
+			args[r.field] = r.value
+		}
+		err := client.HMSet(key, args).Err()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		for _, r := range records {
+			t.Run(r.field, func(t *testing.T) {
+				// Note: go-redis does not support HSTRLEN yet
+				res, err := client.HGet(key, r.field).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(res) != len(r.value) {
+					t.Errorf("%d != %d", len(res), len(r.value))
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("HVALS", func(t *testing.T) {
 		key := "myhash_hvals"
 		records := []struct {

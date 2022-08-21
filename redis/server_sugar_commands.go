@@ -241,6 +241,21 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(arrayMsg.Size()), nil
 	})
 
+	server.RegisterExexutor("HSTRLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		retMsg, err := server.executeCommand(ctx, "HGET", args)
+		if err != nil {
+			return nil, err
+		}
+		if retMsg.IsNil() {
+			return NewIntegerMessage(0), nil
+		}
+		retStr, err := retMsg.String()
+		if err != nil {
+			return nil, err
+		}
+		return NewIntegerMessage(len(retStr)), nil
+	})
+
 	server.RegisterExexutor("HVALS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
