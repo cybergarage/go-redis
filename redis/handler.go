@@ -29,7 +29,7 @@ type GenericCommandHandler interface {
 // StringHandler represents a core command hander interface for string commands.
 type StringCommandHandler interface {
 	Set(ctx *DBContext, key string, val string, opt SetOption) (*Message, error)
-	Get(ctx *DBContext, key string, opt GetOption) (*Message, error)
+	Get(ctx *DBContext, key string) (*Message, error)
 	MSet(ctx *DBContext, dict map[string]string, opt MSetOption) (*Message, error)
 	MGet(ctx *DBContext, keys []string) (*Message, error)
 }

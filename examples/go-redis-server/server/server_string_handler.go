@@ -67,7 +67,7 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption) (*redis.Message, error) {
+func (server *Server) Get(ctx *redis.DBContext, key string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
 		return nil, err
@@ -85,9 +85,8 @@ func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption)
 
 func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
 	if opt.NX {
-		getOpt := redis.GetOption{}
 		for key := range dict {
-			res, err := server.Get(ctx, key, getOpt)
+			res, err := server.Get(ctx, key)
 			if err != nil {
 				return nil, err
 			}
@@ -121,11 +120,10 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 }
 
 func (server *Server) MGet(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	getOpt := redis.GetOption{}
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, key := range keys {
-		msg, err := server.Get(ctx, key, getOpt)
+		msg, err := server.Get(ctx, key)
 		if err != nil {
 			return nil, err
 		}
