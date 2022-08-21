@@ -69,7 +69,7 @@ O,STRLEN,2.2.0,
 O,SUBSTR,1.0.0,
 Supported,Hash Command,Redis Version,Note
 O,HDEL,2.0.0,
--,HEXISTS,2.0.0,
+O,HEXISTS,2.0.0,
 O,HGET,2.0.0,
 O,HGETALL,2.0.0,
 -,HINCRBY,2.0.0,

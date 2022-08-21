@@ -18,7 +18,7 @@ import "strconv"
 
 // nolint: gocyclo, maintidx
 func (server *Server) registerSugarExecutors() {
-	// common internal functions
+	// common internal sugar functions
 
 	incdecExecutor := func(ctx *DBContext, cmd string, key string, val int) (*Message, error) {
 		getOpt := GetOption{}
@@ -82,29 +82,7 @@ func (server *Server) registerSugarExecutors() {
 		return NewBulkMessage(getVal[start:(end + 1)]), nil
 	}
 
-	// Registers string commands.
-
-	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, appendVal, err := nextSetArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
-		if err != nil {
-			return nil, err
-		}
-		newVal := appendVal
-		if getVal, err := getRet.String(); err == nil {
-			newVal = getVal + appendVal
-		}
-		opt := newDefaultSetOption()
-		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
-		if err != nil {
-			return nil, err
-		}
-		return NewIntegerMessage(len(newVal)), nil
-	})
+	// Registers sugar string commands.
 
 	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, appendVal, err := nextSetArguments(cmd, args)
@@ -191,5 +169,28 @@ func (server *Server) registerSugarExecutors() {
 
 	server.RegisterExexutor("SUBSTR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		return getRangeExecutor(ctx, cmd, args)
+	})
+
+	// Registers sugar hash commands.
+
+	server.RegisterExexutor("HEXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := HGetOption{}
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		field, err := nextStringArgument(cmd, "field", args)
+		if err != nil {
+			return nil, err
+		}
+		getRet, err := server.userCommandHandler.HGet(ctx, key, field, opt)
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+		_, err = getRet.String()
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+		return NewIntegerMessage(1), nil
 	})
 }
