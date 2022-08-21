@@ -21,8 +21,7 @@ func (server *Server) registerSugarExecutors() {
 	// common internal sugar functions
 
 	incdecExecutor := func(ctx *DBContext, cmd string, key string, val int) (*Message, error) {
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		getRet, err := server.userCommandHandler.Get(ctx, key)
 		if err != nil {
 			return nil, err
 		}
@@ -50,8 +49,7 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		getRet, err := server.userCommandHandler.Get(ctx, key)
 		if err != nil {
 			return nil, err
 		}
@@ -112,8 +110,7 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		getOpt := GetOption{}
-		getRet, err := server.userCommandHandler.Get(ctx, key, getOpt)
+		getRet, err := server.userCommandHandler.Get(ctx, key)
 		if err != nil {
 			return NewNilMessage(), nil
 		}

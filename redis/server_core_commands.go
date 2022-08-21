@@ -155,12 +155,11 @@ func (server *Server) registerCoreExecutors() {
 	// String commands.
 
 	server.RegisterExexutor("GET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		opt := GetOption{}
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Get(ctx, key, opt)
+		return server.userCommandHandler.Get(ctx, key)
 	})
 
 	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
