@@ -20,67 +20,29 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
-func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	var oldVal []byte = nil
-	hasOldRecord := false
-	if opt.NX || opt.GET {
-		var currRecord *Record
-		currRecord, hasOldRecord = db.GetRecord(key)
-		switch {
-		case opt.NX:
-			if hasOldRecord {
-				return redis.NewIntegerMessage(0), nil
-			}
-		case opt.GET:
-			if hasOldRecord {
-				stringData, ok := currRecord.Data.(string)
-				if ok {
-					oldVal = []byte(stringData)
-				}
-			}
-		}
-	}
-
-	record := &Record{
-		Key:       key,
-		Data:      val,
-		Timestamp: time.Now(),
-		TTL:       0,
-	}
-	db.SetRecord(record)
-
-	switch {
-	case opt.NX:
-		return redis.NewIntegerMessage(1), nil
-	case opt.GET:
-		if hasOldRecord && oldVal != nil {
-			return redis.NewBulkMessage(string(oldVal)), nil
-		}
-		return redis.NewNilMessage(), nil
-	}
-
-	return redis.NewOKMessage(), nil
-}
-
-func (server *Server) Get(ctx *redis.DBContext, key string, opt redis.GetOption) (*redis.Message, error) {
+func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
 		return nil, err
 	}
 	record, ok := db.GetRecord(key)
 	if !ok {
-		return redis.NewNilMessage(), nil
+		return redis.NewIntegerMessage(0), nil
 	}
-	stringData, ok := record.Data.(string)
-	if ok {
-		return redis.NewStringMessage(stringData), nil
+	dict, ok := record.Data.(HashData)
+	if !ok {
+		return redis.NewIntegerMessage(0), nil
 	}
-	return redis.NewNilMessage(), nil
+	removedFields := 0
+	for _, field := range fields {
+		_, ok := dict[field]
+		if !ok {
+			continue
+		}
+		delete(dict, field)
+		removedFields++
+	}
+	return redis.NewIntegerMessage(removedFields), nil
 }
 
 // nolint: ifshort
@@ -163,57 +125,6 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 		array.Append(redis.NewBulkMessage(val))
 	}
 
-	return arrayMsg, nil
-}
-
-func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
-	if opt.NX {
-		getOpt := redis.GetOption{}
-		for key := range dict {
-			res, err := server.Get(ctx, key, getOpt)
-			if err != nil {
-				return nil, err
-			}
-			if !res.IsNil() {
-				return redis.NewIntegerMessage(0), nil
-			}
-		}
-	}
-
-	now := time.Now()
-	setOpt := redis.SetOption{
-		NX:      true,
-		XX:      false,
-		EX:      0,
-		PX:      0,
-		EXAT:    now,
-		PXAT:    now,
-		KEEPTTL: false,
-		GET:     false,
-	}
-	for key, val := range dict {
-		if _, err := server.Set(ctx, key, val, setOpt); err != nil {
-			return nil, err
-		}
-	}
-
-	if opt.NX {
-		return redis.NewIntegerMessage(1), nil
-	}
-	return redis.NewOKMessage(), nil
-}
-
-func (server *Server) MGet(ctx *redis.DBContext, keys []string, opt redis.MGetOption) (*redis.Message, error) {
-	getOpt := redis.GetOption{}
-	arrayMsg := redis.NewArrayMessage()
-	array, _ := arrayMsg.Array()
-	for _, key := range keys {
-		msg, err := server.Get(ctx, key, getOpt)
-		if err != nil {
-			return nil, err
-		}
-		array.Append(msg)
-	}
 	return arrayMsg, nil
 }
 
