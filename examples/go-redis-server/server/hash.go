@@ -14,12 +14,4 @@
 
 package server
 
-import "time"
-
-// Record represents a database record.
-type Record struct {
-	Key       string
-	Data      any
-	Timestamp time.Time
-	TTL       time.Duration
-}
+type Hash map[string]string

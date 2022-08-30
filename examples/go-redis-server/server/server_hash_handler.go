@@ -29,7 +29,7 @@ func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
-	dict, ok := record.Data.(HashData)
+	dict, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
@@ -52,17 +52,17 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 		return nil, err
 	}
 
-	var dict HashData
+	var dict Hash
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
-		dict, ok = record.Data.(HashData)
+		dict, ok = record.Data.(Hash)
 		if !ok {
 			hasRecord = false
 		}
 	}
 	if !hasRecord {
-		dict := HashData{}
+		dict := Hash{}
 		dict[field] = val
 		record := &Record{
 			Key:       key,
@@ -95,7 +95,7 @@ func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*red
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	dict, ok := record.Data.(HashData)
+	dict, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
@@ -118,7 +118,7 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 		return arrayMsg, nil
 	}
 
-	dict, ok := record.Data.(HashData)
+	dict, ok := record.Data.(Hash)
 	if !ok {
 		return arrayMsg, nil
 	}
