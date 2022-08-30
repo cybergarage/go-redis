@@ -2,6 +2,7 @@
 
 ## v1.1.0 (2022-xx-xx)
 - Support major set, sorted set and list commands
+- LINDEX, LLEN, LPOP, LPUSH, LRANGE, LREM, LSET, LTRIM, RPOP, RPUSH
 
 ## v1.0.0 (2022-08-21)
 - Support major generic, string and hash commands
