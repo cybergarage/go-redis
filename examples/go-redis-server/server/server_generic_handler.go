@@ -77,7 +77,7 @@ func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, er
 	switch record.Data.(type) {
 	case string:
 		return redis.NewStringMessage("string"), nil
-	case HashData:
+	case Hash:
 		return redis.NewStringMessage("hash"), nil
 	}
 	return redis.NewStringMessage("none"), nil
