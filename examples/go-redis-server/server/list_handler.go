@@ -28,7 +28,7 @@ func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.
 		return nil, err
 	}
 
-	if _, hasRecord := db.GetRecord(key); !hasRecord {
+	if !db.HasRecord(key) {
 		return redis.NewNilMessage(), nil
 	}
 
@@ -71,8 +71,7 @@ func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, op
 	}
 
 	if opt.X {
-		_, hasRecord := db.GetRecord(key)
-		if !hasRecord {
+		if !db.HasRecord(key) {
 			return redis.NewIntegerMessage(0), nil
 		}
 	}
@@ -98,8 +97,7 @@ func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, op
 	}
 
 	if opt.X {
-		_, hasRecord := db.GetRecord(key)
-		if !hasRecord {
+		if !db.HasRecord(key) {
 			return redis.NewIntegerMessage(0), nil
 		}
 	}
@@ -124,7 +122,7 @@ func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.
 		return nil, err
 	}
 
-	if _, hasRecord := db.GetRecord(key); !hasRecord {
+	if !db.HasRecord(key) {
 		return redis.NewNilMessage(), nil
 	}
 
