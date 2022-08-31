@@ -77,7 +77,29 @@ func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, op
 }
 
 func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
-	return nil, nil
+	if opt.X {
+		db, err := server.GetDatabase(ctx.ID())
+		if err != nil {
+			return nil, err
+		}
+		_, hasRecord := db.GetRecord(key)
+		if !hasRecord {
+			return redis.NewIntegerMessage(0), nil
+		}
+	}
+
+	record, list, err := server.getDatabaseListRecord(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, elem := range elems {
+		list = append(list, elem)
+	}
+
+	record.Data = list
+
+	return redis.NewIntegerMessage(len(list)), nil
 }
 
 func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
