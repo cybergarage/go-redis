@@ -35,7 +35,7 @@ func (server *Server) getDatabaseListRecord(ctx *redis.DBContext, key string) (*
 		var ok bool
 		list, ok = record.Data.(List)
 		if !ok {
-			hasRecord = false
+			return nil, nil, fmt.Errorf(errorInvalidStoredDataType, record.Data)
 		}
 	}
 	if !hasRecord {
@@ -242,7 +242,7 @@ func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, er
 
 	list, ok := record.Data.(List)
 	if !ok {
-		return redis.NewErrorMessage(fmt.Errorf(errorInvalidDataType, record.Data)), nil
+		return redis.NewErrorMessage(fmt.Errorf(errorInvalidStoredDataType, record.Data)), nil
 	}
 
 	return redis.NewIntegerMessage(len(list)), nil
