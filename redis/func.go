@@ -127,7 +127,7 @@ func nextPopArguments(cmd string, args Arguments) (string, int, error) {
 		}
 		cnt = 1
 	}
-	return key, cnt, err
+	return key, cnt, nil
 }
 
 // Expire argument fuctions
