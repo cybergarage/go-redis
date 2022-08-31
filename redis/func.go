@@ -106,13 +106,14 @@ func nextHashArgument(cmd string, args Arguments) (string, error) {
 
 // List argument fuctions
 
-// func nextPushArgument(cmd string, args Arguments) (string, error) {
-// 	key, err := nextKeyArgument(cmd, args)
-// 	if err != nil {
-// 		return "", nil
-// 	}
-// 	return nextStringArgument(cmd, "hash", args)
-// }
+func nextPushArguments(cmd string, args Arguments) (string, []string, error) {
+	key, err := nextKeyArgument(cmd, args)
+	if err != nil {
+		return "", nil, nil
+	}
+	elems, err := nextStringsArguments(cmd, args)
+	return key, elems, err
+}
 
 // Expire argument fuctions
 
