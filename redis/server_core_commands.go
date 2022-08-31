@@ -331,6 +331,14 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.LLen(ctx, key)
 	})
 
+	server.RegisterExexutor("LPOP", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, cnt, err := nextPopArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.LPop(ctx, key, cnt)
+	})
+
 	server.RegisterExexutor("LPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {

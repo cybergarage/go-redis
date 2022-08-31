@@ -51,6 +51,48 @@ func (server *Server) getDatabaseListRecord(ctx *redis.DBContext, key string) (*
 	return record, list, nil
 }
 
+func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	if _, hasRecord := db.GetRecord(key); !hasRecord {
+		return redis.NewNilMessage(), nil
+	}
+
+	record, list, err := server.getDatabaseListRecord(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+
+	if count < 1 {
+		return redis.NewNilMessage(), nil
+	}
+
+	if count == 1 {
+		if len(list) < 1 {
+			return redis.NewNilMessage(), nil
+		}
+		msg := redis.NewBulkMessage(list[0])
+		record.Data = list[1:]
+		return msg, nil
+	}
+
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for n := 0; n < count; n++ {
+		if len(list) < 1 {
+			continue
+		}
+		array.Append(redis.NewBulkMessage(list[0]))
+		list = list[1:]
+	}
+	record.Data = list
+
+	return arrayMsg, nil
+}
+
 func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
 	if opt.X {
 		db, err := server.GetDatabase(ctx.ID())
@@ -101,10 +143,6 @@ func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, op
 	record.Data = list
 
 	return redis.NewIntegerMessage(len(list)), nil
-}
-
-func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
-	return nil, nil
 }
 
 func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
