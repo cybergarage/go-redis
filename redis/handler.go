@@ -55,12 +55,19 @@ type ListCommandHandler interface {
 	LLen(ctx *DBContext, key string) (*Message, error)
 }
 
+// SetCommandHandler represents a core command hander interface for set commands.
+type SetCommandHandler interface {
+	SAdd(ctx *DBContext, key string, members []string) (*Message, error)
+	SMembers(ctx *DBContext, key string) (*Message, error)
+}
+
 // CommandHandler represents a command hander interface for user commands.
 type CommandHandler interface {
 	GenericCommandHandler
 	StringCommandHandler
 	HashCommandHandler
 	ListCommandHandler
+	SetCommandHandler
 }
 
 // SystemCommandHandler represents a hander interface for system commands.

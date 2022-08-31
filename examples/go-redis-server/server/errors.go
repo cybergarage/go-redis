@@ -21,5 +21,5 @@ import (
 var ErrNotFound = errors.New("not found")
 
 const (
-	errorInvalidDataType = "invalid message type (%T)"
+	errorInvalidStoredDataType = "invalid stored data type (%T)"
 )
