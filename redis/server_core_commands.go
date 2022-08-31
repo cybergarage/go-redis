@@ -311,6 +311,26 @@ func (server *Server) registerCoreExecutors() {
 
 	// List commands.
 
+	server.RegisterExexutor("LINDEX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		idx, err := nextIntegerArgument(cmd, "index", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.LIndex(ctx, key, idx)
+	})
+
+	server.RegisterExexutor("LLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.LLen(ctx, key)
+	})
+
 	server.RegisterExexutor("LPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
@@ -329,24 +349,6 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.LPush(ctx, key, elems, opt)
 	})
 
-	server.RegisterExexutor("RPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, elems, err := nextPushArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		opt := PushOption{X: false}
-		return server.userCommandHandler.RPush(ctx, key, elems, opt)
-	})
-
-	server.RegisterExexutor("RPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, elems, err := nextPushArguments(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		opt := PushOption{X: true}
-		return server.userCommandHandler.RPush(ctx, key, elems, opt)
-	})
-
 	server.RegisterExexutor("LRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
@@ -363,11 +365,21 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.LRange(ctx, key, start, end)
 	})
 
-	server.RegisterExexutor("LLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, err := nextKeyArgument(cmd, args)
+	server.RegisterExexutor("RPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.LLen(ctx, key)
+		opt := PushOption{X: false}
+		return server.userCommandHandler.RPush(ctx, key, elems, opt)
+	})
+
+	server.RegisterExexutor("RPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := PushOption{X: true}
+		return server.userCommandHandler.RPush(ctx, key, elems, opt)
 	})
 }
