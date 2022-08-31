@@ -109,10 +109,25 @@ func nextHashArgument(cmd string, args Arguments) (string, error) {
 func nextPushArguments(cmd string, args Arguments) (string, []string, error) {
 	key, err := nextKeyArgument(cmd, args)
 	if err != nil {
-		return "", nil, nil
+		return "", nil, err
 	}
 	elems, err := nextStringsArguments(cmd, args)
 	return key, elems, err
+}
+
+func nextPopArguments(cmd string, args Arguments) (string, int, error) {
+	key, err := nextKeyArgument(cmd, args)
+	if err != nil {
+		return "", 0, err
+	}
+	cnt, err := nextIntegerArgument(cmd, "count", args)
+	if err != nil {
+		if !errors.Is(err, proto.ErrEOM) {
+			return "", 0, err
+		}
+		cnt = 1
+	}
+	return key, cnt, err
 }
 
 // Expire argument fuctions
