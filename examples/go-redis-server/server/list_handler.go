@@ -15,6 +15,7 @@
 package server
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/cybergarage/go-redis/redis"
@@ -139,6 +140,21 @@ func (server *Server) LIndex(ctx *redis.DBContext, key string, index int) (*redi
 	return nil, nil
 }
 
-func (server *Server) LLen(ctx *redis.DBContext, key string, index int) (*redis.Message, error) {
-	return nil, nil
+func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	record, hasRecord := db.GetRecord(key)
+	if !hasRecord {
+		return redis.NewIntegerMessage(0), nil
+	}
+
+	list, ok := record.Data.(List)
+	if !ok {
+		return redis.NewErrorMessage(fmt.Errorf(errorInvalidDataType, record.Data)), nil
+	}
+
+	return redis.NewIntegerMessage(len(list)), nil
 }
