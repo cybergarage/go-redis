@@ -81,6 +81,10 @@ func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, er
 		return redis.NewStringMessage("hash"), nil
 	case List:
 		return redis.NewStringMessage("list"), nil
+	case Set:
+		return redis.NewStringMessage("set"), nil
+	case ZSet:
+		return redis.NewStringMessage("zset"), nil
 	}
 	return redis.NewStringMessage("none"), nil
 }
