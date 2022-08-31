@@ -52,7 +52,7 @@ type ListCommandHandler interface {
 	RPop(ctx *DBContext, key string, count int) (*Message, error)
 	LRange(ctx *DBContext, key string, start int, stop int) (*Message, error)
 	LIndex(ctx *DBContext, key string, index int) (*Message, error)
-	LLen(ctx *DBContext, key string, index int) (*Message, error)
+	LLen(ctx *DBContext, key string) (*Message, error)
 }
 
 // CommandHandler represents a command hander interface for user commands.
