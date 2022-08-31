@@ -108,7 +108,7 @@ O,RPOP,1.0.0
 O,RPUSH,1.0.0
 O,RPUSHX,2.2.0
 Supported,List Command,Redis Version,Note
--,SADD,1.0.0
+O,SADD,1.0.0
 -,SCARD1.0.0
 -,SDIFF,1.0.0
 -,SDIFFSTORE,1.0.0
@@ -116,7 +116,7 @@ Supported,List Command,Redis Version,Note
 -,SINTERCARD,7.0.0
 -,SINTERSTORE,1.0.0
 -,SISMEMBER,1.0.0
--,SMEMBERS,1.0.0
+O,SMEMBERS,1.0.0
 -,SMISMEMBER,6.2.0
 -,SMOVE,1.0.0
 -,SPOP,1.0.0
