@@ -51,6 +51,17 @@ func (server *Server) getDatabaseListRecord(ctx *redis.DBContext, key string) (*
 }
 
 func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
+	if opt.X {
+		db, err := server.GetDatabase(ctx.ID())
+		if err != nil {
+			return nil, err
+		}
+		_, hasRecord := db.GetRecord(key)
+		if !hasRecord {
+			return redis.NewIntegerMessage(0), nil
+		}
+	}
+
 	record, list, err := server.getDatabaseListRecord(ctx, key)
 	if err != nil {
 		return nil, err

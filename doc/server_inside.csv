@@ -97,9 +97,9 @@ Supported,List Command,Redis Version,Note
 -,LMPOP,7.0.0
 -,LPOP,1.0.0
 -,LPOS,6.2.0
--,LPUSH,1.0.0
--,LPUSHX,2.2.0
--,LRANGE,1.0.0
+O,LPUSH,1.0.0
+O,LPUSHX,2.2.0
+O,LRANGE,1.0.0
 -,LREM,1.0.0
 -,LSET,1.0.0
 -,LTRIM,1.0.0
