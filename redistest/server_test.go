@@ -1173,4 +1173,54 @@ func testList(t *testing.T, server *Server, client *Client) {
 			})
 		}
 	})
+
+	t.Run("LPUSHX", func(t *testing.T) {
+		key := "mylist_lpushx"
+		keyOther := "myotherlist_lpushx"
+		records := []struct {
+			key         string
+			elems       []string
+			expectedRet int64
+			expectedRng []string
+		}{
+			{key, []string{"hello"}, 2, []string{"hello", "world"}},
+			{keyOther, []string{"hello"}, 0, []string{}},
+		}
+
+		_, err := client.LPush(key, []string{"world"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+strings.Join(r.elems, ","), func(t *testing.T) {
+				// Note: LPushX does not support multiple elements yet
+				res, err := client.LPushX(r.key, r.elems[0]).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				rng, err := client.LRange(r.key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(rng) != len(r.expectedRng) {
+					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
+					return
+				}
+				for n, rs := range rng {
+					if rs != r.expectedRng[n] {
+						t.Errorf("%s != %s", rs, r.expectedRng[n])
+						return
+					}
+				}
+			})
+		}
+	})
 }

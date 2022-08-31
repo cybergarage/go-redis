@@ -325,7 +325,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		opt := PushOption{X: false}
+		opt := PushOption{X: true}
 		return server.userCommandHandler.LPush(ctx, key, elems, opt)
 	})
 
