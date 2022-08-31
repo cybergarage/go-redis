@@ -22,6 +22,8 @@ import (
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
+// General argument fuctions
+
 func nextIntegerArgument(cmd string, name string, args Arguments) (int, error) {
 	val, err := args.NextInteger()
 	if err != nil {
@@ -38,28 +40,32 @@ func nextStringArgument(cmd string, name string, args Arguments) (string, error)
 	return hash, nil
 }
 
-func nextHashArgument(cmd string, args Arguments) (string, error) {
-	return nextStringArgument(cmd, "hash", args)
+func nextStringsArguments(cmd string, args Arguments) ([]string, error) {
+	var str string
+	var err error
+	strs := []string{}
+	str, err = args.NextString()
+	for err == nil {
+		strs = append(strs, str)
+		str, err = args.NextString()
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return nil, err
+	}
+	return strs, nil
 }
+
+// Key argument fuctions
 
 func nextKeyArgument(cmd string, args Arguments) (string, error) {
 	return nextStringArgument(cmd, "key", args)
 }
 
 func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
-	var key string
-	var err error
-	keys := []string{}
-	key, err = args.NextString()
-	for err == nil {
-		keys = append(keys, key)
-		key, err = args.NextString()
-	}
-	if !errors.Is(err, proto.ErrEOM) {
-		return nil, err
-	}
-	return keys, nil
+	return nextStringsArguments(cmd, args)
 }
+
+// String argument functions
 
 func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	key, err := args.NextString()
@@ -91,6 +97,24 @@ func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 	}
 	return dir, nil
 }
+
+// Hash argument fuctions
+
+func nextHashArgument(cmd string, args Arguments) (string, error) {
+	return nextStringArgument(cmd, "hash", args)
+}
+
+// List argument fuctions
+
+// func nextPushArgument(cmd string, args Arguments) (string, error) {
+// 	key, err := nextKeyArgument(cmd, args)
+// 	if err != nil {
+// 		return "", nil
+// 	}
+// 	return nextStringArgument(cmd, "hash", args)
+// }
+
+// Expire argument fuctions
 
 func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption, error) {
 	opt := ExpireOption{
