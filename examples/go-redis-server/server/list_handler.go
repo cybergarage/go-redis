@@ -18,6 +18,8 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
+type List []string
+
 func (server *Server) LPush(ctx *redis.DBContext, key string, elements []string, opt redis.PushOption) (*redis.Message, error) {
 	return nil, nil
 }

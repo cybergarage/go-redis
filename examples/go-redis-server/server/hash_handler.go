@@ -20,6 +20,8 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
+type Hash map[string]string
+
 func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
