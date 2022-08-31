@@ -1133,6 +1133,41 @@ func testHash(t *testing.T, server *Server, client *Client) {
 func testList(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
+	t.Run("LLEN", func(t *testing.T) {
+		key := "mylist_llen"
+		records := []struct {
+			elems       []string
+			expectedRet int64
+			expectedLen int64
+		}{
+			{[]string{"world"}, 1, 1},
+			{[]string{"hello"}, 2, 2},
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.elems, ","), func(t *testing.T) {
+				res, err := client.LPush(key, r.elems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				l, err := client.LLen(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if l != r.expectedLen {
+					t.Errorf("%d != %d", l, r.expectedLen)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("LPUSH", func(t *testing.T) {
 		key := "mylist_lpush"
 		records := []struct {

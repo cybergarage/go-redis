@@ -362,4 +362,12 @@ func (server *Server) registerCoreExecutors() {
 		}
 		return server.userCommandHandler.LRange(ctx, key, start, end)
 	})
+
+	server.RegisterExexutor("LLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.LLen(ctx, key)
+	})
 }

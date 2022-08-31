@@ -92,7 +92,7 @@ Supported,List Command,Redis Version,Note
 -,BRPOPLPUSH,2.2.0
 -,LINDEX,1.0.0
 -,LINSERT,2.2.0
--,LLEN,1.0.0
+O,LLEN,1.0.0
 -,LMOVE,6.2.0
 -,LMPOP,7.0.0
 -,LPOP,1.0.0
