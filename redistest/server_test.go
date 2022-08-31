@@ -1332,6 +1332,42 @@ func testList(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("RPOP", func(t *testing.T) {
+		key := "mylist_lpop"
+
+		_, err := client.RPush(key, []string{"one", "two", "three", "four", "five"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		records := []struct {
+			count    int64
+			expected string
+		}{
+			{1, "five"},
+			{1, "four"},
+			{1, "three"},
+			{1, "two"},
+			{1, "one"},
+		}
+
+		for _, r := range records {
+			t.Run(r.expected, func(t *testing.T) {
+				// RPop does note support count parameter
+				res, err := client.RPop(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("RPUSH", func(t *testing.T) {
 		key := "mylist_rpush"
 		records := []struct {
