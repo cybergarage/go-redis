@@ -34,6 +34,12 @@ func (rmap Records) SetRecord(record *Record) error {
 	return nil
 }
 
+// HasRecord returns true if the database has the specified key record, otherwise false.
+func (rmap Records) HasRecord(key string) bool {
+	_, ok := rmap[key]
+	return ok
+}
+
 // GetRecord gets a record with the specified key.
 func (rmap Records) GetRecord(key string) (*Record, bool) {
 	record, ok := rmap[key]
