@@ -1223,4 +1223,95 @@ func testList(t *testing.T, server *Server, client *Client) {
 			})
 		}
 	})
+
+	t.Run("RPUSH", func(t *testing.T) {
+		key := "mylist_rpush"
+		records := []struct {
+			elems       []string
+			expectedRet int64
+			expectedRng []string
+		}{
+			{[]string{"hello"}, 1, []string{"hello"}},
+			{[]string{"world"}, 2, []string{"hello", "world"}},
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.elems, ","), func(t *testing.T) {
+				res, err := client.RPush(key, r.elems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				rng, err := client.LRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(rng) != len(r.expectedRng) {
+					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
+					return
+				}
+				for n, rs := range rng {
+					if rs != r.expectedRng[n] {
+						t.Errorf("%s != %s", rs, r.expectedRng[n])
+						return
+					}
+				}
+			})
+		}
+	})
+
+	t.Run("RPUSHX", func(t *testing.T) {
+		key := "mylist_rpushx"
+		keyOther := "myotherlist_rpushx"
+		records := []struct {
+			key         string
+			elems       []string
+			expectedRet int64
+			expectedRng []string
+		}{
+			{key, []string{"world"}, 2, []string{"hello", "world"}},
+			{keyOther, []string{"hello"}, 0, []string{}},
+		}
+
+		_, err := client.RPush(key, []string{"hello"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for _, r := range records {
+			t.Run(r.key+":"+strings.Join(r.elems, ","), func(t *testing.T) {
+				// Note: LPushX does not support multiple elements yet
+				res, err := client.RPushX(r.key, r.elems[0]).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				rng, err := client.LRange(r.key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(rng) != len(r.expectedRng) {
+					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
+					return
+				}
+				for n, rs := range rng {
+					if rs != r.expectedRng[n] {
+						t.Errorf("%s != %s", rs, r.expectedRng[n])
+						return
+					}
+				}
+			})
+		}
+	})
 }
