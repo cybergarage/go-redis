@@ -23,6 +23,25 @@ import (
 	"time"
 )
 
+func isStringsEqual(aa []string, ba []string) bool {
+	for len(aa) != len(ba) {
+		return false
+	}
+	for _, a := range aa {
+		hasStr := false
+		for _, b := range ba {
+			if a == b {
+				hasStr = true
+				break
+			}
+		}
+		if !hasStr {
+			return false
+		}
+	}
+	return true
+}
+
 // nolint: maintidx, gocyclo
 func TestServer(t *testing.T) {
 	server := NewServer()
@@ -863,7 +882,7 @@ func testHash(t *testing.T, server *Server, client *Client) {
 					t.Error(err)
 					return
 				}
-				if !reflect.DeepEqual(res, r.fields) {
+				if !isStringsEqual(res, r.fields) {
 					t.Errorf("%s != %s", res, r.fields)
 					return
 				}
