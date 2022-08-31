@@ -44,11 +44,23 @@ type HashCommandHandler interface {
 	HMGet(ctx *DBContext, key string, fields []string) (*Message, error)
 }
 
+// ListCommandHandler represents a core command hander interface for list commands.
+type ListCommandHandler interface {
+	LPush(ctx *DBContext, key string, elements []string, opt PushOption) (*Message, error)
+	RPush(ctx *DBContext, key string, elements []string, opt PushOption) (*Message, error)
+	LPop(ctx *DBContext, key string, count int) (*Message, error)
+	RPop(ctx *DBContext, key string, count int) (*Message, error)
+	LRange(ctx *DBContext, key string, start int, stop int) (*Message, error)
+	LIndex(ctx *DBContext, key string, index int) (*Message, error)
+	LLen(ctx *DBContext, key string, index int) (*Message, error)
+}
+
 // CommandHandler represents a command hander interface for user commands.
 type CommandHandler interface {
 	GenericCommandHandler
 	StringCommandHandler
 	HashCommandHandler
+	ListCommandHandler
 }
 
 // SystemCommandHandler represents a hander interface for system commands.
