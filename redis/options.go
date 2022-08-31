@@ -47,6 +47,10 @@ type RenameOption struct {
 	NX bool
 }
 
+type PushOption struct {
+	X bool
+}
+
 func newDefaultSetOption() SetOption {
 	now := time.Now()
 	return SetOption{
