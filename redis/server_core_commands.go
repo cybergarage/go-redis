@@ -308,4 +308,58 @@ func (server *Server) registerCoreExecutors() {
 		}
 		return server.userCommandHandler.HMGet(ctx, hash, keys)
 	})
+
+	// List commands.
+
+	server.RegisterExexutor("LPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := PushOption{X: false}
+		return server.userCommandHandler.LPush(ctx, key, elems, opt)
+	})
+
+	server.RegisterExexutor("LPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := PushOption{X: false}
+		return server.userCommandHandler.LPush(ctx, key, elems, opt)
+	})
+
+	server.RegisterExexutor("RPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := PushOption{X: false}
+		return server.userCommandHandler.RPush(ctx, key, elems, opt)
+	})
+
+	server.RegisterExexutor("RPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, elems, err := nextPushArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := PushOption{X: false}
+		return server.userCommandHandler.RPush(ctx, key, elems, opt)
+	})
+
+	server.RegisterExexutor("LRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		start, err := nextIntegerArgument(cmd, "start", args)
+		if err != nil {
+			return nil, err
+		}
+		end, err := nextIntegerArgument(cmd, "end", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.LRange(ctx, key, start, end)
+	})
 }

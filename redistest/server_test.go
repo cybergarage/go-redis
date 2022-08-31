@@ -16,7 +16,6 @@ package redistest
 
 import (
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -100,6 +99,12 @@ func TestServer(t *testing.T) {
 
 	t.Run("Hash", func(t *testing.T) {
 		testHash(t, server, client)
+	})
+
+	// List commands
+
+	t.Run("List", func(t *testing.T) {
+		testList(t, server, client)
 	})
 
 	t.Run("YCSB", func(t *testing.T) {
@@ -1115,9 +1120,55 @@ func testHash(t *testing.T, server *Server, client *Client) {
 					t.Error(err)
 					return
 				}
-				if !reflect.DeepEqual(res, r.values) {
+				if !isStringsEqual(res, r.values) {
 					t.Errorf("%s != %s", res, r.fields)
 					return
+				}
+			})
+		}
+	})
+}
+
+// nolint: maintidx, gocyclo, dupl
+func testList(t *testing.T, server *Server, client *Client) {
+	t.Helper()
+
+	t.Run("LPUSH", func(t *testing.T) {
+		key := "mylist_lpush"
+		records := []struct {
+			elems       []string
+			expectedRet int64
+			expectedRng []string
+		}{
+			{[]string{"world"}, 1, []string{"world"}},
+			{[]string{"hello"}, 2, []string{"hello", "world"}},
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.elems, ","), func(t *testing.T) {
+				res, err := client.LPush(key, r.elems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				rng, err := client.LRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(rng) != len(r.expectedRng) {
+					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
+					return
+				}
+				for n, rs := range rng {
+					if rs != r.expectedRng[n] {
+						t.Errorf("%s != %s", rs, r.expectedRng[n])
+						return
+					}
 				}
 			})
 		}
