@@ -136,8 +136,21 @@ func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop i
 	return arrayMsg, nil
 }
 
-func (server *Server) LIndex(ctx *redis.DBContext, key string, index int) (*redis.Message, error) {
-	return nil, nil
+func (server *Server) LIndex(ctx *redis.DBContext, key string, idx int) (*redis.Message, error) {
+	_, list, err := server.getDatabaseListRecord(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+
+	if idx < 0 {
+		idx = len(list) + idx
+	}
+
+	if (idx < 0) || ((len(list) - 1) < idx) {
+		return redis.NewNilMessage(), nil
+	}
+
+	return redis.NewBulkMessage(list[idx]), nil
 }
 
 func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, error) {

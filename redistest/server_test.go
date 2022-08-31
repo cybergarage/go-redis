@@ -1133,6 +1133,43 @@ func testHash(t *testing.T, server *Server, client *Client) {
 func testList(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
+	t.Run("LINDEX", func(t *testing.T) {
+		key := "mylist_lindex"
+
+		_, err := client.LPush(key, []string{"world", "hello"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		records := []struct {
+			index    int64
+			expected string
+		}{
+			{0, "hello"},
+			{1, "world"},
+			{-1, "world"},
+			{-2, "hello"},
+			{3, ""},
+		}
+
+		for _, r := range records {
+			t.Run(strconv.Itoa(int(r.index)), func(t *testing.T) {
+				res, err := client.LIndex(key, r.index).Result()
+				if err != nil {
+					if len(r.expected) != 0 { // Is response nil ?
+						t.Error(err)
+					}
+					return
+				}
+				if res != r.expected {
+					t.Errorf("%s != %s", res, r.expected)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("LLEN", func(t *testing.T) {
 		key := "mylist_llen"
 		records := []struct {
