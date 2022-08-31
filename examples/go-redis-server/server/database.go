@@ -14,6 +14,11 @@
 
 package server
 
+import (
+	"fmt"
+	"time"
+)
+
 // Database represents a database.
 type Database struct {
 	ID int
@@ -26,4 +31,27 @@ func NewDatabaseWithID(id int) *Database {
 		ID:      id,
 		Records: Records{},
 	}
+}
+
+func (db *Database) GetListRecord(key string) (*Record, List, error) {
+	var list List
+	record, hasRecord := db.GetRecord(key)
+	if hasRecord {
+		var ok bool
+		list, ok = record.Data.(List)
+		if !ok {
+			return nil, nil, fmt.Errorf(errorInvalidStoredDataType, record.Data)
+		}
+	}
+	if !hasRecord {
+		list = List{}
+		record = &Record{
+			Key:       key,
+			Data:      list,
+			Timestamp: time.Now(),
+			TTL:       0,
+		}
+		db.SetRecord(record)
+	}
+	return record, list, nil
 }
