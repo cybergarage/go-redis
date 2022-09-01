@@ -40,7 +40,7 @@ func nextStringArgument(cmd string, name string, args Arguments) (string, error)
 	return hash, nil
 }
 
-func nextStringsArguments(cmd string, args Arguments) ([]string, error) {
+func nextStringsArguments(cmd string, name string, args Arguments) ([]string, error) {
 	var str string
 	var err error
 	strs := []string{}
@@ -50,7 +50,7 @@ func nextStringsArguments(cmd string, args Arguments) ([]string, error) {
 		str, err = args.NextString()
 	}
 	if !errors.Is(err, proto.ErrEOM) {
-		return nil, err
+		return nil, newMissingArgumentError(cmd, name, err)
 	}
 	return strs, nil
 }
@@ -62,7 +62,7 @@ func nextKeyArgument(cmd string, args Arguments) (string, error) {
 }
 
 func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
-	return nextStringsArguments(cmd, args)
+	return nextStringsArguments(cmd, "keys", args)
 }
 
 // String argument functions
@@ -111,7 +111,7 @@ func nextPushArguments(cmd string, args Arguments) (string, []string, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	elems, err := nextStringsArguments(cmd, args)
+	elems, err := nextStringsArguments(cmd, "elements", args)
 	return key, elems, err
 }
 
