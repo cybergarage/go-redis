@@ -21,9 +21,53 @@ import (
 type Set []string
 
 func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	return nil, nil
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	record, sets, err := db.GetSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+
+	addedMemberCount := 0
+	for _, member := range members {
+		hasMember := false
+		for _, set := range sets {
+			if set == member {
+				hasMember = true
+				continue
+			}
+		}
+		if hasMember {
+			continue
+		}
+		sets = append(sets, member)
+		addedMemberCount++
+	}
+
+	record.Data = sets
+
+	return redis.NewIntegerMessage(addedMemberCount), nil
 }
 
 func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	return nil, nil
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	_, sets, err := db.GetSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for _, set := range sets {
+		array.Append(redis.NewBulkMessage(set))
+	}
+
+	return arrayMsg, nil
 }
