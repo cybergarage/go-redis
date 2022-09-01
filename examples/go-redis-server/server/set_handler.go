@@ -71,3 +71,30 @@ func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message
 
 	return arrayMsg, nil
 }
+
+func (server *Server) SRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	record, sets, err := db.GetSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+
+	removedMemberCount := 0
+	for _, member := range members {
+		for n, set := range sets {
+			if set == member {
+				sets = append(sets[:n], sets[n+1:]...)
+				removedMemberCount++
+				break
+			}
+		}
+	}
+
+	record.Data = sets
+
+	return redis.NewIntegerMessage(removedMemberCount), nil
+}

@@ -1498,15 +1498,50 @@ func testSet(t *testing.T, server *Server, client *Client) {
 					t.Error(err)
 					return
 				}
-				if len(mems) != len(r.expectedMems) {
-					t.Errorf("%d != %d", len(mems), len(r.expectedMems))
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
 				}
-				for n, rs := range mems {
-					if rs != r.expectedMems[n] {
-						t.Errorf("%s != %s", rs, r.expectedMems[n])
-						return
-					}
+			})
+		}
+	})
+
+	t.Run("SREM", func(t *testing.T) {
+		key := "myset_srem"
+		records := []struct {
+			mems         []string
+			expectedRet  int64
+			expectedMems []string
+		}{
+			{[]string{"one"}, 1, []string{"two", "three"}},
+			{[]string{"four"}, 0, []string{"two", "three"}},
+		}
+
+		_, err := client.SAdd(key, []string{"one", "two", "three"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
+				res, err := client.SRem(key, r.mems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				mems, err := client.SMembers(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
 				}
 			})
 		}

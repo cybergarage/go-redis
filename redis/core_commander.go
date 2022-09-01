@@ -420,4 +420,16 @@ func (server *Server) registerCoreExecutors() {
 		}
 		return server.userCommandHandler.SMembers(ctx, key)
 	})
+
+	server.RegisterExexutor("SREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		members, err := nextStringsArguments(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.SRem(ctx, key, members)
+	})
 }
