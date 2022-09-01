@@ -59,6 +59,7 @@ type ListCommandHandler interface {
 type SetCommandHandler interface {
 	SAdd(ctx *DBContext, key string, members []string) (*Message, error)
 	SMembers(ctx *DBContext, key string) (*Message, error)
+	SRem(ctx *DBContext, key string, members []string) (*Message, error)
 }
 
 // CommandHandler represents a command hander interface for user commands.
