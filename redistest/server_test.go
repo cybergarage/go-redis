@@ -1506,6 +1506,43 @@ func testSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("SCARD", func(t *testing.T) {
+		key := "myset_scard"
+		records := []struct {
+			mems         []string
+			expectedRet  int64
+			expectedCard int64
+		}{
+			{[]string{"Hello"}, 1, 1},
+			{[]string{"World"}, 1, 2},
+			{[]string{"Hello"}, 0, 2},
+			{[]string{"World"}, 0, 2},
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
+				res, err := client.SAdd(key, r.mems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				ret, err := client.SCard(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if ret != r.expectedCard {
+					t.Errorf("%d != %d", ret, r.expectedCard)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("SISMEMBER", func(t *testing.T) {
 		key := "myset_sismember"
 		records := []struct {
