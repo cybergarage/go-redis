@@ -14,4 +14,9 @@
 
 package server
 
-type ZSet []string
+type ZSet []*ZSetMember
+
+type ZSetMember struct {
+	Score string
+	Data  string
+}
