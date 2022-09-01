@@ -398,4 +398,26 @@ func (server *Server) registerCoreExecutors() {
 		opt := PushOption{X: true}
 		return server.userCommandHandler.RPush(ctx, key, elems, opt)
 	})
+
+	// Set commands.
+
+	server.RegisterExexutor("SADD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		members, err := nextStringsArguments(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.SAdd(ctx, key, members)
+	})
+
+	server.RegisterExexutor("SMEMBERS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.SMembers(ctx, key)
+	})
 }

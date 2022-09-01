@@ -107,6 +107,12 @@ func TestServer(t *testing.T) {
 		testList(t, server, client)
 	})
 
+	// Set commands
+
+	t.Run("Set", func(t *testing.T) {
+		testSet(t, server, client)
+	})
+
 	t.Run("YCSB", func(t *testing.T) {
 		err = ExecYCSB(t)
 		if err != nil {
@@ -1452,6 +1458,53 @@ func testList(t *testing.T, server *Server, client *Client) {
 				for n, rs := range rng {
 					if rs != r.expectedRng[n] {
 						t.Errorf("%s != %s", rs, r.expectedRng[n])
+						return
+					}
+				}
+			})
+		}
+	})
+}
+
+// nolint: maintidx, gocyclo, dupl
+func testSet(t *testing.T, server *Server, client *Client) {
+	t.Helper()
+
+	t.Run("SADD", func(t *testing.T) {
+		key := "myset_sadd"
+		records := []struct {
+			mems         []string
+			expectedRet  int64
+			expectedMems []string
+		}{
+			{[]string{"Hello"}, 1, []string{"Hello"}},
+			{[]string{"World"}, 1, []string{"Hello", "World"}},
+			{[]string{"World"}, 0, []string{"Hello", "World"}},
+		}
+
+		for _, r := range records {
+			t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
+				res, err := client.SAdd(key, r.mems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				mems, err := client.SMembers(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if len(mems) != len(r.expectedMems) {
+					t.Errorf("%d != %d", len(mems), len(r.expectedMems))
+					return
+				}
+				for n, rs := range mems {
+					if rs != r.expectedMems[n] {
+						t.Errorf("%s != %s", rs, r.expectedMems[n])
 						return
 					}
 				}

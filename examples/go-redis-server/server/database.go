@@ -55,3 +55,26 @@ func (db *Database) GetListRecord(key string) (*Record, List, error) {
 	}
 	return record, list, nil
 }
+
+func (db *Database) GetSetRecord(key string) (*Record, Set, error) {
+	var set Set
+	record, hasRecord := db.GetRecord(key)
+	if hasRecord {
+		var ok bool
+		set, ok = record.Data.(Set)
+		if !ok {
+			return nil, nil, fmt.Errorf(errorInvalidStoredDataType, record.Data)
+		}
+	}
+	if !hasRecord {
+		set = Set{}
+		record = &Record{
+			Key:       key,
+			Data:      set,
+			Timestamp: time.Now(),
+			TTL:       0,
+		}
+		db.SetRecord(record)
+	}
+	return record, set, nil
+}
