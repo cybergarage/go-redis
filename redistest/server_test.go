@@ -1506,6 +1506,40 @@ func testSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("SISMEMBER", func(t *testing.T) {
+		key := "myset_sismember"
+		records := []struct {
+			mem         string
+			expectedRet bool
+		}{
+			{"one", true},
+			{"two", true},
+			{"three", true},
+			{"four", false},
+			{"five", false},
+		}
+
+		_, err := client.SAdd(key, []string{"one", "two", "three"}).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for _, r := range records {
+			t.Run(r.mem, func(t *testing.T) {
+				res, err := client.SIsMember(key, r.mem).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%t != %t", res, r.expectedRet)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("SREM", func(t *testing.T) {
 		key := "myset_srem"
 		records := []struct {

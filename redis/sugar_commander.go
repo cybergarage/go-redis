@@ -268,4 +268,41 @@ func (server *Server) registerSugarExecutors() {
 		}
 		return retMsg, nil
 	})
+
+	// Registers sugar set commands.
+
+	server.RegisterExexutor("SISMEMBER", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		member, err := nextStringArgument(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+
+		retMsg, err := server.userCommandHandler.SMembers(ctx, key)
+		if err != nil {
+			return nil, err
+		}
+
+		arrayMsg, err := retMsg.Array()
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+
+		nextMsg, _ := arrayMsg.Next()
+		for nextMsg != nil {
+			val, err := nextMsg.String()
+			if err != nil {
+				break
+			}
+			if val == member {
+				return NewIntegerMessage(1), nil
+			}
+			nextMsg, _ = arrayMsg.Next()
+		}
+
+		return NewIntegerMessage(0), nil
+	})
 }
