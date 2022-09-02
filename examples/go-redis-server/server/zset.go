@@ -83,6 +83,20 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 	return mems
 }
 
+func (zset *ZSet) RangeByScore(min float64, max float64, opt ZRangeOption) []*ZSetMember {
+	mems := []*ZSetMember{}
+	for _, mem := range zset.members {
+		if (mem.Score < min && !opt.MINEXCLUSIVE) || (mem.Score <= min && opt.MINEXCLUSIVE) {
+			continue
+		}
+		if (max < mem.Score && !opt.MAXEXCLUSIVE) || (max <= mem.Score && opt.MAXEXCLUSIVE) {
+			continue
+		}
+		mems = append(mems, mem)
+	}
+	return mems
+}
+
 func (zset *ZSet) Rem(members []string) int {
 	removedMemberCount := 0
 	for _, rm := range members {
@@ -143,7 +157,7 @@ func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start floa
 	if err != nil {
 		return nil, err
 	}
-	mems := zset.Range(start, stop, opt)
+	mems := zset.RangeByScore(start, stop, opt)
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, mem := range mems {
