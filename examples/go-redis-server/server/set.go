@@ -18,23 +18,19 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
-type Set []string
+////////////////////////////////////////////////////////////
+// Set
+////////////////////////////////////////////////////////////
 
-func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
+type Set struct {
+	members []string
+}
 
-	record, sets, err := db.GetSetRecord(key)
-	if err != nil {
-		return nil, err
-	}
-
+func (set *Set) Add(members []string) int {
 	addedMemberCount := 0
 	for _, member := range members {
 		hasMember := false
-		for _, set := range sets {
+		for _, set := range set.members {
 			if set == member {
 				hasMember = true
 				continue
@@ -43,13 +39,26 @@ func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (
 		if hasMember {
 			continue
 		}
-		sets = append(sets, member)
+		set.members = append(set.members, member)
 		addedMemberCount++
 	}
+	return addedMemberCount
+}
 
-	record.Data = sets
+////////////////////////////////////////////////////////////
+// Set command handler
+////////////////////////////////////////////////////////////
 
-	return redis.NewIntegerMessage(addedMemberCount), nil
+func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, set, err := db.GetSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+	return redis.NewIntegerMessage(set.Add(members)), nil
 }
 
 func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message, error) {
