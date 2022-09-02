@@ -130,6 +130,46 @@ func nextPopArguments(cmd string, args Arguments) (string, int, error) {
 	return key, cnt, nil
 }
 
+func nextZSetRangeArguments(cmd string, args Arguments) (ZRangeOption, error) {
+	opt := ZRangeOption{
+		BYSCORE:    false,
+		BYLEX:      false,
+		REV:        false,
+		WITHSCORES: false,
+		Offset:     0,
+		Count:      -1,
+	}
+
+	param, err := args.NextString()
+	for err == nil {
+		switch strings.ToUpper(param) {
+		case "BYSCORE":
+			opt.BYSCORE = true
+		case "BYLEX":
+			opt.BYLEX = true
+		case "REV":
+			opt.REV = true
+		case "LIMIT":
+			opt.Offset, err = nextIntegerArgument(cmd, "offset", args)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "offset", err)
+			}
+			opt.Count, err = nextIntegerArgument(cmd, "count", args)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "count", err)
+			}
+		case "WITHSCORES":
+			opt.WITHSCORES = true
+		}
+		param, err = args.NextString()
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return opt, newMissingArgumentError(cmd, "", err)
+	}
+
+	return opt, nil
+}
+
 // Expire argument fuctions
 
 func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption, error) {
