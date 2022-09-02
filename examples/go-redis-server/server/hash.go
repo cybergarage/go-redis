@@ -79,11 +79,11 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 		return nil, err
 	}
 
-	var dict Hash
+	var hash Hash
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
-		dict, ok = record.Data.(Hash)
+		hash, ok = record.Data.(Hash)
 		if !ok {
 			hasRecord = false
 		}
@@ -101,7 +101,7 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 		return redis.NewIntegerMessage(1), nil
 	}
 
-	return redis.NewIntegerMessage(dict.Set(field, val, opt)), nil
+	return redis.NewIntegerMessage(hash.Set(field, val, opt)), nil
 }
 
 func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*redis.Message, error) {
