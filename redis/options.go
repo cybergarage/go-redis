@@ -51,6 +51,15 @@ type PushOption struct {
 	X bool
 }
 
+type ZAddOption struct {
+	XX   bool
+	NX   bool
+	LT   bool
+	GT   bool
+	CH   bool
+	INCR bool
+}
+
 func newDefaultSetOption() SetOption {
 	now := time.Now()
 	return SetOption{
