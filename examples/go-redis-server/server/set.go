@@ -99,6 +99,7 @@ func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message
 	for _, m := range set.Members() {
 		array.Append(redis.NewBulkMessage(m))
 	}
+
 	return arrayMsg, nil
 }
 
