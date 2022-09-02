@@ -564,4 +564,16 @@ func (server *Server) registerCoreExecutors() {
 
 		return server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
 	})
+
+	server.RegisterExexutor("ZREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		members, err := nextStringsArguments(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.ZRem(ctx, key, members)
+	})
 }
