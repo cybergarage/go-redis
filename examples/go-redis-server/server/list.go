@@ -34,7 +34,7 @@ func NewList() *List {
 	}
 }
 
-func (list *List) Pop(count int) ([]string, bool) {
+func (list *List) LPop(count int) ([]string, bool) {
 	if count < 1 {
 		return nil, false
 	}
@@ -51,6 +51,13 @@ func (list *List) Pop(count int) ([]string, bool) {
 	return elems, true
 }
 
+func (list *List) LPush(elems []string) int {
+	for _, elem := range elems {
+		list.elements = append([]string{elem}, list.elements...)
+	}
+	return len(list.elements)
+}
+
 ////////////////////////////////////////////////////////////
 // List command handler
 ////////////////////////////////////////////////////////////
@@ -65,12 +72,12 @@ func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.
 		return redis.NewNilMessage(), nil
 	}
 
-	record, list, err := db.GetListRecord(key)
+	_, list, err := db.GetListRecord(key)
 	if err != nil {
 		return nil, err
 	}
 
-	elems, ok := list.Pop(count)
+	elems, ok := list.LPop(count)
 	if !ok || len(elems) == 0 {
 		return redis.NewNilMessage(), nil
 	}
@@ -103,18 +110,12 @@ func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, op
 		}
 	}
 
-	record, list, err := db.GetListRecord(key)
+	_, list, err := db.GetListRecord(key)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, elem := range elems {
-		list = append([]string{elem}, list...)
-	}
-
-	record.Data = list
-
-	return redis.NewIntegerMessage(len(list)), nil
+	return redis.NewIntegerMessage(list.LPush(elems)), nil
 }
 
 func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
