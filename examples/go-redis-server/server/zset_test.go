@@ -28,7 +28,7 @@ func TestZSet(t *testing.T) {
 		{"1", "one", []string{"one"}},
 	}
 
-	zset := ZSet{}
+	zset := NewZSet()
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%s(%s)", testCase.data, testCase.score), func(t *testing.T) {
 			m := &ZSetMember{
