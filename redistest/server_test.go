@@ -1728,7 +1728,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 			{"-inf", "+inf", []string{"one", "two", "three"}},
 			{"1", "2", []string{"one", "two"}},
 			{"(1", "2", []string{"two"}},
-			{"(1", "(2", []string{""}},
+			{"(1", "(2", []string{}},
 		}
 
 		params := []goredis.Z{
