@@ -1717,4 +1717,49 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 			})
 		}
 	})
+
+	t.Run("ZRANGEBYSCORE", func(t *testing.T) {
+		key := "myset_zrengebyscore"
+		records := []struct {
+			min          string
+			max          string
+			expectedMems []string
+		}{
+			{"-inf", "+inf", []string{"one", "two", "three"}},
+			{"1", "2", []string{"one", "two"}},
+			{"(1", "2", []string{"two"}},
+			{"(1", "(2", []string{""}},
+		}
+
+		params := []goredis.Z{
+			{Score: 1, Member: "one"},
+			{Score: 2, Member: "two"},
+			{Score: 3, Member: "three"},
+		}
+		_, err := client.ZAdd(key, params...).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		for _, r := range records {
+			t.Run(r.min+":"+r.max, func(t *testing.T) {
+				opt := goredis.ZRangeBy{
+					Min:    r.min,
+					Max:    r.max,
+					Offset: 0,
+					Count:  -1,
+				}
+				mems, err := client.ZRangeByScore(key, opt).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
+				}
+			})
+		}
+	})
 }
