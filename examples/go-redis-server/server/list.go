@@ -15,8 +15,6 @@
 package server
 
 import (
-	"fmt"
-
 	"github.com/cybergarage/go-redis/redis"
 )
 
@@ -72,9 +70,7 @@ func (list *List) RPop(count int) ([]string, bool) {
 }
 
 func (list *List) RPush(elems []string) int {
-	for _, elem := range elems {
-		list.elements = append(list.elements, elem)
-	}
+	list.elements = append(list.elements, elems...)
 	return len(list.elements)
 }
 
@@ -105,11 +101,15 @@ func (list *List) Index(idx int) (string, bool) {
 	return list.elements[idx], true
 }
 
+func (list *List) Len() int {
+	return len(list.elements)
+}
+
 ////////////////////////////////////////////////////////////
 // List command handler
 ////////////////////////////////////////////////////////////
 
-func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
+func (server *Server) pop(ctx *redis.DBContext, key string, count int, isLPop bool) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
 		return nil, err
@@ -124,7 +124,14 @@ func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.
 		return nil, err
 	}
 
-	elems, ok := list.LPop(count)
+	var elems []string
+	var ok bool
+	if isLPop {
+		elems, ok = list.LPop(count)
+	} else {
+		elems, ok = list.RPop(count)
+	}
+
 	if !ok || len(elems) == 0 {
 		return redis.NewNilMessage(), nil
 	}
@@ -143,82 +150,49 @@ func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.
 	}
 
 	return arrayMsg, nil
+}
+
+func (server *Server) push(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption, isLPop bool) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	if opt.X {
+		if !db.HasRecord(key) {
+			return redis.NewIntegerMessage(0), nil
+		}
+	}
+
+	_, list, err := db.GetListRecord(key)
+	if err != nil {
+		return nil, err
+	}
+
+	var cnt int
+	if isLPop {
+		cnt = list.LPush(elems)
+	} else {
+		cnt = list.RPush(elems)
+	}
+
+	return redis.NewIntegerMessage(cnt), nil
+}
+
+func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
+	return server.pop(ctx, key, count, true)
 }
 
 func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	if opt.X {
-		if !db.HasRecord(key) {
-			return redis.NewIntegerMessage(0), nil
-		}
-	}
-
-	_, list, err := db.GetListRecord(key)
-	if err != nil {
-		return nil, err
-	}
-
-	return redis.NewIntegerMessage(list.LPush(elems)), nil
+	return server.push(ctx, key, elems, opt, true)
 }
 
 func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	if !db.HasRecord(key) {
-		return redis.NewNilMessage(), nil
-	}
-
-	_, list, err := db.GetListRecord(key)
-	if err != nil {
-		return nil, err
-	}
-
-	elems, ok := list.RPop(count)
-	if !ok || len(elems) == 0 {
-		return redis.NewNilMessage(), nil
-	}
-
-	if count == 1 {
-		if len(elems) < 1 {
-			return redis.NewNilMessage(), nil
-		}
-		return redis.NewBulkMessage(elems[0]), nil
-	}
-
-	arrayMsg := redis.NewArrayMessage()
-	array, _ := arrayMsg.Array()
-	for _, elem := range elems {
-		array.Append(redis.NewBulkMessage(elem))
-	}
-
-	return arrayMsg, nil
+	return server.pop(ctx, key, count, false)
 }
 
 func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	if opt.X {
-		if !db.HasRecord(key) {
-			return redis.NewIntegerMessage(0), nil
-		}
-	}
-
-	_, list, err := db.GetListRecord(key)
-	if err != nil {
-		return nil, err
-	}
-
-	return redis.NewIntegerMessage(list.RPush(elems)), nil
+	return server.push(ctx, key, elems, opt, false)
 }
 
 func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop int) (*redis.Message, error) {
@@ -267,15 +241,10 @@ func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, er
 		return nil, err
 	}
 
-	record, hasRecord := db.GetRecord(key)
-	if !hasRecord {
-		return redis.NewIntegerMessage(0), nil
+	_, list, err := db.GetListRecord(key)
+	if err != nil {
+		return nil, err
 	}
 
-	list, ok := record.Data.(List)
-	if !ok {
-		return redis.NewErrorMessage(fmt.Errorf(errorInvalidStoredDataType, record.Data)), nil
-	}
-
-	return redis.NewIntegerMessage(len(list)), nil
+	return redis.NewIntegerMessage(list.Len()), nil
 }
