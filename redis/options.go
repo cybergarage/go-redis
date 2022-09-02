@@ -61,12 +61,14 @@ type ZAddOption struct {
 }
 
 type ZRangeOption struct {
-	BYSCORE    bool
-	BYLEX      bool
-	REV        bool
-	WITHSCORES bool
-	Offset     int
-	Count      int
+	BYSCORE      bool
+	BYLEX        bool
+	REV          bool
+	WITHSCORES   bool
+	MINEXCLUSIVE bool
+	MAXEXCLUSIVE bool
+	Offset       int
+	Count        int
 }
 
 func newDefaultSetOption() SetOption {

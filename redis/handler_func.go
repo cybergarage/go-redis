@@ -163,7 +163,7 @@ func nextRangeArgument(cmd string, name string, args Arguments) (float64, bool, 
 	return rng, exclusive, nil
 }
 
-func nextZSetRangeArguments(cmd string, args Arguments) (ZRangeOption, error) {
+func nextRangeOptionArguments(cmd string, args Arguments) (ZRangeOption, error) {
 	opt := ZRangeOption{
 		BYSCORE:    false,
 		BYLEX:      false,
