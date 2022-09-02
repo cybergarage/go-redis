@@ -33,6 +33,13 @@ func NewZSet() *ZSet {
 	}
 }
 
+func NewZSetMember(score string, data string) *ZSetMember {
+	return &ZSetMember{
+		Score: score,
+		Data:  data,
+	}
+}
+
 // nolint: staticcheck
 func (zset ZSet) Add(nm *ZSetMember) {
 	for n, tm := range zset.members {
