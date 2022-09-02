@@ -515,12 +515,12 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		start, err := nextIntegerArgument(cmd, "start", args)
+		start, startEx, err := nextRangeArgument(cmd, "start", args)
 		if err != nil {
 			return nil, err
 		}
 
-		stop, err := nextIntegerArgument(cmd, "stop", args)
+		stop, stopEx, err := nextRangeArgument(cmd, "stop", args)
 		if err != nil {
 			return nil, err
 		}
@@ -530,7 +530,13 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		return server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
+		if opt.BYSCORE {
+			opt.MINEXCLUSIVE = startEx
+			opt.MAXEXCLUSIVE = stopEx
+			return server.userCommandHandler.ZRangeByScore(ctx, key, start, stop, opt)
+		}
+
+		return server.userCommandHandler.ZRange(ctx, key, int(start), int(stop), opt)
 	})
 
 	server.RegisterExexutor("ZRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
