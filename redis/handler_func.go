@@ -145,6 +145,24 @@ func nextScoreArgument(cmd string, name string, args Arguments) (float64, error)
 	return score, nil
 }
 
+func nextRangeArgument(cmd string, name string, args Arguments) (float64, bool, error) {
+	str, err := args.NextString()
+	if err != nil || len(str) == 0 {
+		return 0, false, newMissingArgumentError(cmd, name, err)
+	}
+	offset := 0
+	exclusive := false
+	if str[0] == '(' {
+		offset = 1
+		exclusive = true
+	}
+	rng, err := strconv.ParseFloat(str[offset:], 64)
+	if err != nil {
+		return 0, false, newMissingArgumentError(cmd, name, err)
+	}
+	return rng, exclusive, nil
+}
+
 func nextZSetRangeArguments(cmd string, args Arguments) (ZRangeOption, error) {
 	opt := ZRangeOption{
 		BYSCORE:    false,
