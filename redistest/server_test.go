@@ -1672,44 +1672,49 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
-	// t.Run("ZREM", func(t *testing.T) {
-	// 	key := "myset_zrem"
-	// 	records := []struct {
-	// 		mems         []string
-	// 		expectedRet  int64
-	// 		expectedMems []string
-	// 	}{
-	// 		{[]string{"one"}, 1, []string{"two", "three"}},
-	// 		{[]string{"four"}, 0, []string{"two", "three"}},
-	// 	}
+	t.Run("ZREM", func(t *testing.T) {
+		key := "myset_zrem"
+		records := []struct {
+			mems         []string
+			expectedRet  int64
+			expectedMems []string
+		}{
+			{[]string{"two"}, 1, []string{"one", "three"}},
+			{[]string{"one"}, 1, []string{"three"}},
+		}
 
-	// 	_, err := client.SAdd(key, []string{"one", "two", "three"}).Result()
-	// 	if err != nil {
-	// 		t.Error(err)
-	// 		return
-	// 	}
+		params := []goredis.Z{
+			{Score: 1, Member: "one"},
+			{Score: 2, Member: "two"},
+			{Score: 3, Member: "three"},
+		}
+		_, err := client.ZAdd(key, params...).Result()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-	// 	for _, r := range records {
-	// 		t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
-	// 			res, err := client.SRem(key, r.mems).Result()
-	// 			if err != nil {
-	// 				t.Error(err)
-	// 				return
-	// 			}
-	// 			if res != r.expectedRet {
-	// 				t.Errorf("%d != %d", r.expectedRet, res)
-	// 				return
-	// 			}
-	// 			mems, err := client.SMembers(key).Result()
-	// 			if err != nil {
-	// 				t.Error(err)
-	// 				return
-	// 			}
-	// 			if !isStringsEqual(mems, r.expectedMems) {
-	// 				t.Errorf("%s != %s", mems, r.expectedMems)
-	// 				return
-	// 			}
-	// 		})
-	// 	}
-	// })
+		for _, r := range records {
+			t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
+				res, err := client.ZRem(key, r.mems).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				mems, err := client.ZRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
+				}
+			})
+		}
+	})
 }
