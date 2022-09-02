@@ -60,6 +60,15 @@ type ZAddOption struct {
 	INCR bool
 }
 
+type ZRangeOption struct {
+	BYSCORE    bool
+	BYLEX      bool
+	REV        bool
+	WITHSCORES bool
+	Offset     int
+	Count      int
+}
+
 func newDefaultSetOption() SetOption {
 	now := time.Now()
 	return SetOption{
