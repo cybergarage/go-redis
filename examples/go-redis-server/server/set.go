@@ -26,6 +26,12 @@ type Set struct {
 	members []string
 }
 
+func NewSet() *Set {
+	return &Set{
+		members: []string{},
+	}
+}
+
 func (set *Set) Add(members []string) int {
 	addedMemberCount := 0
 	for _, member := range members {
