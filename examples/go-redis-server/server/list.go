@@ -20,7 +20,40 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
-type List []string
+////////////////////////////////////////////////////////////
+// List
+////////////////////////////////////////////////////////////
+
+type List struct {
+	elements []string
+}
+
+func NewList() *List {
+	return &List{
+		elements: []string{},
+	}
+}
+
+func (list *List) Pop(count int) ([]string, bool) {
+	if count < 1 {
+		return nil, false
+	}
+
+	elems := []string{}
+	for n := 0; n < count; n++ {
+		if len(list.elements) < 1 {
+			continue
+		}
+		elems = append(elems, list.elements[0])
+		list.elements = list.elements[1:]
+	}
+
+	return elems, true
+}
+
+////////////////////////////////////////////////////////////
+// List command handler
+////////////////////////////////////////////////////////////
 
 func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
@@ -37,29 +70,23 @@ func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.
 		return nil, err
 	}
 
-	if count < 1 {
+	elems, ok := list.Pop(count)
+	if !ok || len(elems) == 0 {
 		return redis.NewNilMessage(), nil
 	}
 
 	if count == 1 {
-		if len(list) < 1 {
+		if len(elems) < 1 {
 			return redis.NewNilMessage(), nil
 		}
-		msg := redis.NewBulkMessage(list[0])
-		record.Data = list[1:]
-		return msg, nil
+		return redis.NewBulkMessage(elems[0]), nil
 	}
 
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
-	for n := 0; n < count; n++ {
-		if len(list) < 1 {
-			continue
-		}
-		array.Append(redis.NewBulkMessage(list[0]))
-		list = list[1:]
+	for _, elem := range elems {
+		array.Append(redis.NewBulkMessage(elem))
 	}
-	record.Data = list
 
 	return arrayMsg, nil
 }
