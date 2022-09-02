@@ -14,27 +14,35 @@
 
 package server
 
-type ZSet []*ZSetMember
-
 ////////////////////////////////////////////////////////////
 // ZSet
 ////////////////////////////////////////////////////////////
+
+type ZSet struct {
+	members []*ZSetMember
+}
 
 type ZSetMember struct {
 	Score string
 	Data  string
 }
 
+func NewZSet() *ZSet {
+	return &ZSet{
+		members: []*ZSetMember{},
+	}
+}
+
 // nolint: staticcheck
 func (zset ZSet) Add(nm *ZSetMember) {
-	for n, tm := range zset {
+	for n, tm := range zset.members {
 		if nm.Score < tm.Score {
-			zset = append(zset[:n+1], zset[n:]...)
-			zset[n] = nm
+			zset.members = append(zset.members[:n+1], zset.members[n:]...)
+			zset.members[n] = nm
 			return
 		}
 	}
-	zset = append(zset, nm)
+	zset.members = append(zset.members, nm)
 }
 
 ////////////////////////////////////////////////////////////
