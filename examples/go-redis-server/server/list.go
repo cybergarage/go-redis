@@ -38,7 +38,6 @@ func (list *List) LPop(count int) ([]string, bool) {
 	if count < 1 {
 		return nil, false
 	}
-
 	elems := []string{}
 	for n := 0; n < count; n++ {
 		if len(list.elements) < 1 {
@@ -47,7 +46,6 @@ func (list *List) LPop(count int) ([]string, bool) {
 		elems = append(elems, list.elements[0])
 		list.elements = list.elements[1:]
 	}
-
 	return elems, true
 }
 
@@ -56,6 +54,21 @@ func (list *List) LPush(elems []string) int {
 		list.elements = append([]string{elem}, list.elements...)
 	}
 	return len(list.elements)
+}
+
+func (list *List) RPop(count int) ([]string, bool) {
+	if count < 1 {
+		return nil, false
+	}
+	elems := []string{}
+	for n := 0; n < count; n++ {
+		if len(list.elements) < 1 {
+			continue
+		}
+		elems = append(elems, list.elements[len(list.elements)-1])
+		list.elements = list.elements[:len(list.elements)-1]
+	}
+	return elems, true
 }
 
 ////////////////////////////////////////////////////////////
@@ -118,6 +131,42 @@ func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, op
 	return redis.NewIntegerMessage(list.LPush(elems)), nil
 }
 
+func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	if !db.HasRecord(key) {
+		return redis.NewNilMessage(), nil
+	}
+
+	_, list, err := db.GetListRecord(key)
+	if err != nil {
+		return nil, err
+	}
+
+	elems, ok := list.RPop(count)
+	if !ok || len(elems) == 0 {
+		return redis.NewNilMessage(), nil
+	}
+
+	if count == 1 {
+		if len(elems) < 1 {
+			return redis.NewNilMessage(), nil
+		}
+		return redis.NewBulkMessage(elems[0]), nil
+	}
+
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for _, elem := range elems {
+		array.Append(redis.NewBulkMessage(elem))
+	}
+
+	return arrayMsg, nil
+}
+
 func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
@@ -142,48 +191,6 @@ func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, op
 	record.Data = list
 
 	return redis.NewIntegerMessage(len(list)), nil
-}
-
-func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	if !db.HasRecord(key) {
-		return redis.NewNilMessage(), nil
-	}
-
-	record, list, err := db.GetListRecord(key)
-	if err != nil {
-		return nil, err
-	}
-
-	if count < 1 {
-		return redis.NewNilMessage(), nil
-	}
-
-	if count == 1 {
-		if len(list) < 1 {
-			return redis.NewNilMessage(), nil
-		}
-		msg := redis.NewBulkMessage(list[len(list)-1])
-		record.Data = list[:len(list)-1]
-		return msg, nil
-	}
-
-	arrayMsg := redis.NewArrayMessage()
-	array, _ := arrayMsg.Array()
-	for n := 0; n < count; n++ {
-		if len(list) < 1 {
-			continue
-		}
-		array.Append(redis.NewBulkMessage(list[len(list)-1]))
-		list = list[:len(list)-1]
-	}
-	record.Data = list
-
-	return arrayMsg, nil
 }
 
 func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop int) (*redis.Message, error) {
