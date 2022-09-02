@@ -16,6 +16,7 @@ package server
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -25,7 +26,12 @@ func TestZSet(t *testing.T) {
 		data     string
 		expected []string
 	}{
-		{"1", "one", []string{"one"}},
+		{"6", "six", []string{"six"}},
+		{"1", "one", []string{"one", "six"}},
+		{"2", "two", []string{"one", "two", "six"}},
+		{"3", "three", []string{"one", "two", "three", "six"}},
+		{"5", "five", []string{"one", "two", "three", "five", "six"}},
+		{"4", "four", []string{"one", "two", "three", "four", "five", "six"}},
 	}
 
 	zset := NewZSet()
@@ -36,6 +42,11 @@ func TestZSet(t *testing.T) {
 				Data:  testCase.data,
 			}
 			zset.Add(m)
+			mems := zset.Range(0, -1)
+			if !reflect.DeepEqual(mems, testCase.expected) {
+				t.Errorf("%s != %s", mems, testCase.expected)
+				return
+			}
 		})
 	}
 }
