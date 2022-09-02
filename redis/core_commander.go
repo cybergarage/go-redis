@@ -14,7 +14,13 @@
 
 package redis
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+
+	"github.com/cybergarage/go-redis/redis/proto"
+)
 
 // nolint: gocyclo, maintidx
 func (server *Server) registerCoreExecutors() {
@@ -431,5 +437,131 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 		return server.userCommandHandler.SRem(ctx, key, members)
+	})
+
+	// ZSet commands.
+
+	server.RegisterExexutor("ZADD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt := ZAddOption{
+			XX:   false,
+			NX:   false,
+			LT:   false,
+			GT:   false,
+			CH:   false,
+			INCR: false,
+		}
+
+		score := ""
+		param, err := args.NextString()
+		for err == nil {
+			isOption := true
+			switch strings.ToUpper(param) {
+			case "NX":
+				opt.NX = true
+			case "XX":
+				opt.XX = true
+			case "GT":
+				opt.GT = true
+			case "LT":
+				opt.LT = true
+			case "CH":
+				opt.CH = true
+			case "INCR":
+				opt.INCR = true
+			default:
+				score = param
+				isOption = false
+			}
+			if !isOption {
+				break
+			}
+		}
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "score", err)
+		}
+
+		members := []*ZSetMember{}
+		member, err := args.NextString()
+		if err != nil {
+			err = newMissingArgumentError(cmd, "score", err)
+		}
+		for err == nil {
+			members = append(members, &ZSetMember{Score: score, Data: member})
+			score, err = args.NextString()
+			if err != nil {
+				err = newMissingArgumentError(cmd, "member", err)
+				break
+			}
+			member, err = args.NextString()
+			if err != nil {
+				err = newMissingArgumentError(cmd, "score", err)
+				break
+			}
+		}
+		if !errors.Is(err, proto.ErrEOM) {
+			return nil, err
+		}
+
+		return server.userCommandHandler.ZAdd(ctx, key, members, opt)
+	})
+
+	server.RegisterExexutor("ZRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		start, err := nextIntegerArgument(cmd, "start", args)
+		if err != nil {
+			return nil, err
+		}
+
+		stop, err := nextIntegerArgument(cmd, "stop", args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt := ZRangeOption{
+			BYSCORE:    false,
+			BYLEX:      false,
+			REV:        false,
+			WITHSCORES: false,
+			Offset:     0,
+			Count:      -1,
+		}
+
+		param, err := args.NextString()
+		for err == nil {
+			switch strings.ToUpper(param) {
+			case "BYSCORE":
+				opt.BYSCORE = true
+			case "BYLEX":
+				opt.BYLEX = true
+			case "REV":
+				opt.REV = true
+			case "LIMIT":
+				opt.Offset, err = nextIntegerArgument(cmd, "offset", args)
+				if err != nil {
+					return nil, newMissingArgumentError(cmd, "offset", err)
+				}
+				opt.Count, err = nextIntegerArgument(cmd, "count", args)
+				if err != nil {
+					return nil, newMissingArgumentError(cmd, "count", err)
+				}
+			case "WITHSCORES":
+				opt.WITHSCORES = true
+			}
+			param, err = args.NextString()
+		}
+		if !errors.Is(err, proto.ErrEOM) {
+			return nil, newMissingArgumentError(cmd, "", err)
+		}
+
+		return server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
 	})
 }

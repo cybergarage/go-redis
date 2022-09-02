@@ -20,18 +20,18 @@ import (
 )
 
 const (
-	errorNotSupportedCommand = "'%s' is not supported"
-	errorMissingArgument     = "%s: missing argument (%s) %w"
-	errorUnkownArgument      = "%s: unknown argument (%s)"
+	errorNotSupportedCommand    = "'%s' is not supported"
+	errorMissingCommandArgument = "%s: missing argument (%s) %w"
+	errorUnkownCommandArgument  = "%s: unknown argument (%s)"
 )
 
 var errQuit = errors.New("QUIT")
 var errSystem = errors.New("internal system error")
 
 func newMissingArgumentError(cmd string, arg string, err error) error {
-	return fmt.Errorf(errorMissingArgument, cmd, arg, err)
+	return fmt.Errorf(errorMissingCommandArgument, cmd, arg, err)
 }
 
 func newUnkownArgumentError(cmd string, arg string) error {
-	return fmt.Errorf(errorUnkownArgument, cmd, arg)
+	return fmt.Errorf(errorUnkownCommandArgument, cmd, arg)
 }

@@ -20,6 +20,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	goredis "github.com/go-redis/redis"
 )
 
 func isStringsEqual(aa []string, ba []string) bool {
@@ -111,6 +113,12 @@ func TestServer(t *testing.T) {
 
 	t.Run("Set", func(t *testing.T) {
 		testSet(t, server, client)
+	})
+
+	// ZSet commands
+
+	t.Run("ZSet", func(t *testing.T) {
+		testZSet(t, server, client)
 	})
 
 	t.Run("YCSB", func(t *testing.T) {
@@ -1617,4 +1625,91 @@ func testSet(t *testing.T, server *Server, client *Client) {
 			})
 		}
 	})
+}
+
+// nolint: maintidx, gocyclo, dupl
+func testZSet(t *testing.T, server *Server, client *Client) {
+	t.Helper()
+
+	t.Run("ZADD", func(t *testing.T) {
+		key := "myset_zadd"
+		records := []struct {
+			scores       []float64
+			data         []string
+			expectedRet  int64
+			expectedMems []string
+		}{
+			{[]float64{1}, []string{"one"}, 1, []string{"one"}},
+			{[]float64{1}, []string{"uno"}, 1, []string{"one", "uno"}},
+			{[]float64{2, 3}, []string{"two", "three"}, 2, []string{"one", "uno", "two", "three"}},
+		}
+
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
+				params := []goredis.Z{}
+				for n, score := range r.scores {
+					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
+				}
+				res, err := client.ZAdd(key, params...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				mems, err := client.ZRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
+				}
+			})
+		}
+	})
+
+	// t.Run("ZREM", func(t *testing.T) {
+	// 	key := "myset_zrem"
+	// 	records := []struct {
+	// 		mems         []string
+	// 		expectedRet  int64
+	// 		expectedMems []string
+	// 	}{
+	// 		{[]string{"one"}, 1, []string{"two", "three"}},
+	// 		{[]string{"four"}, 0, []string{"two", "three"}},
+	// 	}
+
+	// 	_, err := client.SAdd(key, []string{"one", "two", "three"}).Result()
+	// 	if err != nil {
+	// 		t.Error(err)
+	// 		return
+	// 	}
+
+	// 	for _, r := range records {
+	// 		t.Run(strings.Join(r.mems, ","), func(t *testing.T) {
+	// 			res, err := client.SRem(key, r.mems).Result()
+	// 			if err != nil {
+	// 				t.Error(err)
+	// 				return
+	// 			}
+	// 			if res != r.expectedRet {
+	// 				t.Errorf("%d != %d", r.expectedRet, res)
+	// 				return
+	// 			}
+	// 			mems, err := client.SMembers(key).Result()
+	// 			if err != nil {
+	// 				t.Error(err)
+	// 				return
+	// 			}
+	// 			if !isStringsEqual(mems, r.expectedMems) {
+	// 				t.Errorf("%s != %s", mems, r.expectedMems)
+	// 				return
+	// 			}
+	// 		})
+	// 	}
+	// })
 }
