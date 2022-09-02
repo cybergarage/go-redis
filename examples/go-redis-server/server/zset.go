@@ -40,8 +40,7 @@ func NewZSetMember(score string, data string) *ZSetMember {
 	}
 }
 
-// nolint: staticcheck
-func (zset ZSet) Add(nm *ZSetMember) {
+func (zset *ZSet) Add(nm *ZSetMember) {
 	for n, tm := range zset.members {
 		if nm.Score < tm.Score {
 			zset.members = append(zset.members[:n+1], zset.members[n:]...)
@@ -50,6 +49,23 @@ func (zset ZSet) Add(nm *ZSetMember) {
 		}
 	}
 	zset.members = append(zset.members, nm)
+}
+
+func (zset *ZSet) Range(start int, stop int) []string {
+	if start < 0 {
+		start = len(zset.members) + start
+	}
+	if stop < 0 {
+		stop = len(zset.members) + stop
+	}
+	mems := []string{}
+	for n := start; n <= stop; n++ {
+		if (n < 0) || ((len(zset.members) - 1) < n) {
+			continue
+		}
+		mems = append(mems, zset.members[n].Data)
+	}
+	return mems
 }
 
 ////////////////////////////////////////////////////////////
