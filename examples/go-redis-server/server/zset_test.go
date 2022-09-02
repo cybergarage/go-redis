@@ -34,6 +34,15 @@ func TestZSet(t *testing.T) {
 		{"4", "four", []string{"one", "two", "three", "four", "five", "six"}},
 	}
 
+	zopt := ZRangeOption{
+		BYSCORE:    false,
+		BYLEX:      false,
+		REV:        false,
+		WITHSCORES: false,
+		Offset:     0,
+		Count:      -1,
+	}
+
 	zset := NewZSet()
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%s(%s)", testCase.data, testCase.score), func(t *testing.T) {
@@ -42,7 +51,7 @@ func TestZSet(t *testing.T) {
 				Data:  testCase.data,
 			}
 			zset.Add(m)
-			mems := zset.Range(0, -1)
+			mems := zset.Range(0, -1, zopt)
 			memdata := []string{}
 			for _, mem := range mems {
 				memdata = append(memdata, mem.Data)
