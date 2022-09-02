@@ -33,18 +33,18 @@ func NewDatabaseWithID(id int) *Database {
 	}
 }
 
-func (db *Database) GetListRecord(key string) (*Record, List, error) {
-	var list List
+func (db *Database) GetListRecord(key string) (*Record, *List, error) {
+	var list *List
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
-		list, ok = record.Data.(List)
+		list, ok = record.Data.(*List)
 		if !ok {
 			return nil, nil, fmt.Errorf(errorInvalidStoredDataType, record.Data)
 		}
 	}
 	if !hasRecord {
-		list = List{}
+		list = NewList()
 		record = &Record{
 			Key:       key,
 			Data:      list,
