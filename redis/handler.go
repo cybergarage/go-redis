@@ -63,7 +63,7 @@ type SetCommandHandler interface {
 }
 
 type ZSetMember struct {
-	Score string
+	Score float64
 	Data  string
 }
 
