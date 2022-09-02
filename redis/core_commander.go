@@ -526,43 +526,36 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		opt := ZRangeOption{
-			BYSCORE:    false,
-			BYLEX:      false,
-			REV:        false,
-			WITHSCORES: false,
-			Offset:     0,
-			Count:      -1,
-		}
-
-		param, err := args.NextString()
-		for err == nil {
-			switch strings.ToUpper(param) {
-			case "BYSCORE":
-				opt.BYSCORE = true
-			case "BYLEX":
-				opt.BYLEX = true
-			case "REV":
-				opt.REV = true
-			case "LIMIT":
-				opt.Offset, err = nextIntegerArgument(cmd, "offset", args)
-				if err != nil {
-					return nil, newMissingArgumentError(cmd, "offset", err)
-				}
-				opt.Count, err = nextIntegerArgument(cmd, "count", args)
-				if err != nil {
-					return nil, newMissingArgumentError(cmd, "count", err)
-				}
-			case "WITHSCORES":
-				opt.WITHSCORES = true
-			}
-			param, err = args.NextString()
-		}
-		if !errors.Is(err, proto.ErrEOM) {
-			return nil, newMissingArgumentError(cmd, "", err)
+		opt, err := nextZSetRangeArguments(cmd, args)
+		if err != nil {
+			return nil, err
 		}
 
 		return server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
+	})
+
+	server.RegisterExexutor("ZRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		min, err := nextIntegerArgument(cmd, "min", args)
+		if err != nil {
+			return nil, err
+		}
+
+		max, err := nextIntegerArgument(cmd, "max", args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt, err := nextZSetRangeArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		return server.userCommandHandler.ZRange(ctx, key, min, max, opt)
 	})
 
 	server.RegisterExexutor("ZREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
