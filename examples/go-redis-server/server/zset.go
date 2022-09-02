@@ -73,6 +73,7 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 	if stop < 0 {
 		stop = len(zset.members) + stop
 	}
+
 	mems := []*ZSetMember{}
 	for n := start; n <= stop; n++ {
 		if (n < 0) || ((len(zset.members) - 1) < n) {
@@ -80,7 +81,17 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 		}
 		mems = append(mems, zset.members[n])
 	}
-	return mems
+
+	offset := opt.Offset
+	if offset < 0 {
+		offset = 0
+	}
+	count := opt.Count
+	if count < 0 {
+		count = len(mems)
+	}
+
+	return mems[offset:count]
 }
 
 func (zset *ZSet) RangeByScore(min float64, max float64, opt ZRangeOption) []*ZSetMember {
@@ -94,7 +105,17 @@ func (zset *ZSet) RangeByScore(min float64, max float64, opt ZRangeOption) []*ZS
 		}
 		mems = append(mems, mem)
 	}
-	return mems
+
+	offset := opt.Offset
+	if offset < 0 {
+		offset = 0
+	}
+	count := opt.Count
+	if count < 0 {
+		count = len(mems)
+	}
+
+	return mems[offset:count]
 }
 
 func (zset *ZSet) Rem(members []string) int {
