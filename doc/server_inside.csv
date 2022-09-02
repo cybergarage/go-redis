@@ -129,7 +129,7 @@ Supported,Sorted Set Command,Redis Version,Note
 -,BZMPOP,7.0.0
 -,BZPOPMAX,5.0.0
 -,BZPOPMIN,5.0.0
--,ZADD,1.2.0
+O,ZADD,1.2.0
 -,ZCARD,1.2.0
 -,ZCOUNT,2.0.0
 -,ZDIFF,6.2.0
@@ -144,7 +144,7 @@ Supported,Sorted Set Command,Redis Version,Note
 -,ZPOPMAX,5.0.0
 -,ZPOPMIN,5.0.0
 -,ZRANDMEMBER,6.2.0
--,ZRANGE,1.2.0
+O,ZRANGE,1.2.0
 -,ZRANGEBYLEX,2.8.9
 -,ZRANGEBYSCORE,1.0.5
 -,ZRANGESTORE,6.2.0
