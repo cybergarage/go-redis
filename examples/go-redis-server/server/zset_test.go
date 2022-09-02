@@ -43,8 +43,12 @@ func TestZSet(t *testing.T) {
 			}
 			zset.Add(m)
 			mems := zset.Range(0, -1)
-			if !reflect.DeepEqual(mems, testCase.expected) {
-				t.Errorf("%s != %s", mems, testCase.expected)
+			memdata := []string{}
+			for _, mem := range mems {
+				memdata = append(memdata, mem.Data)
+			}
+			if !reflect.DeepEqual(memdata, testCase.expected) {
+				t.Errorf("%s != %s", memdata, testCase.expected)
 				return
 			}
 		})
