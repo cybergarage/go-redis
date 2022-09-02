@@ -20,3 +20,15 @@ type ZSetMember struct {
 	Score string
 	Data  string
 }
+
+// nolint: staticcheck
+func (zset ZSet) Add(nm *ZSetMember) {
+	for n, tm := range zset {
+		if nm.Score < tm.Score {
+			zset = append(zset[:n+1], zset[n:]...)
+			zset[n] = nm
+			return
+		}
+	}
+	zset = append(zset, nm)
+}

@@ -15,17 +15,27 @@
 package server
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestZSet(t *testing.T) {
 	testCases := []struct {
-		member   string
+		score    string
+		data     string
 		expected []string
-	}{}
+	}{
+		{"1", "one", []string{"one"}},
+	}
 
+	zset := ZSet{}
 	for _, testCase := range testCases {
-		t.Run(testCase.member, func(t *testing.T) {
+		t.Run(fmt.Sprintf("%s(%s)", testCase.data, testCase.score), func(t *testing.T) {
+			m := &ZSetMember{
+				Score: testCase.score,
+				Data:  testCase.data,
+			}
+			zset.Add(m)
 		})
 	}
 }
