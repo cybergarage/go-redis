@@ -62,6 +62,18 @@ type SetCommandHandler interface {
 	SRem(ctx *DBContext, key string, members []string) (*Message, error)
 }
 
+type ZSetMember struct {
+	Score string
+	Data  string
+}
+
+// ZSetCommandHandler represents a core command hander interface for zset commands.
+type ZSetCommandHandler interface {
+	ZAdd(ctx *DBContext, key string, members []*ZSetMember, opt ZAddOption) (*Message, error)
+	ZRange(ctx *DBContext, key string, start int, stop int, opt ZRangeOption) (*Message, error)
+	ZRem(ctx *DBContext, key string, members []string) (*Message, error)
+}
+
 // CommandHandler represents a command hander interface for user commands.
 type CommandHandler interface {
 	GenericCommandHandler
@@ -69,6 +81,7 @@ type CommandHandler interface {
 	HashCommandHandler
 	ListCommandHandler
 	SetCommandHandler
+	ZSetCommandHandler
 }
 
 // SystemCommandHandler represents a hander interface for system commands.

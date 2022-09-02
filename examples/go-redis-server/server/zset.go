@@ -14,6 +14,8 @@
 
 package server
 
+import "github.com/cybergarage/go-redis/redis"
+
 ////////////////////////////////////////////////////////////
 // ZSet
 ////////////////////////////////////////////////////////////
@@ -71,3 +73,15 @@ func (zset *ZSet) Range(start int, stop int) []string {
 ////////////////////////////////////////////////////////////
 // ZSet command handler
 ////////////////////////////////////////////////////////////
+
+func (server *Server) ZAdd(ctx *redis.DBContext, key string, members []*redis.ZSetMember, opt redis.ZAddOption) (*redis.Message, error) {
+	return nil, nil
+}
+
+func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop int, opt redis.ZRangeOption) (*redis.Message, error) {
+	return nil, nil
+}
+
+func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
+	return nil, nil
+}
