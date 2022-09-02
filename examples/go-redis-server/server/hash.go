@@ -22,6 +22,19 @@ import (
 
 type Hash map[string]string
 
+// nolint: ifshort
+func (hash Hash) Set(field string, val string, opt redis.HSetOption) int {
+	_, hasKey := hash[field]
+	if opt.NX && hasKey {
+		return 0
+	}
+	hash[field] = val
+	if hasKey {
+		return 0
+	}
+	return 1
+}
+
 func (hash Hash) Del(fields []string) int {
 	removedFields := 0
 	for _, field := range fields {
@@ -44,11 +57,11 @@ func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
-	dict, ok := record.Data.(Hash)
+	hash, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
-	return redis.NewIntegerMessage(dict.Del(fields)), nil
+	return redis.NewIntegerMessage(hash.Del(fields)), nil
 }
 
 // nolint: ifshort
@@ -80,16 +93,7 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 		return redis.NewIntegerMessage(1), nil
 	}
 
-	_, hasKey := dict[field]
-	if opt.NX && hasKey {
-		return redis.NewIntegerMessage(0), nil
-	}
-
-	dict[field] = val
-	if hasKey {
-		return redis.NewIntegerMessage(0), nil
-	}
-	return redis.NewIntegerMessage(1), nil
+	return redis.NewIntegerMessage(dict.Set(field, val, opt)), nil
 }
 
 func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*redis.Message, error) {
@@ -101,15 +105,15 @@ func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*red
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	dict, ok := record.Data.(Hash)
+	hash, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	dictData, ok := dict[field]
+	hashData, ok := hash[field]
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
-	return redis.NewStringMessage(dictData), nil
+	return redis.NewStringMessage(hashData), nil
 }
 
 func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message, error) {
@@ -124,13 +128,13 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 		return arrayMsg, nil
 	}
 
-	dict, ok := record.Data.(Hash)
+	hash, ok := record.Data.(Hash)
 	if !ok {
 		return arrayMsg, nil
 	}
 
 	array, _ := arrayMsg.Array()
-	for key, val := range dict {
+	for key, val := range hash {
 		array.Append(redis.NewBulkMessage(key))
 		array.Append(redis.NewBulkMessage(val))
 	}
