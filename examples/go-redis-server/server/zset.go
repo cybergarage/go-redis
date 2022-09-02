@@ -26,6 +26,7 @@ type ZSet struct {
 
 type ZSetMember = redis.ZSetMember
 type ZRangeOption = redis.ZRangeOption
+type ZAddOption = redis.ZAddOption
 
 func NewZSet() *ZSet {
 	return &ZSet{
@@ -40,15 +41,25 @@ func NewZSetMember(score string, data string) *ZSetMember {
 	}
 }
 
-func (zset *ZSet) Add(nm *ZSetMember) {
-	for n, tm := range zset.members {
-		if nm.Score < tm.Score {
-			zset.members = append(zset.members[:n+1], zset.members[n:]...)
-			zset.members[n] = nm
-			return
+func (zset *ZSet) Add(nms []*ZSetMember, opt ZAddOption) int {
+	addedMemberCount := 0
+	for _, nm := range nms {
+		isAdded := false
+		for n, tm := range zset.members {
+			if nm.Score < tm.Score {
+				zset.members = append(zset.members[:n+1], zset.members[n:]...)
+				zset.members[n] = nm
+				isAdded = true
+				addedMemberCount++
+				break
+			}
+		}
+		if !isAdded {
+			zset.members = append(zset.members, nm)
+			addedMemberCount++
 		}
 	}
-	zset.members = append(zset.members, nm)
+	return addedMemberCount
 }
 
 func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
@@ -68,18 +79,16 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 	return mems
 }
 
-////////////////////////////////////////////////////////////
-// ZSet command handler
-////////////////////////////////////////////////////////////
-
-func (server *Server) ZAdd(ctx *redis.DBContext, key string, members []*redis.ZSetMember, opt redis.ZAddOption) (*redis.Message, error) {
-	return nil, nil
-}
-
-func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop int, opt redis.ZRangeOption) (*redis.Message, error) {
-	return nil, nil
-}
-
-func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	return nil, nil
+func (zset *ZSet) Rem(members []string) int {
+	removedMemberCount := 0
+	for _, rm := range members {
+		for n, m := range zset.members {
+			if m.Data == rm {
+				zset.members = append(zset.members[:n], zset.members[n+1:]...)
+				removedMemberCount++
+				break
+			}
+		}
+	}
+	return removedMemberCount
 }
