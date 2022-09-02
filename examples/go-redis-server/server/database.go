@@ -78,3 +78,26 @@ func (db *Database) GetSetRecord(key string) (*Record, *Set, error) {
 	}
 	return record, set, nil
 }
+
+func (db *Database) GetZSetRecord(key string) (*Record, *ZSet, error) {
+	var zset *ZSet
+	record, hasRecord := db.GetRecord(key)
+	if hasRecord {
+		var ok bool
+		zset, ok = record.Data.(*ZSet)
+		if !ok {
+			return nil, nil, fmt.Errorf(errorInvalidStoredDataType, record.Data)
+		}
+	}
+	if !hasRecord {
+		zset = NewZSet()
+		record = &Record{
+			Key:       key,
+			Data:      zset,
+			Timestamp: time.Now(),
+			TTL:       0,
+		}
+		db.SetRecord(record)
+	}
+	return record, zset, nil
+}
