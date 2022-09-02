@@ -46,12 +46,14 @@ func TestZSet(t *testing.T) {
 	}
 
 	zropt := ZRangeOption{
-		BYSCORE:    false,
-		BYLEX:      false,
-		REV:        false,
-		WITHSCORES: false,
-		Offset:     0,
-		Count:      -1,
+		BYSCORE:      false,
+		BYLEX:        false,
+		REV:          false,
+		WITHSCORES:   false,
+		MINEXCLUSIVE: false,
+		MAXEXCLUSIVE: false,
+		Offset:       0,
+		Count:        -1,
 	}
 
 	for _, r := range addCases {
