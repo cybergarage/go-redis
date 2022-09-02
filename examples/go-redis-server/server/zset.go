@@ -25,6 +25,7 @@ type ZSet struct {
 }
 
 type ZSetMember = redis.ZSetMember
+type ZRangeOption = redis.ZRangeOption
 
 func NewZSet() *ZSet {
 	return &ZSet{
@@ -50,7 +51,7 @@ func (zset *ZSet) Add(nm *ZSetMember) {
 	zset.members = append(zset.members, nm)
 }
 
-func (zset *ZSet) Range(start int, stop int) []*ZSetMember {
+func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 	if start < 0 {
 		start = len(zset.members) + start
 	}
