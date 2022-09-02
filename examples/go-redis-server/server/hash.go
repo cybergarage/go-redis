@@ -22,6 +22,19 @@ import (
 
 type Hash map[string]string
 
+func (hash Hash) Del(fields []string) int {
+	removedFields := 0
+	for _, field := range fields {
+		_, ok := hash[field]
+		if !ok {
+			continue
+		}
+		delete(hash, field)
+		removedFields++
+	}
+	return removedFields
+}
+
 func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
@@ -35,16 +48,7 @@ func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
-	removedFields := 0
-	for _, field := range fields {
-		_, ok := dict[field]
-		if !ok {
-			continue
-		}
-		delete(dict, field)
-		removedFields++
-	}
-	return redis.NewIntegerMessage(removedFields), nil
+	return redis.NewIntegerMessage(dict.Del(fields)), nil
 }
 
 // nolint: ifshort
