@@ -71,6 +71,13 @@ func (list *List) RPop(count int) ([]string, bool) {
 	return elems, true
 }
 
+func (list *List) RPush(elems []string) int {
+	for _, elem := range elems {
+		list.elements = append(list.elements, elem)
+	}
+	return len(list.elements)
+}
+
 ////////////////////////////////////////////////////////////
 // List command handler
 ////////////////////////////////////////////////////////////
@@ -179,18 +186,12 @@ func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, op
 		}
 	}
 
-	record, list, err := db.GetListRecord(key)
+	_, list, err := db.GetListRecord(key)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, elem := range elems {
-		list = append(list, elem)
-	}
-
-	record.Data = list
-
-	return redis.NewIntegerMessage(len(list)), nil
+	return redis.NewIntegerMessage(list.RPush(elems)), nil
 }
 
 func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop int) (*redis.Message, error) {
