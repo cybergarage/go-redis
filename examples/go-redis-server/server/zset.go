@@ -14,7 +14,11 @@
 
 package server
 
-import "github.com/cybergarage/go-redis/redis"
+import (
+	"strconv"
+
+	"github.com/cybergarage/go-redis/redis"
+)
 
 ////////////////////////////////////////////////////////////
 // ZSet
@@ -34,7 +38,7 @@ func NewZSet() *ZSet {
 	}
 }
 
-func NewZSetMember(score string, data string) *ZSetMember {
+func NewZSetMember(score float64, data string) *ZSetMember {
 	return &ZSetMember{
 		Score: score,
 		Data:  data,
@@ -124,7 +128,7 @@ func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop i
 	for _, mem := range mems {
 		array.Append(redis.NewBulkMessage(mem.Data))
 		if opt.WITHSCORES {
-			array.Append(redis.NewBulkMessage(mem.Score))
+			array.Append(redis.NewBulkMessage(strconv.FormatFloat(mem.Score, 'g', -1, 64)))
 		}
 	}
 	return arrayMsg, nil

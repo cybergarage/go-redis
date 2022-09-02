@@ -16,6 +16,7 @@ package redis
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,11 +34,11 @@ func nextIntegerArgument(cmd string, name string, args Arguments) (int, error) {
 }
 
 func nextStringArgument(cmd string, name string, args Arguments) (string, error) {
-	hash, err := args.NextString()
+	str, err := args.NextString()
 	if err != nil {
 		return "", newMissingArgumentError(cmd, name, err)
 	}
-	return hash, nil
+	return str, nil
 }
 
 func nextStringsArguments(cmd string, name string, args Arguments) ([]string, error) {
@@ -128,6 +129,20 @@ func nextPopArguments(cmd string, args Arguments) (string, int, error) {
 		cnt = 1
 	}
 	return key, cnt, nil
+}
+
+// ZSet fuctions
+
+func nextScoreArgument(cmd string, name string, args Arguments) (float64, error) {
+	str, err := args.NextString()
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	score, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	return score, nil
 }
 
 func nextZSetRangeArguments(cmd string, args Arguments) (ZRangeOption, error) {

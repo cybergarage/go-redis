@@ -24,16 +24,16 @@ func TestZSet(t *testing.T) {
 	zset := NewZSet()
 
 	addCases := []struct {
-		score    string
+		score    float64
 		data     string
 		expected []string
 	}{
-		{"6", "six", []string{"six"}},
-		{"1", "one", []string{"one", "six"}},
-		{"2", "two", []string{"one", "two", "six"}},
-		{"3", "three", []string{"one", "two", "three", "six"}},
-		{"5", "five", []string{"one", "two", "three", "five", "six"}},
-		{"4", "four", []string{"one", "two", "three", "four", "five", "six"}},
+		{6, "six", []string{"six"}},
+		{1, "one", []string{"one", "six"}},
+		{2, "two", []string{"one", "two", "six"}},
+		{3, "three", []string{"one", "two", "three", "six"}},
+		{5, "five", []string{"one", "two", "three", "five", "six"}},
+		{4, "four", []string{"one", "two", "three", "four", "five", "six"}},
 	}
 
 	zaopt := ZAddOption{
@@ -56,7 +56,7 @@ func TestZSet(t *testing.T) {
 
 	for _, r := range addCases {
 		t.Run("Add", func(t *testing.T) {
-			t.Run(fmt.Sprintf("%s(%s)", r.data, r.score), func(t *testing.T) {
+			t.Run(fmt.Sprintf("%s(%f)", r.data, r.score), func(t *testing.T) {
 				m := &ZSetMember{
 					Score: r.score,
 					Data:  r.data,

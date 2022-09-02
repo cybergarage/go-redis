@@ -16,6 +16,7 @@ package redis
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 
@@ -456,7 +457,7 @@ func (server *Server) registerCoreExecutors() {
 			INCR: false,
 		}
 
-		score := ""
+		var score float64
 		param, err := args.NextString()
 		for err == nil {
 			isOption := true
@@ -474,7 +475,7 @@ func (server *Server) registerCoreExecutors() {
 			case "INCR":
 				opt.INCR = true
 			default:
-				score = param
+				score, err = strconv.ParseFloat(param, 64)
 				isOption = false
 			}
 			if !isOption {
@@ -488,18 +489,16 @@ func (server *Server) registerCoreExecutors() {
 		members := []*ZSetMember{}
 		member, err := args.NextString()
 		if err != nil {
-			err = newMissingArgumentError(cmd, "score", err)
+			err = newMissingArgumentError(cmd, "member", err)
 		}
 		for err == nil {
 			members = append(members, &ZSetMember{Score: score, Data: member})
-			score, err = args.NextString()
+			score, err = nextScoreArgument(cmd, "score", args)
 			if err != nil {
-				err = newMissingArgumentError(cmd, "member", err)
 				break
 			}
-			member, err = args.NextString()
+			member, err = nextStringArgument(cmd, "member", args)
 			if err != nil {
-				err = newMissingArgumentError(cmd, "score", err)
 				break
 			}
 		}
