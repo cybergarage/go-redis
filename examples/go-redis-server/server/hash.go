@@ -20,6 +20,10 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
+////////////////////////////////////////////////////////////
+// Hash
+////////////////////////////////////////////////////////////
+
 type Hash map[string]string
 
 // nolint: ifshort
@@ -47,6 +51,10 @@ func (hash Hash) Del(fields []string) int {
 	}
 	return removedFields
 }
+
+////////////////////////////////////////////////////////////
+// Hash command handler
+////////////////////////////////////////////////////////////
 
 func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
