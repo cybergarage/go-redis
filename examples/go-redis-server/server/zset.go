@@ -92,3 +92,52 @@ func (zset *ZSet) Rem(members []string) int {
 	}
 	return removedMemberCount
 }
+
+////////////////////////////////////////////////////////////
+// ZSet command handler
+////////////////////////////////////////////////////////////
+
+func (server *Server) ZAdd(ctx *redis.DBContext, key string, members []*redis.ZSetMember, opt redis.ZAddOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+	return redis.NewIntegerMessage(zset.Add(members, opt)), nil
+}
+
+func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop int, opt redis.ZRangeOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+	mems := zset.Range(start, stop, opt)
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for _, mem := range mems {
+		array.Append(redis.NewBulkMessage(mem.Data))
+		if opt.WITHSCORES {
+			array.Append(redis.NewBulkMessage(mem.Score))
+		}
+	}
+	return arrayMsg, nil
+}
+
+func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+	return redis.NewIntegerMessage(zset.Rem(members)), nil
+}
