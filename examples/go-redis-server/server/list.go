@@ -95,6 +95,16 @@ func (list *List) Range(start int, stop int) []string {
 	return elems
 }
 
+func (list *List) Index(idx int) (string, bool) {
+	if idx < 0 {
+		idx = len(list.elements) + idx
+	}
+	if (idx < 0) || ((len(list.elements) - 1) < idx) {
+		return "", false
+	}
+	return list.elements[idx], true
+}
+
 ////////////////////////////////////////////////////////////
 // List command handler
 ////////////////////////////////////////////////////////////
@@ -243,15 +253,12 @@ func (server *Server) LIndex(ctx *redis.DBContext, key string, idx int) (*redis.
 		return nil, err
 	}
 
-	if idx < 0 {
-		idx = len(list) + idx
-	}
-
-	if (idx < 0) || ((len(list) - 1) < idx) {
+	elem, ok := list.Index(idx)
+	if !ok {
 		return redis.NewNilMessage(), nil
 	}
 
-	return redis.NewBulkMessage(list[idx]), nil
+	return redis.NewBulkMessage(elem), nil
 }
 
 func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, error) {
