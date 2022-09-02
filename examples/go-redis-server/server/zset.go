@@ -24,10 +24,7 @@ type ZSet struct {
 	members []*ZSetMember
 }
 
-type ZSetMember struct {
-	Score string
-	Data  string
-}
+type ZSetMember = redis.ZSetMember
 
 func NewZSet() *ZSet {
 	return &ZSet{
@@ -53,19 +50,19 @@ func (zset *ZSet) Add(nm *ZSetMember) {
 	zset.members = append(zset.members, nm)
 }
 
-func (zset *ZSet) Range(start int, stop int) []string {
+func (zset *ZSet) Range(start int, stop int) []*ZSetMember {
 	if start < 0 {
 		start = len(zset.members) + start
 	}
 	if stop < 0 {
 		stop = len(zset.members) + stop
 	}
-	mems := []string{}
+	mems := []*ZSetMember{}
 	for n := start; n <= stop; n++ {
 		if (n < 0) || ((len(zset.members) - 1) < n) {
 			continue
 		}
-		mems = append(mems, zset.members[n].Data)
+		mems = append(mems, zset.members[n])
 	}
 	return mems
 }
