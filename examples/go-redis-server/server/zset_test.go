@@ -21,7 +21,9 @@ import (
 )
 
 func TestZSet(t *testing.T) {
-	testCases := []struct {
+	zset := NewZSet()
+
+	addCases := []struct {
 		score    string
 		data     string
 		expected []string
@@ -34,7 +36,16 @@ func TestZSet(t *testing.T) {
 		{"4", "four", []string{"one", "two", "three", "four", "five", "six"}},
 	}
 
-	zopt := ZRangeOption{
+	zaopt := ZAddOption{
+		XX:   false,
+		NX:   false,
+		LT:   false,
+		GT:   false,
+		CH:   false,
+		INCR: false,
+	}
+
+	zropt := ZRangeOption{
 		BYSCORE:    false,
 		BYLEX:      false,
 		REV:        false,
@@ -43,23 +54,53 @@ func TestZSet(t *testing.T) {
 		Count:      -1,
 	}
 
-	zset := NewZSet()
-	for _, testCase := range testCases {
-		t.Run(fmt.Sprintf("%s(%s)", testCase.data, testCase.score), func(t *testing.T) {
-			m := &ZSetMember{
-				Score: testCase.score,
-				Data:  testCase.data,
-			}
-			zset.Add(m)
-			mems := zset.Range(0, -1, zopt)
-			memdata := []string{}
-			for _, mem := range mems {
-				memdata = append(memdata, mem.Data)
-			}
-			if !reflect.DeepEqual(memdata, testCase.expected) {
-				t.Errorf("%s != %s", memdata, testCase.expected)
-				return
-			}
+	for _, r := range addCases {
+		t.Run("Add", func(t *testing.T) {
+			t.Run(fmt.Sprintf("%s(%s)", r.data, r.score), func(t *testing.T) {
+				m := &ZSetMember{
+					Score: r.score,
+					Data:  r.data,
+				}
+				zset.Add([]*ZSetMember{m}, zaopt)
+				mems := zset.Range(0, -1, zropt)
+				memdata := []string{}
+				for _, mem := range mems {
+					memdata = append(memdata, mem.Data)
+				}
+				if !reflect.DeepEqual(memdata, r.expected) {
+					t.Errorf("%s != %s", memdata, r.expected)
+					return
+				}
+			})
+		})
+	}
+
+	remCases := []struct {
+		data     string
+		expected []string
+	}{
+		{"six", []string{"one", "two", "three", "four", "five"}},
+		{"one", []string{"two", "three", "four", "five"}},
+		{"two", []string{"three", "four", "five"}},
+		{"three", []string{"four", "five"}},
+		{"five", []string{"four"}},
+		{"four", []string{}},
+	}
+
+	for _, r := range remCases {
+		t.Run("Rem", func(t *testing.T) {
+			t.Run(r.data, func(t *testing.T) {
+				zset.Rem([]string{r.data})
+				mems := zset.Range(0, -1, zropt)
+				memdata := []string{}
+				for _, mem := range mems {
+					memdata = append(memdata, mem.Data)
+				}
+				if !reflect.DeepEqual(memdata, r.expected) {
+					t.Errorf("%s != %s", memdata, r.expected)
+					return
+				}
+			})
 		})
 	}
 }
