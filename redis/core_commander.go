@@ -525,7 +525,7 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		opt, err := nextZSetRangeArguments(cmd, args)
+		opt, err := nextRangeOptionArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
@@ -539,22 +539,24 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		min, err := nextIntegerArgument(cmd, "min", args)
+		min, minEx, err := nextRangeArgument(cmd, "min", args)
 		if err != nil {
 			return nil, err
 		}
 
-		max, err := nextIntegerArgument(cmd, "max", args)
+		max, maxEx, err := nextRangeArgument(cmd, "max", args)
 		if err != nil {
 			return nil, err
 		}
 
-		opt, err := nextZSetRangeArguments(cmd, args)
+		opt, err := nextRangeOptionArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+		opt.MINEXCLUSIVE = minEx
+		opt.MAXEXCLUSIVE = maxEx
 
-		return server.userCommandHandler.ZRange(ctx, key, min, max, opt)
+		return server.userCommandHandler.ZRangeByScore(ctx, key, min, max, opt)
 	})
 
 	server.RegisterExexutor("ZREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
