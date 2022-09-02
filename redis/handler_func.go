@@ -165,12 +165,14 @@ func nextRangeArgument(cmd string, name string, args Arguments) (float64, bool, 
 
 func nextRangeOptionArguments(cmd string, args Arguments) (ZRangeOption, error) {
 	opt := ZRangeOption{
-		BYSCORE:    false,
-		BYLEX:      false,
-		REV:        false,
-		WITHSCORES: false,
-		Offset:     0,
-		Count:      -1,
+		BYSCORE:      false,
+		BYLEX:        false,
+		REV:          false,
+		WITHSCORES:   false,
+		MINEXCLUSIVE: false,
+		MAXEXCLUSIVE: false,
+		Offset:       0,
+		Count:        -1,
 	}
 
 	param, err := args.NextString()
