@@ -71,6 +71,7 @@ type ZSetMember struct {
 type ZSetCommandHandler interface {
 	ZAdd(ctx *DBContext, key string, members []*ZSetMember, opt ZAddOption) (*Message, error)
 	ZRange(ctx *DBContext, key string, start int, stop int, opt ZRangeOption) (*Message, error)
+	ZRangeByScore(ctx *DBContext, key string, min float64, max float64, opt ZRangeOption) (*Message, error)
 	ZRem(ctx *DBContext, key string, members []string) (*Message, error)
 }
 

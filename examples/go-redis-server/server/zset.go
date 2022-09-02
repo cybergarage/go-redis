@@ -134,6 +134,27 @@ func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop i
 	return arrayMsg, nil
 }
 
+func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start float64, stop float64, opt redis.ZRangeOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return nil, err
+	}
+	mems := zset.Range(start, stop, opt)
+	arrayMsg := redis.NewArrayMessage()
+	array, _ := arrayMsg.Array()
+	for _, mem := range mems {
+		array.Append(redis.NewBulkMessage(mem.Data))
+		if opt.WITHSCORES {
+			array.Append(redis.NewBulkMessage(strconv.FormatFloat(mem.Score, 'g', -1, 64)))
+		}
+	}
+	return arrayMsg, nil
+}
+
 func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
 	db, err := server.GetDatabase(ctx.ID())
 	if err != nil {
