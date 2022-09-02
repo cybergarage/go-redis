@@ -78,6 +78,23 @@ func (list *List) RPush(elems []string) int {
 	return len(list.elements)
 }
 
+func (list *List) Range(start int, stop int) []string {
+	if start < 0 {
+		start = len(list.elements) + start
+	}
+	if stop < 0 {
+		stop = len(list.elements) + stop
+	}
+	elems := []string{}
+	for n := start; n <= stop; n++ {
+		if (n < 0) || ((len(list.elements) - 1) < n) {
+			continue
+		}
+		elems = append(elems, list.elements[n])
+	}
+	return elems
+}
+
 ////////////////////////////////////////////////////////////
 // List command handler
 ////////////////////////////////////////////////////////////
@@ -205,20 +222,11 @@ func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop i
 		return nil, err
 	}
 
-	if start < 0 {
-		start = len(list) + start
-	}
-	if stop < 0 {
-		stop = len(list) + stop
-	}
-
+	elems := list.Range(start, stop)
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
-	for n := start; n <= stop; n++ {
-		if (n < 0) || ((len(list) - 1) < n) {
-			continue
-		}
-		array.Append(redis.NewBulkMessage(list[n]))
+	for _, elem := range elems {
+		array.Append(redis.NewBulkMessage(elem))
 	}
 
 	return arrayMsg, nil
