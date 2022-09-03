@@ -15,7 +15,7 @@ To set up this example server, run the following command:
 ```
 make install
 ```
-The example server is compiled and installed to your GO_PATH/bin directory. The example server supports major Redis commands, your can run YCSB (Yahoo! Cloud Serving Benchmark) to the example server as the following. 
+The example server is compiled and installed to your GO_PATH/bin directory. The example server supports major Redis commands, so you can run YCSB (Yahoo! Cloud Serving Benchmark) to the example server as the following. 
 
 ```
 YCSB Client 0.17.0
