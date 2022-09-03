@@ -36,6 +36,18 @@ func NewZSet() *ZSet {
 	}
 }
 
+func NewZSetMembers() []*ZSetMember {
+	return []*ZSetMember{}
+}
+
+func reverseZSetMembers(mems []*ZSetMember) []*ZSetMember {
+	for i := 0; i < len(mems)/2; i++ {
+		j := len(mems) - i - 1
+		mems[i], mems[j] = mems[j], mems[i]
+	}
+	return mems
+}
+
 func NewZSetMember(score float64, data string) *ZSetMember {
 	return &ZSetMember{
 		Score: score,
@@ -89,7 +101,11 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 		count = len(mems)
 	}
 
-	return mems[offset:count]
+	if !opt.REV {
+		return mems[offset:count]
+	}
+
+	return reverseZSetMembers(mems[offset:count])
 }
 
 func (zset *ZSet) RangeByScore(min float64, max float64, opt ZRangeOption) []*ZSetMember {
@@ -113,7 +129,11 @@ func (zset *ZSet) RangeByScore(min float64, max float64, opt ZRangeOption) []*ZS
 		count = len(mems)
 	}
 
-	return mems[offset:count]
+	if !opt.REV {
+		return mems[offset:count]
+	}
+
+	return reverseZSetMembers(mems[offset:count])
 }
 
 func (zset *ZSet) Rem(members []string) int {
