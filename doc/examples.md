@@ -6,10 +6,7 @@ The `go-redis` is disributed with the `go-redis-server` which is a example Redis
 
 - [go-redis-server](examples/go-redis-server)
 
-The example server is implemented by the following steps.
-
-- [How to implement a Redis compatible server?](doc/server_impl.md)
-
+This example is implemented to return the same responses and errors as the official Redis server, but its performance characteristics may vary due to the simple and naive implementation.
 
 ### Installation
 
