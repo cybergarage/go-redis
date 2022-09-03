@@ -74,6 +74,7 @@ type ZSetCommandHandler interface {
 	ZRangeByScore(ctx *DBContext, key string, min float64, max float64, opt ZRangeOption) (*Message, error)
 	ZRem(ctx *DBContext, key string, members []string) (*Message, error)
 	ZScore(ctx *DBContext, key string, member string) (*Message, error)
+	ZIncBy(ctx *DBContext, key string, inc float64, member string) (*Message, error)
 }
 
 // CommandHandler represents a command hander interface for user commands.
