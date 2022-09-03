@@ -62,9 +62,10 @@ type SetCommandHandler interface {
 	SRem(ctx *DBContext, key string, members []string) (*Message, error)
 }
 
+// ZSetMember represents a parameter for ZSetCommandHandler.
 type ZSetMember struct {
-	Score float64
-	Data  string
+	Score  float64
+	Member string
 }
 
 // ZSetCommandHandler represents a core command hander interface for zset commands.

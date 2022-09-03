@@ -492,7 +492,7 @@ func (server *Server) registerCoreExecutors() {
 			err = newMissingArgumentError(cmd, "member", err)
 		}
 		for err == nil {
-			members = append(members, &ZSetMember{Score: score, Data: member})
+			members = append(members, &ZSetMember{Score: score, Member: member})
 			score, err = nextScoreArgument(cmd, "score", args)
 			if err != nil {
 				break
