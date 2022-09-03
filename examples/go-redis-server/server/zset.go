@@ -50,8 +50,8 @@ func reverseZSetMembers(mems []*ZSetMember) []*ZSetMember {
 
 func NewZSetMember(score float64, data string) *ZSetMember {
 	return &ZSetMember{
-		Score: score,
-		Data:  data,
+		Score:  score,
+		Member: data,
 	}
 }
 
@@ -140,7 +140,7 @@ func (zset *ZSet) Rem(members []string) int {
 	removedMemberCount := 0
 	for _, rm := range members {
 		for n, m := range zset.members {
-			if m.Data == rm {
+			if m.Member == rm {
 				zset.members = append(zset.members[:n], zset.members[n+1:]...)
 				removedMemberCount++
 				break
@@ -152,7 +152,7 @@ func (zset *ZSet) Rem(members []string) int {
 
 func (zset *ZSet) Score(member string) (float64, bool) {
 	for _, m := range zset.members {
-		if m.Data == member {
+		if m.Member == member {
 			return m.Score, true
 		}
 	}
@@ -162,7 +162,7 @@ func (zset *ZSet) Score(member string) (float64, bool) {
 func (zset *ZSet) IncBy(inc float64, member string) float64 {
 	var tm *ZSetMember
 	for n, m := range zset.members {
-		if m.Data == member {
+		if m.Member == member {
 			zset.members = append(zset.members[:n], zset.members[n+1:]...)
 			tm = m
 			m.Score += inc
@@ -171,8 +171,8 @@ func (zset *ZSet) IncBy(inc float64, member string) float64 {
 	}
 	if tm == nil {
 		tm = &ZSetMember{
-			Score: inc,
-			Data:  member,
+			Score:  inc,
+			Member: member,
 		}
 	}
 	opt := ZAddOption{
@@ -216,7 +216,7 @@ func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop i
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, mem := range mems {
-		array.Append(redis.NewBulkMessage(mem.Data))
+		array.Append(redis.NewBulkMessage(mem.Member))
 		if opt.WITHSCORES {
 			array.Append(redis.NewFloatMessage(mem.Score))
 		}
@@ -237,7 +237,7 @@ func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start floa
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, mem := range mems {
-		array.Append(redis.NewBulkMessage(mem.Data))
+		array.Append(redis.NewBulkMessage(mem.Member))
 		if opt.WITHSCORES {
 			array.Append(redis.NewFloatMessage(mem.Score))
 		}

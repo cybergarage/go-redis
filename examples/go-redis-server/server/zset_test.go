@@ -60,14 +60,14 @@ func TestZSet(t *testing.T) {
 		t.Run("Add", func(t *testing.T) {
 			t.Run(fmt.Sprintf("%s(%f)", r.data, r.score), func(t *testing.T) {
 				m := &ZSetMember{
-					Score: r.score,
-					Data:  r.data,
+					Score:  r.score,
+					Member: r.data,
 				}
 				zset.Add([]*ZSetMember{m}, zaopt)
 				mems := zset.Range(0, -1, zropt)
 				memdata := []string{}
 				for _, mem := range mems {
-					memdata = append(memdata, mem.Data)
+					memdata = append(memdata, mem.Member)
 				}
 				if !reflect.DeepEqual(memdata, r.expected) {
 					t.Errorf("%s != %s", memdata, r.expected)
@@ -96,7 +96,7 @@ func TestZSet(t *testing.T) {
 				mems := zset.Range(0, -1, zropt)
 				memdata := []string{}
 				for _, mem := range mems {
-					memdata = append(memdata, mem.Data)
+					memdata = append(memdata, mem.Member)
 				}
 				if !reflect.DeepEqual(memdata, r.expected) {
 					t.Errorf("%s != %s", memdata, r.expected)
