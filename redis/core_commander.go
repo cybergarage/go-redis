@@ -576,4 +576,16 @@ func (server *Server) registerCoreExecutors() {
 		}
 		return server.userCommandHandler.ZRem(ctx, key, members)
 	})
+
+	server.RegisterExexutor("ZSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		member, err := nextStringArgument(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.ZScore(ctx, key, member)
+	})
 }
