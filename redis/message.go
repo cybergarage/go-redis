@@ -63,6 +63,11 @@ func NewArrayMessage() *Message {
 	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(proto.NewArray())
 }
 
+// NewArrayMessageWithArray creates an array message with the specified array.
+func NewArrayMessageWithArray(val *proto.Array) *Message {
+	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(val)
+}
+
 // NewStringArrayMessage creates an array message with the specified strings.
 func NewStringArrayMessage(strs []string) *Message {
 	array := proto.NewArray()
