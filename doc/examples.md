@@ -2,7 +2,7 @@
 
 ## go-redis-server
 
-The `go-redis` is disributed with the `go-redis-server` which is a example Redis compatible server implemetation using `go-redis`.
+The `go-redis` is disributed with the `go-redis-server` which is a example Redis compatible server implemetation using the `go-redis`.
 
 - [go-redis-server](examples/go-redis-server)
 
