@@ -122,8 +122,15 @@ func TestServer(t *testing.T) {
 		testZSet(t, server, client)
 	})
 
+	// YCSB
+
+	workloads := []string{"workloada", "workloadb"}
 	t.Run("YCSB", func(t *testing.T) {
-		ExecYCSB(t)
+		for _, workload := range workloads {
+			t.Run(workload, func(t *testing.T) {
+				ExecYCSBWorkload(t, workload)
+			})
+		}
 	})
 
 	// // panic: not implemented

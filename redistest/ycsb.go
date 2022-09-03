@@ -32,39 +32,16 @@ const (
 	ycsbDefaultWorkload = "workloada"
 )
 
-func ExecYCSBWorkload(t *testing.T, defaultWorkload string) {
+func ExecYCSBWorkload(t *testing.T, workload string) {
 	t.Helper()
-	outputYcsbParams := func(t *testing.T, ycsbEnvs []string, ycsbParams []string) {
-		t.Helper()
-		for n, ycsbEnv := range ycsbEnvs {
-			t.Logf("%s = %s", ycsbEnv, ycsbParams[n])
-		}
+
+	ycsbPath, ok := os.LookupEnv(ycsbPathEnv)
+	if !ok {
+		t.Skipf("%s is not specified", ycsbPathEnv)
 	}
 
-	ycsbEnvs := []string{
-		ycsbPathEnv,
-		ycsbWorkloadEnv,
-	}
+	t.Logf("%s = %s", ycsbPathEnv, ycsbPath)
 
-	ycsbParams := []string{
-		"",
-		defaultWorkload,
-	}
-
-	for n, ycsbEnv := range ycsbEnvs {
-		if v, ok := os.LookupEnv(ycsbEnv); ok {
-			ycsbParams[n] = v
-		}
-		if len(ycsbParams[n]) == 0 {
-			outputYcsbParams(t, ycsbEnvs, ycsbParams)
-			t.Skipf("%s is not specified", ycsbEnv)
-			return
-		}
-	}
-
-	outputYcsbParams(t, ycsbEnvs, ycsbParams)
-
-	ycsbPath := ycsbParams[0]
 	ycsbCmd := filepath.Join(ycsbPath, "bin/ycsb.sh")
 	_, err := os.Stat(ycsbCmd)
 	if err != nil {
@@ -72,7 +49,6 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) {
 		return
 	}
 
-	workload := ycsbParams[1]
 	workloadDir := filepath.Join(ycsbPath, "workloads")
 	workloadFile := filepath.Join(workloadDir, workload)
 
@@ -97,7 +73,7 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) {
 	for _, ycsbWorkloadCmd := range ycsbWorkloadCmds {
 		ycsbArgs[1] = ycsbWorkloadCmd
 		cmdStr := strings.Join(ycsbArgs, " ")
-		t.Run(cmdStr, func(t *testing.T) {
+		t.Run(ycsbWorkloadCmd, func(t *testing.T) {
 			t.Logf("%v", cmdStr)
 			out, err := exec.Command(ycsbCmd, ycsbArgs[1:]...).CombinedOutput()
 			if err != nil {
@@ -115,5 +91,10 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) {
 
 func ExecYCSB(t *testing.T) {
 	t.Helper()
-	ExecYCSBWorkload(t, ycsbDefaultWorkload)
+	workload, ok := os.LookupEnv(ycsbWorkloadEnv)
+	t.Logf("%s = %s", ycsbWorkloadEnv, workload)
+	if !ok {
+		workload = ycsbDefaultWorkload
+	}
+	ExecYCSBWorkload(t, workload)
 }
