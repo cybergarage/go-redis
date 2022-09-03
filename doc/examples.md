@@ -1,4 +1,4 @@
 # Examples
 
 - [go-redis-server](../examples/go-redis-server)
-  -  the `go-redis-server` which is a example Redis compatible server implemetation using the `go-redis`.
+  -  A simple example of implementing a Redis compatible server using `go-redis`.
