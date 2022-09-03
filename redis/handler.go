@@ -78,8 +78,8 @@ type ZSetCommandHandler interface {
 	ZIncBy(ctx *DBContext, key string, inc float64, member string) (*Message, error)
 }
 
-// CommandHandler represents a command hander interface for user commands.
-type CommandHandler interface {
+// UserCommandHandler represents a command hander interface for user commands.
+type UserCommandHandler interface {
 	GenericCommandHandler
 	StringCommandHandler
 	HashCommandHandler
