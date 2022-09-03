@@ -2,9 +2,11 @@
 
 ## go-redis-server
 
-The `go-redis` is disributed with the `go-redis-server` which is a simple Redis compatible server implemetation using `go-redis`.
+The `go-redis` is disributed with the `go-redis-server` which is a example Redis compatible server implemetation using `go-redis`.
 
 - [go-redis-server](examples/go-redis-server)
+
+The example server is implemented by the following steps.
 
 - [How to implement a Redis compatible server?](doc/server_impl.md)
 
