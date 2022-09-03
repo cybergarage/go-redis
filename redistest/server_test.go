@@ -1672,6 +1672,47 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("ZCARD", func(t *testing.T) {
+		key := "myset_zcard"
+		records := []struct {
+			scores       []float64
+			data         []string
+			expectedRet  int64
+			expectedCard int64
+		}{
+			{[]float64{1}, []string{"one"}, 1, 1},
+			{[]float64{1}, []string{"uno"}, 1, 2},
+			{[]float64{2, 3}, []string{"two", "three"}, 2, 4},
+		}
+
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
+				params := []goredis.Z{}
+				for n, score := range r.scores {
+					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
+				}
+				res, err := client.ZAdd(key, params...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				ret, err := client.ZCard(key).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if ret != r.expectedCard {
+					t.Errorf("%d != %d", ret, r.expectedCard)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("ZREM", func(t *testing.T) {
 		key := "myset_zrem"
 		records := []struct {
