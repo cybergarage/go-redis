@@ -515,12 +515,12 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		start, startEx, err := nextRangeArgument(cmd, "start", args)
+		start, startEx, err := nextRangeIndexArgument(cmd, "start", args)
 		if err != nil {
 			return nil, err
 		}
 
-		stop, stopEx, err := nextRangeArgument(cmd, "stop", args)
+		stop, stopEx, err := nextRangeIndexArgument(cmd, "stop", args)
 		if err != nil {
 			return nil, err
 		}
@@ -545,12 +545,12 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		min, minEx, err := nextRangeArgument(cmd, "min", args)
+		min, minEx, err := nextRangeIndexArgument(cmd, "min", args)
 		if err != nil {
 			return nil, err
 		}
 
-		max, maxEx, err := nextRangeArgument(cmd, "max", args)
+		max, maxEx, err := nextRangeIndexArgument(cmd, "max", args)
 		if err != nil {
 			return nil, err
 		}
