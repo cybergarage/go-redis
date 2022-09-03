@@ -16,6 +16,7 @@ package redistest
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -1707,6 +1708,43 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 				}
 				if ret != r.expectedCard {
 					t.Errorf("%d != %d", ret, r.expectedCard)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("ZINCRBY", func(t *testing.T) {
+		key := "myzset_zincrby"
+		records := []struct {
+			score        float64
+			member       string
+			expectedRet  float64
+			expectedMems []string
+		}{
+			{1.0, "one", 1.0, []string{"one"}},
+			{2.0, "two", 2.0, []string{"one", "two"}},
+			{2.0, "one", 3.0, []string{"two", "one"}},
+		}
+
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%s(%f)", r.member, r.score), func(t *testing.T) {
+				res, err := client.ZIncrBy(key, r.score, r.member).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%f != %f", r.expectedRet, res)
+					return
+				}
+				mems, err := client.ZRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !reflect.DeepEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
 				}
 			})
