@@ -1839,15 +1839,15 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
-	t.Run("ZRANGEBYSCORE", func(t *testing.T) {
-		key := "myzset_zrengebyscore"
+	t.Run("ZREVRANGEBYSCORE", func(t *testing.T) {
+		key := "myzset_zrevrengebyscore"
 		records := []struct {
 			min          string
 			max          string
 			expectedMems []string
 		}{
-			{"-inf", "+inf", []string{"one", "two", "three"}},
-			{"1", "2", []string{"one", "two"}},
+			{"-inf", "+inf", []string{"three", "two", "one"}},
+			{"1", "2", []string{"two", "one"}},
 			{"(1", "2", []string{"two"}},
 			{"(1", "(2", []string{}},
 		}
