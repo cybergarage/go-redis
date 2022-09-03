@@ -15,8 +15,6 @@
 package server
 
 import (
-	"strconv"
-
 	"github.com/cybergarage/go-redis/redis"
 )
 
@@ -132,6 +130,15 @@ func (zset *ZSet) Rem(members []string) int {
 	return removedMemberCount
 }
 
+func (zset *ZSet) Score(member string) (float64, bool) {
+	for _, m := range zset.members {
+		if m.Data == member {
+			return m.Score, true
+		}
+	}
+	return 0, false
+}
+
 ////////////////////////////////////////////////////////////
 // ZSet command handler
 ////////////////////////////////////////////////////////////
@@ -163,7 +170,7 @@ func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop i
 	for _, mem := range mems {
 		array.Append(redis.NewBulkMessage(mem.Data))
 		if opt.WITHSCORES {
-			array.Append(redis.NewBulkMessage(strconv.FormatFloat(mem.Score, 'g', -1, 64)))
+			array.Append(redis.NewFloatMessage(mem.Score))
 		}
 	}
 	return arrayMsg, nil
@@ -184,7 +191,7 @@ func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start floa
 	for _, mem := range mems {
 		array.Append(redis.NewBulkMessage(mem.Data))
 		if opt.WITHSCORES {
-			array.Append(redis.NewBulkMessage(strconv.FormatFloat(mem.Score, 'g', -1, 64)))
+			array.Append(redis.NewFloatMessage(mem.Score))
 		}
 	}
 	return arrayMsg, nil
@@ -200,4 +207,20 @@ func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (
 		return nil, err
 	}
 	return redis.NewIntegerMessage(zset.Rem(members)), nil
+}
+
+func (server *Server) ZScore(ctx *redis.DBContext, key string, member string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return redis.NewNilMessage(), nil
+	}
+	score, ok := zset.Score(member)
+	if !ok {
+		return redis.NewNilMessage(), nil
+	}
+	return redis.NewFloatMessage(score), nil
 }
