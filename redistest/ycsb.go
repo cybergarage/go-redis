@@ -79,6 +79,7 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 		ycsbCmd,
 		"",
 		"redis",
+		"-s",
 		"-P",
 		workloadFile,
 		"-p",
