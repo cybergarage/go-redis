@@ -1798,6 +1798,47 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 		}
 	})
 
+	t.Run("ZREVRANGE", func(t *testing.T) {
+		key := "myzset_revrange"
+		records := []struct {
+			scores       []float64
+			data         []string
+			expectedRet  int64
+			expectedMems []string
+		}{
+			{[]float64{1}, []string{"one"}, 1, []string{"one"}},
+			{[]float64{2}, []string{"two"}, 1, []string{"two", "one"}},
+			{[]float64{3}, []string{"three"}, 1, []string{"three", "two", "one"}},
+		}
+
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
+				params := []goredis.Z{}
+				for n, score := range r.scores {
+					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
+				}
+				res, err := client.ZAdd(key, params...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				mems, err := client.ZRevRange(key, 0, -1).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if !isStringsEqual(mems, r.expectedMems) {
+					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
+				}
+			})
+		}
+	})
+
 	t.Run("ZRANGEBYSCORE", func(t *testing.T) {
 		key := "myzset_zrengebyscore"
 		records := []struct {
