@@ -8,11 +8,12 @@ The `go-redis-server` is a sample Redis compatible server implemetation using `g
 
 ### Installation
 
+To set up this example server, run the following command:
+
 ```
 make install
 ```
-
-The `go-redis-server` is compiled and installed to your GO_PATH/bin directory. The `go-redis-server` supports major Redis commands, your can run YCSB (Yahoo! Cloud Serving Benchmark) to the example server as the following. 
+The example server is compiled and installed to your GO_PATH/bin directory. The example server supports major Redis commands, your can run YCSB (Yahoo! Cloud Serving Benchmark) to the example server as the following. 
 
 ```
 YCSB Client 0.17.0
