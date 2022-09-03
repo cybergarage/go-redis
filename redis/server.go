@@ -30,7 +30,7 @@ type Server struct {
 	Port                 int
 	tcpListener          net.Listener
 	systemCommandHandler SystemCommandHandler
-	userCommandHandler   CommandHandler
+	userCommandHandler   UserCommandHandler
 	commandExecutors     Executors
 }
 
@@ -51,7 +51,7 @@ func NewServer() *Server {
 }
 
 // SetCommandHandler sets a user handler to handle user commands.
-func (server *Server) SetCommandHandler(handler CommandHandler) {
+func (server *Server) SetCommandHandler(handler UserCommandHandler) {
 	server.userCommandHandler = handler
 }
 
