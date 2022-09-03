@@ -38,6 +38,7 @@ func ExecYCSBWorkload(t *testing.T, workload string) {
 	ycsbPath, ok := os.LookupEnv(ycsbPathEnv)
 	if !ok {
 		t.Skipf("%s is not specified", ycsbPathEnv)
+		return
 	}
 
 	t.Logf("%s = %s", ycsbPathEnv, ycsbPath)
