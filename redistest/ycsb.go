@@ -83,9 +83,9 @@ func ExecYCSBWorkload(t *testing.T, defaultWorkload string) error {
 		"-P",
 		workloadFile,
 		"-p",
-		"\"redis.host=127.0.0.1\"",
+		"redis.host=localhost",
 		"-p",
-		"\"redis.port=6379\"",
+		"redis.port=6379",
 	}
 
 	ycsbWorkloadCmds := []string{
