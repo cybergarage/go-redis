@@ -2,8 +2,9 @@
 
 ## v1.1.0 (2022-xx-xx)
 - Support major set, sorted set and list commands
-- LINDEX, LLEN, LPOP, LPUSH, LPUSHX, LRANGE, RPOP, RPUSH, RPUSHX
 - SADD, SCARD, SISMEMBER, SMEMBERS, SREM
+- ZADD, ZCARD, ZRANGE, ZRANGEBYSCORE, ZREM
+- LINDEX, LLEN, LPOP, LPUSH, LPUSHX, LRANGE, RPOP, RPUSH, RPUSHX
 
 ## v1.0.0 (2022-08-21)
 - Support major generic, string and hash commands
