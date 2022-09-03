@@ -509,6 +509,22 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.ZAdd(ctx, key, members, opt)
 	})
 
+	server.RegisterExexutor("ZINCRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		inc, err := nextScoreArgument(cmd, "increment", args)
+		if err != nil {
+			return nil, err
+		}
+		member, err := nextStringArgument(cmd, "member", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.ZIncBy(ctx, key, inc, member)
+	})
+
 	server.RegisterExexutor("ZRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {

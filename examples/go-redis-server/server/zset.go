@@ -260,11 +260,7 @@ func (server *Server) ZIncBy(ctx *redis.DBContext, key string, inc float64, memb
 	}
 	_, zset, err := db.GetZSetRecord(key)
 	if err != nil {
-		return redis.NewNilMessage(), nil
+		return nil, err
 	}
-	score, ok := zset.Score(member)
-	if !ok {
-		return redis.NewNilMessage(), nil
-	}
-	return redis.NewFloatMessage(score), nil
+	return redis.NewFloatMessage(zset.IncBy(inc, member)), nil
 }
