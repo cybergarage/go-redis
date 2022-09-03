@@ -140,17 +140,17 @@ func (zset *ZSet) Score(member string) (float64, bool) {
 }
 
 func (zset *ZSet) IncBy(inc float64, member string) float64 {
-	var m *ZSetMember
-	var n int
-	for n, m = range zset.members {
+	var tm *ZSetMember
+	for n, m := range zset.members {
 		if m.Data == member {
 			zset.members = append(zset.members[:n], zset.members[n+1:]...)
+			tm = m
 			m.Score += inc
 			break
 		}
 	}
-	if m == nil {
-		m = &ZSetMember{
+	if tm == nil {
+		tm = &ZSetMember{
 			Score: inc,
 			Data:  member,
 		}
@@ -163,8 +163,8 @@ func (zset *ZSet) IncBy(inc float64, member string) float64 {
 		CH:   false,
 		INCR: false,
 	}
-	zset.Add([]*ZSetMember{m}, opt)
-	return m.Score
+	zset.Add([]*ZSetMember{tm}, opt)
+	return tm.Score
 }
 
 ////////////////////////////////////////////////////////////
