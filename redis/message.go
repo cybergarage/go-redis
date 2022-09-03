@@ -53,6 +53,11 @@ func NewIntegerMessage(val int) *Message {
 	return proto.NewMessageWithType(proto.IntegerMessage).SetBytes([]byte(strconv.Itoa(val)))
 }
 
+// NewFloatMessage creates an float message.
+func NewFloatMessage(val float64) *Message {
+	return proto.NewMessageWithType(proto.BulkMessage).SetBytes([]byte(strconv.FormatFloat(val, 'g', -1, 64)))
+}
+
 // NewArrayMessage creates an empty array message.
 func NewArrayMessage() *Message {
 	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(proto.NewArray())
