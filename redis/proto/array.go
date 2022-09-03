@@ -159,6 +159,24 @@ func (array *Array) NextArray() (*Array, error) {
 	return msg.Array()
 }
 
+// ReverseBy returns the reversed array with the specified step.
+func (array *Array) ReverseBy(step int) *Array {
+	ra := NewArray()
+	l := len(array.msgs)
+	for i := 0; i < l; i += step {
+		for j := 0; j < step; j++ {
+			idx := (l - i - 1) - (step - 1) + j
+			ra.msgs = append(ra.msgs, array.msgs[idx])
+		}
+	}
+	return ra
+}
+
+// Reverse returns the reversed array.
+func (array *Array) Reverse() *Array {
+	return array.ReverseBy(1)
+}
+
 // RESPBytes returns the RESP byte representation.
 func (array *Array) RESPBytes() ([]byte, error) {
 	var respBytes bytes.Buffer
