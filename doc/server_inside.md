@@ -9,7 +9,9 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 
 ## Supported commands
 
-## System commands
+The go-redis defines the following supported Redis commands in the [CommandHandler](../redis/handler.go) as the system, user and sugar command handler.
+
+### System commands
 
 |Supported|Command|Redis Version|Note                             |
 |---------|-------|-------------|---------------------------------|
@@ -18,7 +20,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |O        |QUIT   |1.0.0        |                                 |
 |O        |SELECT |1.0.0        |                                 |
 
-## Generic commands
+### Generic commands
 
 |Supported|Command      |Redis Version|Note                             |
 |---------|------------------|-------------|---------------------------------|
@@ -45,7 +47,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |-        |UNLINK            |4.0.0        |                                 |
 |-        |WAIT              |3.0.0        |                                 |
 
-## String commands
+### String commands
 
 |Supported|Command      |Redis Version|Note                             |
 |---------|------------------|-------------|---------------------------------|
@@ -72,7 +74,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |O        |STRLEN            |2.2.0        |                                 |
 |O        |SUBSTR            |1.0.0        |                                 |
 
-## Hash commands
+### Hash commands
 
 |Supported|Command      |Redis Version|Note                             |
 |---------|------------------|-------------|---------------------------------|
@@ -93,7 +95,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |O        |HSTRLEN           |3.2.0        |                                 |
 |O        |HVALS             |2.0.0        |                                 |
 
-## List commands
+### List commands
 
 |Supported|\Command|Redis Version|Note|
 |---------|------------|-------------|----|
@@ -120,7 +122,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |O        |RPUSH       |1.0.0        |    |
 |O        |RPUSHX      |2.2.0        |    |
 
-## Set commands
+### Set commands
 
 |Supported|Command|Redis Version|Note|
 |---------|-----------|-------------|----|
@@ -142,7 +144,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |-        |SUNION     |1.0.0        |    |
 |-        |SUNIONSTORE|1.0.0        |    |
 
-## Sorted set commands
+### Sorted set commands
 
 |Supported|Command|Redis Version|Note|
 |---------|------------------|-------------|----|
