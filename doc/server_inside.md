@@ -74,7 +74,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 
 ## Hash commands
 
-|Supported|Hash Command      |Redis Version|Note                             |
+|Supported|Command      |Redis Version|Note                             |
 |---------|------------------|-------------|---------------------------------|
 |O        |HDEL              |2.0.0        |                                 |
 |O        |HEXISTS           |2.0.0        |                                 |
@@ -92,3 +92,92 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 |O        |HSETNX            |2.0.0        |                                 |
 |O        |HSTRLEN           |3.2.0        |                                 |
 |O        |HVALS             |2.0.0        |                                 |
+
+## List commands
+
+|Supported|\Command|Redis Version|Note|
+|---------|------------|-------------|----|
+|-        |BLMOVE      |7.0.0        |    |
+|-        |BLMPOP      |7.0.0        |    |
+|-        |BLPOP       |2.0.0        |    |
+|-        |BRPOP       |2.0.0        |    |
+|-        |BRPOPLPUSH  |2.2.0        |    |
+|O        |LINDEX      |1.0.0        |    |
+|-        |LINSERT     |2.2.0        |    |
+|O        |LLEN        |1.0.0        |    |
+|-        |LMOVE       |6.2.0        |    |
+|-        |LMPOP       |7.0.0        |    |
+|O        |LPOP        |1.0.0        |    |
+|-        |LPOS        |6.2.0        |    |
+|O        |LPUSH       |1.0.0        |    |
+|O        |LPUSHX      |2.2.0        |    |
+|O        |LRANGE      |1.0.0        |    |
+|-        |LREM        |1.0.0        |    |
+|-        |LSET        |1.0.0        |    |
+|-        |LTRIM       |1.0.0        |    |
+|O        |RPOP        |1.0.0        |    |
+|-        |RPOPLPUSH   |6.2.0        |    |
+|O        |RPUSH       |1.0.0        |    |
+|O        |RPUSHX      |2.2.0        |    |
+
+## Set commands
+
+|Supported|Command|Redis Version|Note|
+|---------|-----------|-------------|----|
+|O        |SADD       |1.0.0        |    |
+|O        |SCARD      |1.0.0        |    |
+|-        |SDIFF      |1.0.0        |    |
+|-        |SDIFFSTORE |1.0.0        |    |
+|-        |SINTER     |1.0.0        |    |
+|-        |SINTERCARD |7.0.0        |    |
+|-        |SINTERSTORE|1.0.0        |    |
+|O        |SISMEMBER  |1.0.0        |    |
+|O        |SMEMBERS   |1.0.0        |    |
+|-        |SMISMEMBER |6.2.0        |    |
+|-        |SMOVE      |1.0.0        |    |
+|-        |SPOP       |1.0.0        |    |
+|-        |SRANDMEMBER|1.0.0        |    |
+|O        |SREM       |1.0.0        |    |
+|-        |SSCAN      |2.8.0        |    |
+|-        |SUNION     |1.0.0        |    |
+|-        |SUNIONSTORE|1.0.0        |    |
+
+## Sorted set commands
+
+|Supported|Command|Redis Version|Note|
+|---------|------------------|-------------|----|
+|-        |BZMPOP            |7.0.0        |    |
+|-        |BZPOPMAX          |5.0.0        |    |
+|-        |BZPOPMIN          |5.0.0        |    |
+|O        |ZADD              |1.2.0        |    |
+|O        |ZCARD             |1.2.0        |    |
+|-        |ZCOUNT            |2.0.0        |    |
+|-        |ZDIFF             |6.2.0        |    |
+|-        |ZDIFFSTORE        |6.2.0        |    |
+|O        |ZINCRBY           |1.2.0        |    |
+|-        |ZINTER            |6.2.0        |    |
+|-        |ZINTERCARD        |7.0.0        |    |
+|-        |ZINTERSTORE       |2.0.0        |    |
+|-        |ZLEXCOUNT         |2.8.9        |    |
+|-        |ZMPOP             |7.0.0        |    |
+|-        |ZMSCORE           |6.2.0        |    |
+|-        |ZPOPMAX           |5.0.0        |    |
+|-        |ZPOPMIN           |5.0.0        |    |
+|-        |ZRANDMEMBER       |6.2.0        |    |
+|O        |ZRANGE            |1.2.0        |    |
+|-        |ZRANGEBYLEX       |2.8.9        |    |
+|O        |ZRANGEBYSCORE     |1.0.5        |    |
+|-        |ZRANGESTORE       |6.2.0        |    |
+|-        |ZRANK             |2.0.0        |    |
+|O        |ZREM              |1.2.0        |    |
+|-        |ZREMRANGEBYLEX    |2.8.9        |    |
+|-        |ZREMRANGEBYRANK   |2.0.0        |    |
+|-        |ZREMRANGEBYSCORE  |1.2.0        |    |
+|O        |ZREVRANGE         |1.2.0        |    |
+|-        |ZREVRANGEBYLEX    |2.8.9        |    |
+|-        |ZREVRANGEBYSCORE  |2.2.0        |    |
+|-        |ZREVRANK          |2.0.0        |    |
+|-        |ZSCAN             |2.8.0        |    |
+|O        |ZSCORE            |1.2.0        |    |
+|-        |ZUNION            |6.2.0        |    |
+|-        |ZUNIONSTORE       |2.0.0        |    |
