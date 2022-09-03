@@ -330,4 +330,43 @@ func (server *Server) registerSugarExecutors() {
 
 		return NewIntegerMessage(0), nil
 	})
+
+	// Registers sugar set commands.
+
+	server.RegisterExexutor("ZCARD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt := ZRangeOption{
+			BYSCORE:      false,
+			BYLEX:        false,
+			REV:          false,
+			WITHSCORES:   false,
+			MINEXCLUSIVE: false,
+			MAXEXCLUSIVE: false,
+			Offset:       0,
+			Count:        -1,
+		}
+
+		retMsg, err := server.userCommandHandler.ZRange(ctx, key, 0, -1, opt)
+		if err != nil {
+			return nil, err
+		}
+
+		arrayMsg, err := retMsg.Array()
+		if err != nil {
+			return NewIntegerMessage(0), nil
+		}
+
+		memberCount := 0
+		nextMsg, _ := arrayMsg.Next()
+		for nextMsg != nil {
+			memberCount++
+			nextMsg, _ = arrayMsg.Next()
+		}
+
+		return NewIntegerMessage(memberCount), nil
+	})
 }
