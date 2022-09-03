@@ -29,3 +29,4 @@ linters:
     - scopelint
     - typecheck
     - exhaustruct
+    - nilerr
