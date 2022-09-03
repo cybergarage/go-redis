@@ -1725,6 +1725,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 			{1.0, "one", 1.0, []string{"one"}},
 			{2.0, "two", 2.0, []string{"one", "two"}},
 			{2.0, "one", 3.0, []string{"two", "one"}},
+			{3.0, "two", 5.0, []string{"one", "two"}},
 		}
 
 		for _, r := range records {
