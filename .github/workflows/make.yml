@@ -30,4 +30,4 @@ jobs:
       run: tar xvfx ycsb-0.17.0.tar.gz
 
     - name: Test
-      run: env CGO_ENABLED=0 GO_REDIS_YCSB_ROOT_PATH=`pwd`/ycsb-0.17.0 make test
+      run: env CGO_ENABLED=0 YCSB_ROOT=`pwd`/ycsb-0.17.0 make test
