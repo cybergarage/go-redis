@@ -149,7 +149,11 @@ func nextScoreArgument(cmd string, name string, args Arguments) (float64, error)
 	return nextFloatArgument(cmd, name, args)
 }
 
-func nextRangeIndexArgument(cmd string, name string, args Arguments) (float64, bool, error) {
+func nextRangeIndexArgument(cmd string, name string, args Arguments) (int, error) {
+	return nextIntegerArgument(cmd, name, args)
+}
+
+func nextRangeScoreIndexArgument(cmd string, name string, args Arguments) (float64, bool, error) {
 	str, err := args.NextString()
 	if err != nil || len(str) == 0 {
 		return 0, false, newMissingArgumentError(cmd, name, err)

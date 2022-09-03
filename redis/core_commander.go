@@ -531,12 +531,12 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		start, startEx, err := nextRangeIndexArgument(cmd, "start", args)
+		start, startEx, err := nextRangeScoreIndexArgument(cmd, "start", args)
 		if err != nil {
 			return nil, err
 		}
 
-		stop, stopEx, err := nextRangeIndexArgument(cmd, "stop", args)
+		stop, stopEx, err := nextRangeScoreIndexArgument(cmd, "stop", args)
 		if err != nil {
 			return nil, err
 		}
@@ -555,18 +555,55 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.ZRange(ctx, key, int(start), int(stop), opt)
 	})
 
+	server.RegisterExexutor("ZREVRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		start, err := nextRangeIndexArgument(cmd, "start", args)
+		if err != nil {
+			return nil, err
+		}
+
+		stop, err := nextRangeIndexArgument(cmd, "stop", args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt, err := nextRangeOptionArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		msg, err := server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
+		if err != nil {
+			return msg, err
+		}
+
+		array, err := msg.Array()
+		if err != nil {
+			return msg, err
+		}
+
+		if opt.WITHSCORES {
+			return NewArrayMessageWithArray(array.ReverseBy(2)), nil
+		}
+		return NewArrayMessageWithArray(array.Reverse()), nil
+	})
+
 	server.RegisterExexutor("ZRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 
-		min, minEx, err := nextRangeIndexArgument(cmd, "min", args)
+		min, minEx, err := nextRangeScoreIndexArgument(cmd, "min", args)
 		if err != nil {
 			return nil, err
 		}
 
-		max, maxEx, err := nextRangeIndexArgument(cmd, "max", args)
+		max, maxEx, err := nextRangeScoreIndexArgument(cmd, "max", args)
 		if err != nil {
 			return nil, err
 		}
