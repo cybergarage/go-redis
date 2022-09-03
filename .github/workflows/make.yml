@@ -26,7 +26,8 @@ jobs:
       with:
         args: https://github.com/brianfrankcooper/YCSB/releases/download/0.17.0/ycsb-0.17.0.tar.gz
 
+    - name: Set up YCSB
+      run: tar xvfx ycsb-0.17.0.tar.gz
+
     - name: Test
-      run: |
-        tar xvfx ycsb-0.17.0.tar.gz
-        export GO_REDIS_YCSB_ROOT_PATH=`pwd`/ycsb-0.17.0 export CGO_ENABLED=0 make test
+      run: export CGO_ENABLED=0 GO_REDIS_YCSB_ROOT_PATH=`pwd`/ycsb-0.17.0 make test
