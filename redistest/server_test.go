@@ -1632,7 +1632,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 	t.Helper()
 
 	t.Run("ZADD", func(t *testing.T) {
-		key := "myset_zadd"
+		key := "myzset_zadd"
 		records := []struct {
 			scores       []float64
 			data         []string
@@ -1673,7 +1673,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 	})
 
 	t.Run("ZCARD", func(t *testing.T) {
-		key := "myset_zcard"
+		key := "myzset_zcard"
 		records := []struct {
 			scores       []float64
 			data         []string
@@ -1714,7 +1714,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 	})
 
 	t.Run("ZREM", func(t *testing.T) {
-		key := "myset_zrem"
+		key := "myzset_zrem"
 		records := []struct {
 			mems         []string
 			expectedRet  int64
@@ -1760,7 +1760,7 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 	})
 
 	t.Run("ZRANGEBYSCORE", func(t *testing.T) {
-		key := "myset_zrengebyscore"
+		key := "myzset_zrengebyscore"
 		records := []struct {
 			min          string
 			max          string
@@ -1798,6 +1798,44 @@ func testZSet(t *testing.T, server *Server, client *Client) {
 				}
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
+					return
+				}
+			})
+		}
+	})
+
+	t.Run("ZSCORE", func(t *testing.T) {
+		key := "myzset_zscore"
+		records := []struct {
+			score         float64
+			member        string
+			expectedRet   int64
+			expectedScore float64
+		}{
+			{1.0, "one", 1, 1.0},
+			{2.0, "two", 1, 2.0},
+			{3.0, "three", 1, 3.0},
+		}
+
+		for _, r := range records {
+			t.Run(fmt.Sprintf("%s(%f)", r.member, r.score), func(t *testing.T) {
+				params := []goredis.Z{{Score: r.score, Member: r.member}}
+				res, err := client.ZAdd(key, params...).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if res != r.expectedRet {
+					t.Errorf("%d != %d", r.expectedRet, res)
+					return
+				}
+				score, err := client.ZScore(key, r.member).Result()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				if score != r.expectedScore {
+					t.Errorf("%f != %f", score, r.expectedScore)
 					return
 				}
 			})
