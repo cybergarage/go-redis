@@ -27,8 +27,8 @@ const (
 )
 
 const (
-	ycsbPathEnv         = "GO_REDIS_YCSB_ROOT_PATH"
-	ycsbWorkloadEnv     = "GO_REDIS_YCSB_WORKLOAD"
+	ycsbPathEnv         = "YCSB_ROOT"
+	ycsbWorkloadEnv     = "YCSB_WORKLOAD"
 	ycsbDefaultWorkload = "workloada"
 )
 
