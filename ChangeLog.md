@@ -2,6 +2,7 @@
 
 ## v1.1.0 (2022-09-03)
 - Support major set, sorted set and list commands
+- Enable a test using YCSB (Yahoo! Cloud Serving Benchmark)
 ###  Supported
 - SADD, SCARD, SISMEMBER, SMEMBERS, SREM
 - ZADD, ZCARD, ZINCRBY, ZRANGE, ZRANGEBYSCORE, ZREM, ZREVRANGE, ZREVRANGEBYSCORE
