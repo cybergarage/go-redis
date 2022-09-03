@@ -56,6 +56,18 @@ func nextStringsArguments(cmd string, name string, args Arguments) ([]string, er
 	return strs, nil
 }
 
+func nextFloatArgument(cmd string, name string, args Arguments) (float64, error) {
+	str, err := args.NextString()
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	score, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	return score, nil
+}
+
 // Key argument fuctions
 
 func nextKeyArgument(cmd string, args Arguments) (string, error) {
@@ -134,15 +146,7 @@ func nextPopArguments(cmd string, args Arguments) (string, int, error) {
 // ZSet fuctions
 
 func nextScoreArgument(cmd string, name string, args Arguments) (float64, error) {
-	str, err := args.NextString()
-	if err != nil {
-		return 0, newMissingArgumentError(cmd, name, err)
-	}
-	score, err := strconv.ParseFloat(str, 64)
-	if err != nil {
-		return 0, newMissingArgumentError(cmd, name, err)
-	}
-	return score, nil
+	return nextFloatArgument(cmd, name, args)
 }
 
 func nextRangeIndexArgument(cmd string, name string, args Arguments) (float64, bool, error) {
