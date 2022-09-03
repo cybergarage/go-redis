@@ -26,7 +26,7 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 		return nil, err
 	}
 
-	var oldVal []byte = nil
+	var oldVal []byte
 	hasOldRecord := false
 	if opt.NX || opt.GET {
 		var currRecord *Record
