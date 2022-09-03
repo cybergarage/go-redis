@@ -252,3 +252,19 @@ func (server *Server) ZScore(ctx *redis.DBContext, key string, member string) (*
 	}
 	return redis.NewFloatMessage(score), nil
 }
+
+func (server *Server) ZIncBy(ctx *redis.DBContext, key string, inc float64, member string) (*redis.Message, error) {
+	db, err := server.GetDatabase(ctx.ID())
+	if err != nil {
+		return nil, err
+	}
+	_, zset, err := db.GetZSetRecord(key)
+	if err != nil {
+		return redis.NewNilMessage(), nil
+	}
+	score, ok := zset.Score(member)
+	if !ok {
+		return redis.NewNilMessage(), nil
+	}
+	return redis.NewFloatMessage(score), nil
+}
