@@ -618,6 +618,45 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.ZRangeByScore(ctx, key, min, max, opt)
 	})
 
+	server.RegisterExexutor("ZREVRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+
+		max, maxEx, err := nextRangeScoreIndexArgument(cmd, "max", args)
+		if err != nil {
+			return nil, err
+		}
+
+		min, minEx, err := nextRangeScoreIndexArgument(cmd, "min", args)
+		if err != nil {
+			return nil, err
+		}
+
+		opt, err := nextRangeOptionArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt.MINEXCLUSIVE = minEx
+		opt.MAXEXCLUSIVE = maxEx
+
+		msg, err := server.userCommandHandler.ZRangeByScore(ctx, key, min, max, opt)
+		if err != nil {
+			return msg, err
+		}
+
+		array, err := msg.Array()
+		if err != nil {
+			return msg, err
+		}
+
+		if opt.WITHSCORES {
+			return NewArrayMessageWithArray(array.ReverseBy(2)), nil
+		}
+		return NewArrayMessageWithArray(array.Reverse()), nil
+	})
+
 	server.RegisterExexutor("ZREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
