@@ -1,5 +1,6 @@
 # go-redis
 
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cybergarage/go-redis)
 [![test](https://github.com/cybergarage/go-redis/actions/workflows/make.yml/badge.svg)](https://github.com/cybergarage/go-redis/actions/workflows/make.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-redis.svg)](https://pkg.go.dev/github.com/cybergarage/go-redis)
 
