@@ -2,6 +2,8 @@ github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cb
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cybergarage/go-logger v1.0.0 h1:Ru6T1ZUzVWvulv9lX53PNOe1ZFZ5SfaI5YetvZS9BjU=
 github.com/cybergarage/go-logger v1.0.0/go.mod h1:m6rxERUs6audClnM1+FI2+8kIIaSWrBfH/ZV3wc/dYo=
+github.com/cybergarage/go-logger v1.3.2 h1:eFLeIsBS5/bRpyQoh8QoGX8sTUfdGww1P/dT41Qa9BY=
+github.com/cybergarage/go-logger v1.3.2/go.mod h1:4N4xo4/FUVjvc0mILUwFItBGhVglCPN4hSLK38zRLTk=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/go-redis/redis v6.15.9+incompatible h1:K0pv1D7EQUjfyoMql+r/jZqCLizCGKFlFgcHWWmHQjg=

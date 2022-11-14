@@ -51,7 +51,7 @@ func main() {
 
 	server := server.NewServer()
 	if err := server.Start(); err != nil {
-		log.Error("%s couldn't be started (%s)", programName, err.Error())
+		log.Errorf("%s couldn't be started (%s)", programName, err.Error())
 		os.Exit(1)
 	}
 
@@ -70,15 +70,15 @@ func main() {
 			s := <-sigCh
 			switch s {
 			case syscall.SIGHUP:
-				log.Info("caught SIGHUP, restarting...")
+				log.Infof("caught SIGHUP, restarting...")
 				if err := server.Restart(); err != nil {
-					log.Error("%s couldn't be restarted (%s)", programName, err.Error())
+					log.Errorf("%s couldn't be restarted (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 			case syscall.SIGINT, syscall.SIGTERM:
-				log.Info("caught %s, stopping...", s.String())
+				log.Infof("caught %s, stopping...", s.String())
 				if err := server.Stop(); err != nil {
-					log.Error("%s couldn't be stopped (%s)", programName, err.Error())
+					log.Errorf("%s couldn't be stopped (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 				exitCh <- 0
