@@ -148,7 +148,7 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 	reqMsg, parserErr := parser.Next()
 	for reqMsg != nil {
 		if parserErr != nil {
-			log.Error(parserErr.Error())
+			log.Error(parserErr)
 			return parserErr
 		}
 		var resMsg *Message
@@ -161,7 +161,7 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 		}
 		resErr := server.responseMessage(conn, resMsg)
 		if resErr != nil {
-			log.Error(resErr.Error())
+			log.Error(resErr)
 		}
 		if errors.Is(reqErr, errQuit) {
 			conn.Close()
