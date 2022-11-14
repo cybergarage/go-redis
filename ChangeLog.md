@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.1.1 (2022-xx-xx)
+- Update logger package
+
 ## v1.1.0 (2022-09-03)
 - Support major set, sorted set and list commands
 - Enable a test using YCSB (Yahoo! Cloud Serving Benchmark)
