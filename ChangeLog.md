@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1.1 (2022-xx-xx)
+## v1.1.1 (2023-01-02)
 - Update go.mod to go 1.19
 - Update logger package
 
