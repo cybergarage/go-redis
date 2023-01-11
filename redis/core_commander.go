@@ -73,7 +73,7 @@ func (server *Server) registerCoreExecutors() {
 
 		switch strings.ToUpper(opt) {
 		case "SET":
-			params, err := nextStringsArguments(cmd, "params", args)
+			params, err := nextStringArrayArguments(cmd, "params", args)
 			if err != nil {
 				return nil, err
 			}
@@ -443,7 +443,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		members, err := nextStringsArguments(cmd, "member", args)
+		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
@@ -463,7 +463,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		members, err := nextStringsArguments(cmd, "member", args)
+		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
@@ -692,7 +692,7 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		members, err := nextStringsArguments(cmd, "member", args)
+		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
