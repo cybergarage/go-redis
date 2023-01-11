@@ -33,3 +33,11 @@ func (server *Server) Select(ctx *DBContext, index int) (*Message, error) {
 func (server *Server) Quit(ctx *DBContext) (*Message, error) {
 	return NewOKMessage(), errQuit
 }
+
+func (server *Server) ConfigSet(ctx *DBContext, params map[string]string) (*Message, error) {
+	return NewOKMessage(), nil
+}
+
+func (server *Server) ConfigGet(ctx *DBContext, params []string) (*Message, error) {
+	return NewArrayMessage(), nil
+}
