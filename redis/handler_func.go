@@ -41,7 +41,19 @@ func nextStringArgument(cmd string, name string, args Arguments) (string, error)
 	return str, nil
 }
 
-func nextStringsArguments(cmd string, name string, args Arguments) ([]string, error) {
+func nextFloatArgument(cmd string, name string, args Arguments) (float64, error) {
+	str, err := args.NextString()
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	score, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return 0, newMissingArgumentError(cmd, name, err)
+	}
+	return score, nil
+}
+
+func nextStringArrayArguments(cmd string, name string, args Arguments) ([]string, error) {
 	var str string
 	var err error
 	strs := []string{}
@@ -54,18 +66,6 @@ func nextStringsArguments(cmd string, name string, args Arguments) ([]string, er
 		return nil, newMissingArgumentError(cmd, name, err)
 	}
 	return strs, nil
-}
-
-func nextFloatArgument(cmd string, name string, args Arguments) (float64, error) {
-	str, err := args.NextString()
-	if err != nil {
-		return 0, newMissingArgumentError(cmd, name, err)
-	}
-	score, err := strconv.ParseFloat(str, 64)
-	if err != nil {
-		return 0, newMissingArgumentError(cmd, name, err)
-	}
-	return score, nil
 }
 
 func nextStringMapArguments(cmd string, args Arguments) (map[string]string, error) {
@@ -94,7 +94,7 @@ func nextKeyArgument(cmd string, args Arguments) (string, error) {
 }
 
 func nextKeysArguments(cmd string, args Arguments) ([]string, error) {
-	return nextStringsArguments(cmd, "keys", args)
+	return nextStringArrayArguments(cmd, "keys", args)
 }
 
 // String argument functions
@@ -112,7 +112,7 @@ func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 }
 
 func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
-	return nextStringsArguments(cmd, "keys", args)
+	return nextStringArrayArguments(cmd, "keys", args)
 }
 
 func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
@@ -132,7 +132,7 @@ func nextPushArguments(cmd string, args Arguments) (string, []string, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	elems, err := nextStringsArguments(cmd, "elements", args)
+	elems, err := nextStringArrayArguments(cmd, "elements", args)
 	return key, elems, err
 }
 
