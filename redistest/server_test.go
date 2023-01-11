@@ -101,7 +101,7 @@ func TestServer(t *testing.T) {
 	// Hash commands
 
 	t.Run("Hash", func(t *testing.T) {
-		testHash(t, server, client)
+		HashCommandTest(t, client)
 	})
 
 	// List commands
@@ -820,7 +820,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 }
 
 // nolint: maintidx, gocyclo, dupl
-func testHash(t *testing.T, server *Server, client *Client) {
+func HashCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	t.Run("HDEL", func(t *testing.T) {
