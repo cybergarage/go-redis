@@ -86,7 +86,7 @@ func (server *Server) registerCoreExecutors() {
 			return server.systemCommandHandler.ConfigSet(ctx, params)
 		}
 
-		return nil, errors.New(cmd)
+		return nil, errors.New(opt)
 	})
 
 	// Generic commands.
