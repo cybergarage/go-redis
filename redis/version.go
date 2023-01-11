@@ -15,5 +15,5 @@
 package redis
 
 const (
-	Version = "v1.1.0"
+	Version = "v1.1.1"
 )

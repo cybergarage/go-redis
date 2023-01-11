@@ -89,7 +89,7 @@ func TestServer(t *testing.T) {
 	// Generic commands
 
 	t.Run("Generic", func(t *testing.T) {
-		testGeneric(t, server, client)
+		GenericCommandTest(t, client)
 	})
 
 	// String commands
@@ -152,7 +152,7 @@ func TestServer(t *testing.T) {
 }
 
 // nolint: maintidx, gocyclo
-func testGeneric(t *testing.T, server *Server, client *Client) {
+func GenericCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	var err error
