@@ -107,9 +107,12 @@ O,RPOP,1.0.0
 -,RPOPLPUSH,6.2.0
 O,RPUSH,1.0.0
 O,RPUSHX,2.2.0
-Supported,Set Command,Redis Version,Note
+Supported,Server Managment Command,Redis Version,Note
 O,SADD,1.0.0
 O,SCARD,1.0.0
+Supported,Set Command,Redis Version,Note
+O,CONFIG SET,2.0.0
+O,CONFIG GET,2.0.0
 -,SDIFF,1.0.0
 -,SDIFFSTORE,1.0.0
 -,SINTER,1.0.0
