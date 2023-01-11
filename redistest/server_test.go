@@ -113,7 +113,7 @@ func TestServer(t *testing.T) {
 	// Set commands
 
 	t.Run("Set", func(t *testing.T) {
-		testSet(t, server, client)
+		SetCommandTest(t, client)
 	})
 
 	// ZSet commands
@@ -1480,7 +1480,7 @@ func ListCommandTest(t *testing.T, client *Client) {
 }
 
 // nolint: maintidx, gocyclo, dupl
-func testSet(t *testing.T, server *Server, client *Client) {
+func SetCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	t.Run("SADD", func(t *testing.T) {
