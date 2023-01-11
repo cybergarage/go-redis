@@ -68,6 +68,25 @@ func nextFloatArgument(cmd string, name string, args Arguments) (float64, error)
 	return score, nil
 }
 
+func nextStringMapArguments(cmd string, args Arguments) (map[string]string, error) {
+	var key, val string
+	var err error
+	dir := map[string]string{}
+	key, err = args.NextString()
+	for err == nil {
+		val, err = args.NextString()
+		if err != nil {
+			newMissingArgumentError(cmd, key, err)
+		}
+		dir[key] = val
+		key, err = args.NextString()
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return nil, err
+	}
+	return dir, nil
+}
+
 // Key argument fuctions
 
 func nextKeyArgument(cmd string, args Arguments) (string, error) {
@@ -97,22 +116,7 @@ func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
 }
 
 func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
-	var key, val string
-	var err error
-	dir := map[string]string{}
-	key, err = args.NextString()
-	for err == nil {
-		val, err = args.NextString()
-		if err != nil {
-			newMissingArgumentError(cmd, key, err)
-		}
-		dir[key] = val
-		key, err = args.NextString()
-	}
-	if !errors.Is(err, proto.ErrEOM) {
-		return nil, err
-	}
-	return dir, nil
+	return nextStringMapArguments(cmd, args)
 }
 
 // Hash argument fuctions
