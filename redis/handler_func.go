@@ -92,6 +92,10 @@ func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	return key, val, err
 }
 
+func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
+	return nextStringsArguments(cmd, "keys", args)
+}
+
 func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 	var key, val string
 	var err error
