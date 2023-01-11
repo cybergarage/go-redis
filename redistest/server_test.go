@@ -95,7 +95,7 @@ func TestServer(t *testing.T) {
 	// String commands
 
 	t.Run("String", func(t *testing.T) {
-		testString(t, server, client)
+		StringCommandTest(t, client)
 	})
 
 	// Hash commands
@@ -460,7 +460,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 }
 
 // nolint: maintidx, gocyclo, dupl
-func testString(t *testing.T, server *Server, client *Client) {
+func StringCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	t.Run("APPEND", func(t *testing.T) {
