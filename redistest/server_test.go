@@ -107,7 +107,7 @@ func TestServer(t *testing.T) {
 	// List commands
 
 	t.Run("List", func(t *testing.T) {
-		testList(t, server, client)
+		ListCommandTest(t, client)
 	})
 
 	// Set commands
@@ -1149,7 +1149,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 }
 
 // nolint: maintidx, gocyclo, dupl
-func testList(t *testing.T, server *Server, client *Client) {
+func ListCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	t.Run("LINDEX", func(t *testing.T) {
