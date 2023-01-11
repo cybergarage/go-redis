@@ -73,12 +73,17 @@ func (server *Server) registerCoreExecutors() {
 
 		switch strings.ToUpper(opt) {
 		case "SET":
-			params, err := nextMSetArguments(cmd, args)
+			params, err := nextStringsArguments(cmd, "params", args)
+			if err != nil {
+				return nil, err
+			}
+			return server.systemCommandHandler.ConfigGet(ctx, params)
+		case "GET":
+			params, err := nextStringMapArguments(cmd, args)
 			if err != nil {
 				return nil, err
 			}
 			return server.systemCommandHandler.ConfigSet(ctx, params)
-		case "GET":
 		}
 
 		return nil, errors.New(cmd)
