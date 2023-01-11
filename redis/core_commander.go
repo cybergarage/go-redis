@@ -59,6 +59,31 @@ func (server *Server) registerCoreExecutors() {
 		return server.systemCommandHandler.Quit(ctx)
 	})
 
+	// Server management commands.
+
+	server.RegisterExexutor("CONFIG", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+		opt := ""
+		var err error
+		if msg, _ := args.Next(); msg != nil {
+			opt, err = msg.String()
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		switch strings.ToUpper(opt) {
+		case "SET":
+			params, err := nextMSetArguments(cmd, args)
+			if err != nil {
+				return nil, err
+			}
+			return server.systemCommandHandler.ConfigSet(ctx, params)
+		case "GET":
+		}
+
+		return nil, errors.New(cmd)
+	})
+
 	// Generic commands.
 
 	server.RegisterExexutor("DEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
@@ -211,7 +236,7 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		keys, err := nextKeysArguments(cmd, args)
+		keys, err := nextMGetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
