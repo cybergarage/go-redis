@@ -119,7 +119,7 @@ func TestServer(t *testing.T) {
 	// ZSet commands
 
 	t.Run("ZSet", func(t *testing.T) {
-		testZSet(t, server, client)
+		ZSetCommandTest(t, client)
 	})
 
 	// YCSB
@@ -1633,7 +1633,7 @@ func SetCommandTest(t *testing.T, client *Client) {
 }
 
 // nolint: maintidx, gocyclo, dupl
-func testZSet(t *testing.T, server *Server, client *Client) {
+func ZSetCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
 	t.Run("ZADD", func(t *testing.T) {
