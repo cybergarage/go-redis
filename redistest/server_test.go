@@ -168,16 +168,14 @@ func ConnectionCommandTest(t *testing.T, client *Client) {
 func ServerCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
-	t.Run("ECHO", func(t *testing.T) {
-		params := []string{
+	t.Run("CONFIG", func(t *testing.T) {
+		keys := []string{
 			"save",
+			"appendonly",
 		}
-		// vals := []string{
-		// 	"appendonly",
-		// }
-		for _, pram := range params {
-			t.Run(pram, func(t *testing.T) {
-				echo := client.ConfigGet(pram)
+		for _, key := range keys {
+			t.Run(key, func(t *testing.T) {
+				echo := client.ConfigGet(key)
 				if echo.Err() != nil {
 					t.Error(echo.Err())
 					return
