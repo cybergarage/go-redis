@@ -16,23 +16,23 @@ package redis
 
 // Config represents a server configuration.
 type Config struct {
-	params map[string][]string
+	params map[string]string
 }
 
 // newConfig returns a new configuration.
 func newConfig() *Config {
 	return &Config{
-		params: map[string][]string{},
+		params: map[string]string{},
 	}
 }
 
 // SetConfig sets a specified parameter.
-func (cfg *Config) SetConfig(key string, params []string) {
+func (cfg *Config) SetConfig(key string, params string) {
 	cfg.params[key] = params
 }
 
 // Config return the specified parameter.
-func (cfg *Config) Config(key string) ([]string, bool) {
+func (cfg *Config) Config(key string) (string, bool) {
 	params, ok := cfg.params[key]
 	return params, ok
 }
