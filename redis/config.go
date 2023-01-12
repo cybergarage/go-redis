@@ -37,7 +37,7 @@ func (cfg *Config) SetConfig(key string, params string) {
 	cfg.params[key] = params
 }
 
-// AppendConfig sets a specified parameter.
+// AppendConfig appends a specified parameter.
 func (cfg *Config) AppendConfig(key string, params string) {
 	currParams, ok := cfg.params[key]
 	if !ok {
