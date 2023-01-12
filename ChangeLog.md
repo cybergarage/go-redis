@@ -1,7 +1,7 @@
 # Changelog
 
 ## v1.1.2 (2023-xx-xx)
-- Support server managment commands
+- Support server management commands
 ###  Supported
 - CONFIG SET, CONFIG GET
 
