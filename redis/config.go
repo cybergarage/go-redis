@@ -14,6 +14,12 @@
 
 package redis
 
+import "strings"
+
+const (
+	ConfigSep = " "
+)
+
 // Config represents a server configuration.
 type Config struct {
 	params map[string]string
@@ -29,6 +35,16 @@ func newConfig() *Config {
 // SetConfig sets a specified parameter.
 func (cfg *Config) SetConfig(key string, params string) {
 	cfg.params[key] = params
+}
+
+// AppendConfig sets a specified parameter.
+func (cfg *Config) AppendConfig(key string, params string) {
+	currParams, ok := cfg.params[key]
+	if !ok {
+		cfg.params[key] = params
+		return
+	}
+	cfg.params[key] = strings.Join([]string{currParams, params}, ConfigSep)
 }
 
 // Config return the specified parameter.
