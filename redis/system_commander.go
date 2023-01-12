@@ -35,6 +35,9 @@ func (server *Server) Quit(ctx *DBContext) (*Message, error) {
 }
 
 func (server *Server) ConfigSet(ctx *DBContext, params map[string]string) (*Message, error) {
+	for key, param := range params {
+		server.SetConfig(key, param)
+	}
 	return NewOKMessage(), nil
 }
 
