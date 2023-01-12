@@ -14,16 +14,16 @@
 
 package redis
 
-// ConnectionManagmentCommandHandler represents a hander interface for connection management commands.
-type ConnectionManagmentCommandHandler interface {
+// ConnectionManagementCommandHandler represents a hander interface for connection management commands.
+type ConnectionManagementCommandHandler interface {
 	Ping(ctx *DBContext, arg string) (*Message, error)
 	Echo(ctx *DBContext, arg string) (*Message, error)
 	Select(ctx *DBContext, index int) (*Message, error)
 	Quit(ctx *DBContext) (*Message, error)
 }
 
-// ServerManagmentCommandHandler represents a hander interface for server management commands.
-type ServerManagmentCommandHandler interface {
+// ServerManagementCommandHandler represents a hander interface for server management commands.
+type ServerManagementCommandHandler interface {
 	// 2.0.0
 	ConfigSet(ctx *DBContext, params map[string]string) (*Message, error)
 	ConfigGet(ctx *DBContext, params []string) (*Message, error)
@@ -105,6 +105,6 @@ type UserCommandHandler interface {
 
 // SystemCommandHandler represents a hander interface for system commands.
 type SystemCommandHandler interface {
-	ConnectionManagmentCommandHandler
-	ServerManagmentCommandHandler
+	ConnectionManagementCommandHandler
+	ServerManagementCommandHandler
 }
