@@ -25,3 +25,14 @@ func newConfig() *Config {
 		params: map[string][]string{},
 	}
 }
+
+// SetConfig sets a specified parameter.
+func (cfg *Config) SetConfig(key string, params []string) {
+	cfg.params[key] = params
+}
+
+// Config return the specified parameter.
+func (cfg *Config) Config(key string) ([]string, bool) {
+	params, ok := cfg.params[key]
+	return params, ok
+}
