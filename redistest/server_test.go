@@ -111,6 +111,16 @@ func TestServer(t *testing.T) {
 		ZSetCommandTest(t, client)
 	})
 
+	// redis-benchmark
+	params := []string{"-t get,set -n 10000"}
+	t.Run("redis-benchmark", func(t *testing.T) {
+		for _, param := range params {
+			t.Run(param, func(t *testing.T) {
+				ExecRedisBenchmark(t, param)
+			})
+		}
+	})
+
 	// YCSB
 
 	workloads := []string{"workloada", "workloadb"}
