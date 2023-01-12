@@ -16,9 +16,12 @@ package redis
 
 // Config represents a server configuration.
 type Config struct {
+	params map[string][]string
 }
 
 // newConfig returns a new configuration.
 func newConfig() *Config {
-	return &Config{}
+	return &Config{
+		params: map[string][]string{},
+	}
 }
