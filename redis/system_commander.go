@@ -41,6 +41,16 @@ func (server *Server) ConfigSet(ctx *DBContext, params map[string]string) (*Mess
 	return NewOKMessage(), nil
 }
 
-func (server *Server) ConfigGet(ctx *DBContext, params []string) (*Message, error) {
-	return NewArrayMessage(), nil
+func (server *Server) ConfigGet(ctx *DBContext, keys []string) (*Message, error) {
+	msg := NewArrayMessage()
+	for _, key := range keys {
+		msg.Append(NewBulkMessage(key))
+		param, ok := server.Config.Config(key)
+		if ok {
+			msg.Append(NewBulkMessage(param))
+		} else {
+			msg.Append(NewBulkMessage(""))
+		}
+	}
+	return msg, nil
 }
