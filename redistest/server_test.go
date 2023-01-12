@@ -63,10 +63,16 @@ func TestServer(t *testing.T) {
 
 	// ctx := context.Background()
 
-	// Connection commands
+	// Connection management commands
 
 	t.Run("Connection", func(t *testing.T) {
 		ConnectionCommandTest(t, client)
+	})
+
+	// Server management commands
+
+	t.Run("Server", func(t *testing.T) {
+		ServerCommandTest(t, client)
 	})
 
 	// Generic commands
@@ -151,6 +157,29 @@ func ConnectionCommandTest(t *testing.T, client *Client) {
 				}
 				if echo.Val() != msg {
 					t.Errorf("'%s' != '%s'", echo.Val(), msg)
+					return
+				}
+			})
+		}
+	})
+}
+
+// nolint: maintidx, gocyclo
+func ServerCommandTest(t *testing.T, client *Client) {
+	t.Helper()
+
+	t.Run("ECHO", func(t *testing.T) {
+		params := []string{
+			"save",
+		}
+		// vals := []string{
+		// 	"appendonly",
+		// }
+		for _, pram := range params {
+			t.Run(pram, func(t *testing.T) {
+				echo := client.ConfigGet(pram)
+				if echo.Err() != nil {
+					t.Error(echo.Err())
 					return
 				}
 			})
