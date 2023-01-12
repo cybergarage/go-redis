@@ -26,7 +26,7 @@ type ConnectionManagementCommandHandler interface {
 type ServerManagementCommandHandler interface {
 	// 2.0.0
 	ConfigSet(ctx *DBContext, params map[string]string) (*Message, error)
-	ConfigGet(ctx *DBContext, params []string) (*Message, error)
+	ConfigGet(ctx *DBContext, keys []string) (*Message, error)
 }
 
 // GenericCommandHandler represents a hander interface for genelic commands.
