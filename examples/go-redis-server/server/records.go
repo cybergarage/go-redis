@@ -14,13 +14,24 @@
 
 package server
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // Records represents a database record map.
-type Records map[string]*Record
+type Records struct {
+	sync.Map
+}
+
+func NewRecords() *Records {
+	return &Records{
+		Map: sync.Map{},
+	}
+}
 
 // Keys returns all key names.
-func (rmap Records) Keys() []string {
+func (rmap *Records) Keys() []string {
 	keys := []string{}
 	for key := range rmap {
 		keys = append(keys, key)
@@ -29,25 +40,25 @@ func (rmap Records) Keys() []string {
 }
 
 // SetRecord sets the specified record into the records.
-func (rmap Records) SetRecord(record *Record) error {
+func (rmap *Records) SetRecord(record *Record) error {
 	rmap[record.Key] = record
 	return nil
 }
 
 // HasRecord returns true if the database has the specified key record, otherwise false.
-func (rmap Records) HasRecord(key string) bool {
+func (rmap *Records) HasRecord(key string) bool {
 	_, ok := rmap[key]
 	return ok
 }
 
 // GetRecord gets a record with the specified key.
-func (rmap Records) GetRecord(key string) (*Record, bool) {
+func (rmap *Records) GetRecord(key string) (*Record, bool) {
 	record, ok := rmap[key]
 	return record, ok
 }
 
 // RemoveRecord removes a record with the specified key.
-func (rmap Records) RemoveRecord(key string) error {
+func (rmap *Records) RemoveRecord(key string) error {
 	if _, ok := rmap[key]; !ok {
 		return fmt.Errorf("%w : %s", ErrNotFound, key)
 	}
@@ -56,7 +67,7 @@ func (rmap Records) RemoveRecord(key string) error {
 }
 
 // RenameRecord renames the specified key record to the specified new record.
-func (rmap Records) RenameRecord(key string, newkey string) error {
+func (rmap *Records) RenameRecord(key string, newkey string) error {
 	record, ok := rmap.GetRecord(key)
 	if !ok {
 		return fmt.Errorf("%w: %s", ErrNotFound, key)
