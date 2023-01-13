@@ -22,14 +22,14 @@ import (
 // Database represents a database.
 type Database struct {
 	ID int
-	Records
+	*Records
 }
 
 // NewDatabaseWithID returns a new database with the specified ID.
 func NewDatabaseWithID(id int) *Database {
 	return &Database{
 		ID:      id,
-		Records: Records{},
+		Records: NewRecords(),
 	}
 }
 
