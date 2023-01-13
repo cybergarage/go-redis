@@ -14,8 +14,18 @@
 
 package server
 
+import "sync"
+
 // Databases represents a database map.
-type Databases map[int]*Database
+type Databases struct {
+	sync.Map
+}
+
+func NewDatabases() *Databases {
+	return &Databases{
+		Map: sync.Map{},
+	}
+}
 
 // GetDatabase returns the database with the specified ID.
 func (dbs Databases) GetDatabase(id int) (*Database, bool) {
