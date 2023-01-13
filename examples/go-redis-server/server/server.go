@@ -38,6 +38,7 @@ func NewServer() *Server {
 func (server *Server) GetDatabase(id int) (*Database, error) {
 	db, ok := server.Databases.GetDatabase(id)
 	if !ok {
+		db = NewDatabaseWithID(id)
 		server.SetDatabase(id, db)
 	}
 	return db, nil
