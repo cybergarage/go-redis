@@ -33,9 +33,13 @@ func NewRecords() *Records {
 // Keys returns all key names.
 func (rmap *Records) Keys() []string {
 	keys := []string{}
-	for key := range rmap {
-		keys = append(keys, key)
-	}
+	rmap.Range(func(key, value any) bool {
+		skey, ok := key.(string)
+		if ok {
+			keys = append(keys, skey)
+		}
+		return true
+	})
 	return keys
 }
 
