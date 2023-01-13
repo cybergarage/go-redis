@@ -21,14 +21,14 @@ import (
 // Server represents an example server.
 type Server struct {
 	*redis.Server
-	Databases
+	*Databases
 }
 
 // NewServer returns an example server instance.
 func NewServer() *Server {
 	server := &Server{
 		Server:    redis.NewServer(),
-		Databases: Databases{},
+		Databases: NewDatabases(),
 	}
 	server.SetCommandHandler(server)
 	return server
