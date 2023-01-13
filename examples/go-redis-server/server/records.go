@@ -41,7 +41,7 @@ func (rmap *Records) Keys() []string {
 
 // SetRecord sets the specified record into the records.
 func (rmap *Records) SetRecord(record *Record) error {
-	rmap[record.Key] = record
+	rmap.Store(record.Key, record)
 	return nil
 }
 
