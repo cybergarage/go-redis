@@ -57,7 +57,11 @@ func (rmap *Records) HasRecord(key string) bool {
 
 // GetRecord gets a record with the specified key.
 func (rmap *Records) GetRecord(key string) (*Record, bool) {
-	record, ok := rmap[key]
+	v, ok := rmap.Load(key)
+	if !ok {
+		return nil, false
+	}
+	record, ok := v.(*Record)
 	return record, ok
 }
 
