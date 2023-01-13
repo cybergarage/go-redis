@@ -39,7 +39,7 @@ func (server *Server) GetDatabase(id int) (*Database, error) {
 	db, ok := server.Databases.GetDatabase(id)
 	if !ok {
 		db = NewDatabaseWithID(id)
-		server.SetDatabase(id, db)
+		server.SetDatabase(db)
 	}
 	return db, nil
 }

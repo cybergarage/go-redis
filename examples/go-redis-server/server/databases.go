@@ -28,8 +28,8 @@ func NewDatabases() *Databases {
 }
 
 // SetDatabase set a database with the specified ID.
-func (dbs *Databases) SetDatabase(id int, db *Database) {
-	dbs.Store(id, db)
+func (dbs *Databases) SetDatabase(db *Database) {
+	dbs.Store(db.ID, db)
 }
 
 // GetDatabase returns the database with the specified ID.
