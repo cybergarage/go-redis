@@ -67,10 +67,10 @@ func (rmap *Records) GetRecord(key string) (*Record, bool) {
 
 // RemoveRecord removes a record with the specified key.
 func (rmap *Records) RemoveRecord(key string) error {
-	if _, ok := rmap[key]; !ok {
+	if _, ok := rmap.Load(key); !ok {
 		return fmt.Errorf("%w : %s", ErrNotFound, key)
 	}
-	delete(rmap, key)
+	rmap.Delete(key)
 	return nil
 }
 
