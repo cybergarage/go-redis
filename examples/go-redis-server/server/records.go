@@ -51,7 +51,7 @@ func (rmap *Records) SetRecord(record *Record) error {
 
 // HasRecord returns true if the database has the specified key record, otherwise false.
 func (rmap *Records) HasRecord(key string) bool {
-	_, ok := rmap[key]
+	_, ok := rmap.Load(key)
 	return ok
 }
 
