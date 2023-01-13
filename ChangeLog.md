@@ -1,7 +1,9 @@
 # Changelog
 
-## v1.1.2 (2023-xx-xx)
-- Support server management commands
+## v1.2.0 (2023-01-13)
+- Add a new interface for server management commands
+- Update go-redis-server using sync.Map for redis-benchmark
+- Check go-redis-server working only with GET/SET commands of redis-benchmark
 ###  Supported
 - CONFIG SET, CONFIG GET
 
