@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.1 (2023-xx-xx)
+- Update public helper functions in redistest 
+
 ## v1.2.0 (2023-01-13)
 - Add a new interface for server management commands
 - Update go-redis-server using sync.Map for redis-benchmark
