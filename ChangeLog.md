@@ -1,6 +1,7 @@
 # Changelog
 
-## v1.2.1 (2023-xx-xx)
+## v1.2.1 (2023-02-24)
+- Upgrade to go 1.20
 - Update public helper functions in redistest 
 
 ## v1.2.0 (2023-01-13)
