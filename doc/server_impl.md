@@ -1,12 +1,12 @@
-# How to implement a Redis compatible server?
+# How to implement a Redis-compatible server?
 
 This section describes how to implement a Redis-compatible server using the go-redis. Please see to the [examples](../examples) directory to know how to implement the compatible server in more detail.
 
-## Creating your Redis compatible server
+## Creating your Redis-compatible server
 
 ### STEP1: Inheritancing the base server
 
-At first, inherit the base server of the go-redis to implement your Redis compatible server as the following:
+At first, inherit the base server of the go-redis to implement your Redis-compatible server as the following:
 
 ```
 import (
