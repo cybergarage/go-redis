@@ -1,6 +1,6 @@
 module github.com/cybergarage/go-redis
 
-go 1.19
+go 1.20
 
 require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
