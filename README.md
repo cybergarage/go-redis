@@ -4,7 +4,7 @@
 [![test](https://github.com/cybergarage/go-redis/actions/workflows/make.yml/badge.svg)](https://github.com/cybergarage/go-redis/actions/workflows/make.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-redis.svg)](https://pkg.go.dev/github.com/cybergarage/go-redis)
 
-The go-redis is a database framework for implementing a Redis compatible server using Go easily.
+The go-redis is a database framework for implementing a [Redis](https://redis.io)-compatible server using Go easily.
 
 ## What is the go-redis?
 
