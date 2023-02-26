@@ -14,15 +14,19 @@
 
 package redis
 
+import "sync"
+
 // DBContext represents a database connection context.
 type DBContext struct {
 	id int
+	sync.Map
 }
 
 // newDBContext returns a database connection context.
 func newDBContext() *DBContext {
 	return &DBContext{
-		id: 0,
+		id:  0,
+		Map: sync.Map{},
 	}
 }
 
