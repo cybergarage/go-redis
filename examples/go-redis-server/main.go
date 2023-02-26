@@ -32,11 +32,13 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/cybergarage/go-logger/log"
+	clog "github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-redis/examples/go-redis-server/server"
 )
 
@@ -45,13 +47,24 @@ const (
 )
 
 func main() {
-	// isDebugEnabled := flag.Bool("debug", false, "enable debugging log output")
-	// isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
+	isDebugEnabled := flag.Bool("debug", false, "enable debugging log output")
+	isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
 	flag.Parse()
+
+	if *isDebugEnabled {
+		clog.SetStdoutDebugEnbled(true)
+	}
+
+	if *isProfileEnabled {
+		go func() {
+			// nolint: gosec
+			log.Println(http.ListenAndServe("localhost:6060", nil))
+		}()
+	}
 
 	server := server.NewServer()
 	if err := server.Start(); err != nil {
-		log.Errorf("%s couldn't be started (%s)", programName, err.Error())
+		clog.Errorf("%s couldn't be started (%s)", programName, err.Error())
 		os.Exit(1)
 	}
 
@@ -70,15 +83,15 @@ func main() {
 			s := <-sigCh
 			switch s {
 			case syscall.SIGHUP:
-				log.Infof("caught SIGHUP, restarting...")
+				clog.Infof("caught SIGHUP, restarting...")
 				if err := server.Restart(); err != nil {
-					log.Errorf("%s couldn't be restarted (%s)", programName, err.Error())
+					clog.Errorf("%s couldn't be restarted (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 			case syscall.SIGINT, syscall.SIGTERM:
-				log.Infof("caught %s, stopping...", s.String())
+				clog.Infof("caught %s, stopping...", s.String())
 				if err := server.Stop(); err != nil {
-					log.Errorf("%s couldn't be stopped (%s)", programName, err.Error())
+					clog.Errorf("%s couldn't be stopped (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 				exitCh <- 0
