@@ -14,34 +14,34 @@
 
 package redis
 
-func (server *Server) Ping(ctx *DBContext, arg string) (*Message, error) {
+func (server *Server) Ping(conn *Conn, arg string) (*Message, error) {
 	if len(arg) == 0 {
 		return NewStringMessage("PONG"), nil
 	}
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Echo(ctx *DBContext, arg string) (*Message, error) {
+func (server *Server) Echo(conn *Conn, arg string) (*Message, error) {
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Select(ctx *DBContext, index int) (*Message, error) {
-	ctx.id = index
+func (server *Server) Select(conn *Conn, index int) (*Message, error) {
+	conn.id = index
 	return NewOKMessage(), nil
 }
 
-func (server *Server) Quit(ctx *DBContext) (*Message, error) {
+func (server *Server) Quit(conn *Conn) (*Message, error) {
 	return NewOKMessage(), errQuit
 }
 
-func (server *Server) ConfigSet(ctx *DBContext, params map[string]string) (*Message, error) {
+func (server *Server) ConfigSet(conn *Conn, params map[string]string) (*Message, error) {
 	for key, param := range params {
 		server.SetConfig(key, param)
 	}
 	return NewOKMessage(), nil
 }
 
-func (server *Server) ConfigGet(ctx *DBContext, keys []string) (*Message, error) {
+func (server *Server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
 	msg := NewArrayMessage()
 	for _, key := range keys {
 		msg.Append(NewBulkMessage(key))

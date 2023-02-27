@@ -73,8 +73,8 @@ func (set *Set) Members() []string {
 // Set command handler
 ////////////////////////////////////////////////////////////
 
-func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) SAdd(conn *redis.Conn, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +85,8 @@ func (server *Server) SAdd(ctx *redis.DBContext, key string, members []string) (
 	return redis.NewIntegerMessage(set.Add(members)), nil
 }
 
-func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) SMembers(conn *redis.Conn, key string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -103,8 +103,8 @@ func (server *Server) SMembers(ctx *redis.DBContext, key string) (*redis.Message
 	return arrayMsg, nil
 }
 
-func (server *Server) SRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) SRem(conn *redis.Conn, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}

@@ -48,7 +48,7 @@ func isStringsEqual(aa []string, ba []string) bool {
 func CommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
-	// ctx := context.Background()
+	// conn := context.Background()
 
 	// Connection management commands
 

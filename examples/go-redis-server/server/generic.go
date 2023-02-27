@@ -21,8 +21,8 @@ import (
 	"github.com/cybergarage/go-redis/redis/regexp"
 )
 
-func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Del(conn *redis.Conn, keys []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -36,8 +36,8 @@ func (server *Server) Del(ctx *redis.DBContext, keys []string) (*redis.Message, 
 	return redis.NewIntegerMessage(removedCount), nil
 }
 
-func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Exists(conn *redis.Conn, keys []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,8 @@ func (server *Server) Exists(ctx *redis.DBContext, keys []string) (*redis.Messag
 	return redis.NewIntegerMessage(existCount), nil
 }
 
-func (server *Server) Expire(ctx *redis.DBContext, key string, opt redis.ExpireOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Expire(conn *redis.Conn, key string, opt redis.ExpireOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return redis.NewIntegerMessage(0), nil
 	}
@@ -65,8 +65,8 @@ func (server *Server) Expire(ctx *redis.DBContext, key string, opt redis.ExpireO
 	return redis.NewIntegerMessage(1), nil
 }
 
-func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Type(conn *redis.Conn, key string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +89,8 @@ func (server *Server) Type(ctx *redis.DBContext, key string) (*redis.Message, er
 	return redis.NewStringMessage("none"), nil
 }
 
-func (server *Server) Keys(ctx *redis.DBContext, pattern string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Keys(conn *redis.Conn, pattern string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +105,8 @@ func (server *Server) Keys(ctx *redis.DBContext, pattern string) (*redis.Message
 	return redis.NewStringArrayMessage(matchKeys), nil
 }
 
-func (server *Server) Rename(ctx *redis.DBContext, key string, newkey string, opt redis.RenameOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Rename(conn *redis.Conn, key string, newkey string, opt redis.RenameOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -125,10 +125,10 @@ func (server *Server) Rename(ctx *redis.DBContext, key string, newkey string, op
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) TTL(ctx *redis.DBContext, key string) (*redis.Message, error) {
+func (server *Server) TTL(conn *redis.Conn, key string) (*redis.Message, error) {
 	const ttlRecordNotFound int = -2
 	const ttlRecordNotSet int = -1
-	db, err := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
