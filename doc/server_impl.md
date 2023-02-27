@@ -23,16 +23,16 @@ type Server struct {
 Next, implement your user command handler such as SET and GET according to the [UserCommandHandler](../redis/handler.go) interface of the go-redis as the following:
 
 ```
-func (server *Server) Set(conn *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
-	dbID := conn.ID()
+func (server *Server) Set(conn *redis.Conn, key string, val string, opt redis.SetOption) (*redis.Message, error) {
+	dbID := conn.Database()
 
     ....
 
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) Get(conn *redis.DBContext, key string) (*redis.Message, error) {
-	dbID := conn.ID()
+func (server *Server) Get(conn *redis.Conn, key string) (*redis.Message, error) {
+	dbID := conn.Database()
 
     ....
 
@@ -40,7 +40,7 @@ func (server *Server) Get(conn *redis.DBContext, key string) (*redis.Message, er
 }
 ```
 
-The DBContext has the connection information such as the selected database identifier, and the all handler methods should return the appropriate RESP message response.
+The Conn has the connection information such as the selected database identifier, and the all handler methods should return the appropriate RESP message response.
 
 ### STEP4: Setting your user command handler
 
