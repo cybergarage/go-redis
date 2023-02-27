@@ -52,7 +52,11 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "id", err)
 		}
-		return server.systemCommandHandler.Select(conn, id)
+		msg, err := server.systemCommandHandler.Select(conn, id)
+		if err == nil {
+			conn.SetDatabase(id)
+		}
+		return msg, err
 	})
 
 	server.RegisterExexutor("QUIT", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
