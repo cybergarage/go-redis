@@ -191,8 +191,8 @@ func (zset *ZSet) IncBy(inc float64, member string) float64 {
 // ZSet command handler
 ////////////////////////////////////////////////////////////
 
-func (server *Server) ZAdd(ctx *redis.DBContext, key string, members []*redis.ZSetMember, opt redis.ZAddOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZAdd(conn *redis.Conn, key string, members []*redis.ZSetMember, opt redis.ZAddOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -203,8 +203,8 @@ func (server *Server) ZAdd(ctx *redis.DBContext, key string, members []*redis.ZS
 	return redis.NewIntegerMessage(zset.Add(members, opt)), nil
 }
 
-func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop int, opt redis.ZRangeOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZRange(conn *redis.Conn, key string, start int, stop int, opt redis.ZRangeOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -224,8 +224,8 @@ func (server *Server) ZRange(ctx *redis.DBContext, key string, start int, stop i
 	return arrayMsg, nil
 }
 
-func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start float64, stop float64, opt redis.ZRangeOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZRangeByScore(conn *redis.Conn, key string, start float64, stop float64, opt redis.ZRangeOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -245,8 +245,8 @@ func (server *Server) ZRangeByScore(ctx *redis.DBContext, key string, start floa
 	return arrayMsg, nil
 }
 
-func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZRem(conn *redis.Conn, key string, members []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -257,8 +257,8 @@ func (server *Server) ZRem(ctx *redis.DBContext, key string, members []string) (
 	return redis.NewIntegerMessage(zset.Rem(members)), nil
 }
 
-func (server *Server) ZScore(ctx *redis.DBContext, key string, member string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZScore(conn *redis.Conn, key string, member string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -273,8 +273,8 @@ func (server *Server) ZScore(ctx *redis.DBContext, key string, member string) (*
 	return redis.NewFloatMessage(score), nil
 }
 
-func (server *Server) ZIncBy(ctx *redis.DBContext, key string, inc float64, member string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) ZIncBy(conn *redis.Conn, key string, inc float64, member string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}

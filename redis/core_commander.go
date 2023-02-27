@@ -27,7 +27,7 @@ import (
 func (server *Server) registerCoreExecutors() {
 	// Connection management commands.
 
-	server.RegisterExexutor("PING", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("PING", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		arg := ""
 		var err error
 		if msg, _ := args.Next(); msg != nil {
@@ -36,32 +36,32 @@ func (server *Server) registerCoreExecutors() {
 				return nil, err
 			}
 		}
-		return server.systemCommandHandler.Ping(ctx, arg)
+		return server.systemCommandHandler.Ping(conn, arg)
 	})
 
-	server.RegisterExexutor("ECHO", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ECHO", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		msg, err := args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
-		return server.systemCommandHandler.Echo(ctx, msg)
+		return server.systemCommandHandler.Echo(conn, msg)
 	})
 
-	server.RegisterExexutor("SELECT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SELECT", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		id, err := args.NextInteger()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "id", err)
 		}
-		return server.systemCommandHandler.Select(ctx, id)
+		return server.systemCommandHandler.Select(conn, id)
 	})
 
-	server.RegisterExexutor("QUIT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		return server.systemCommandHandler.Quit(ctx)
+	server.RegisterExexutor("QUIT", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		return server.systemCommandHandler.Quit(conn)
 	})
 
 	// Server management commands.
 
-	server.RegisterExexutor("CONFIG", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("CONFIG", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := ""
 		var err error
 		if msg, _ := args.Next(); msg != nil {
@@ -77,13 +77,13 @@ func (server *Server) registerCoreExecutors() {
 			if err != nil {
 				return nil, err
 			}
-			return server.systemCommandHandler.ConfigSet(ctx, params)
+			return server.systemCommandHandler.ConfigSet(conn, params)
 		case "GET":
 			params, err := nextStringArrayArguments(cmd, "params", args)
 			if err != nil {
 				return nil, err
 			}
-			return server.systemCommandHandler.ConfigGet(ctx, params)
+			return server.systemCommandHandler.ConfigGet(conn, params)
 		}
 
 		return nil, errors.New(opt)
@@ -91,15 +91,15 @@ func (server *Server) registerCoreExecutors() {
 
 	// Generic commands.
 
-	server.RegisterExexutor("DEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("DEL", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Del(ctx, keys)
+		return server.userCommandHandler.Del(conn, keys)
 	})
 
-	server.RegisterExexutor("EXPIRE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("EXPIRE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -113,10 +113,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Expire(ctx, key, opt)
+		return server.userCommandHandler.Expire(conn, key, opt)
 	})
 
-	server.RegisterExexutor("EXPIREAT", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("EXPIREAT", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -130,46 +130,34 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Expire(ctx, key, opt)
+		return server.userCommandHandler.Expire(conn, key, opt)
 	})
 
-	server.RegisterExexutor("EXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("EXISTS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Exists(ctx, keys)
+		return server.userCommandHandler.Exists(conn, keys)
 	})
 
-	server.RegisterExexutor("KEYS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("KEYS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		pattern, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Keys(ctx, pattern)
+		return server.userCommandHandler.Keys(conn, pattern)
 	})
 
-	server.RegisterExexutor("TYPE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("TYPE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Type(ctx, key)
+		return server.userCommandHandler.Type(conn, key)
 	})
 
-	server.RegisterExexutor("RENAME", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		key, err := nextKeyArgument(cmd, args)
-		if err != nil {
-			return nil, err
-		}
-		newkey, err := nextStringArgument(cmd, "newkey", args)
-		if err != nil {
-			return nil, err
-		}
-		return server.userCommandHandler.Rename(ctx, key, newkey, RenameOption{NX: false})
-	})
-
-	server.RegisterExexutor("RENAMENX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("RENAME", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -178,47 +166,59 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Rename(ctx, key, newkey, RenameOption{NX: true})
+		return server.userCommandHandler.Rename(conn, key, newkey, RenameOption{NX: false})
 	})
 
-	server.RegisterExexutor("TTL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("RENAMENX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.TTL(ctx, key)
+		newkey, err := nextStringArgument(cmd, "newkey", args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Rename(conn, key, newkey, RenameOption{NX: true})
+	})
+
+	server.RegisterExexutor("TTL", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		key, err := nextKeyArgument(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.TTL(conn, key)
 	})
 
 	// String commands.
 
-	server.RegisterExexutor("GET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("GET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Get(ctx, key)
+		return server.userCommandHandler.Get(conn, key)
 	})
 
-	server.RegisterExexutor("SET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
-	server.RegisterExexutor("GETSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("GETSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.GET = true
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
-	server.RegisterExexutor("MSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("MSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := MSetOption{
 			NX: false,
 		}
@@ -226,10 +226,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MSet(ctx, dir, opt)
+		return server.userCommandHandler.MSet(conn, dir, opt)
 	})
 
-	server.RegisterExexutor("MSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("MSETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := MSetOption{
 			NX: true,
 		}
@@ -237,30 +237,30 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MSet(ctx, dir, opt)
+		return server.userCommandHandler.MSet(conn, dir, opt)
 	})
 
-	server.RegisterExexutor("MGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("MGET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		keys, err := nextMGetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MGet(ctx, keys)
+		return server.userCommandHandler.MGet(conn, keys)
 	})
 
-	server.RegisterExexutor("SETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.NX = true
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.Set(ctx, key, val, opt)
+		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
 	// Hash commands.
 
-	server.RegisterExexutor("HDEL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HDEL", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -269,10 +269,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HDel(ctx, hash, keys)
+		return server.userCommandHandler.HDel(conn, hash, keys)
 	})
 
-	server.RegisterExexutor("HGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HGET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -281,18 +281,18 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HGet(ctx, hash, key)
+		return server.userCommandHandler.HGet(conn, hash, key)
 	})
 
-	server.RegisterExexutor("HGETALL", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HGETALL", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HGetAll(ctx, hash)
+		return server.userCommandHandler.HGetAll(conn, hash)
 	})
 
-	server.RegisterExexutor("HSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{
 			NX: false,
 		}
@@ -304,10 +304,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
+		return server.userCommandHandler.HSet(conn, hash, key, val, opt)
 	})
 
-	server.RegisterExexutor("HSETNX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HSETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := HSetOption{
 			NX: true,
 		}
@@ -319,10 +319,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HSet(ctx, hash, key, val, opt)
+		return server.userCommandHandler.HSet(conn, hash, key, val, opt)
 	})
 
-	server.RegisterExexutor("HMSET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HMSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -331,10 +331,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HMSet(ctx, hash, dir)
+		return server.userCommandHandler.HMSet(conn, hash, dir)
 	})
 
-	server.RegisterExexutor("HMGET", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("HMGET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -343,12 +343,12 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HMGet(ctx, hash, keys)
+		return server.userCommandHandler.HMGet(conn, hash, keys)
 	})
 
 	// List commands.
 
-	server.RegisterExexutor("LINDEX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LINDEX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -357,44 +357,44 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.LIndex(ctx, key, idx)
+		return server.userCommandHandler.LIndex(conn, key, idx)
 	})
 
-	server.RegisterExexutor("LLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LLEN", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.LLen(ctx, key)
+		return server.userCommandHandler.LLen(conn, key)
 	})
 
-	server.RegisterExexutor("LPOP", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LPOP", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, cnt, err := nextPopArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.LPop(ctx, key, cnt)
+		return server.userCommandHandler.LPop(conn, key, cnt)
 	})
 
-	server.RegisterExexutor("LPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LPUSH", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		opt := PushOption{X: false}
-		return server.userCommandHandler.LPush(ctx, key, elems, opt)
+		return server.userCommandHandler.LPush(conn, key, elems, opt)
 	})
 
-	server.RegisterExexutor("LPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LPUSHX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		opt := PushOption{X: true}
-		return server.userCommandHandler.LPush(ctx, key, elems, opt)
+		return server.userCommandHandler.LPush(conn, key, elems, opt)
 	})
 
-	server.RegisterExexutor("LRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("LRANGE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -407,38 +407,38 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.LRange(ctx, key, start, end)
+		return server.userCommandHandler.LRange(conn, key, start, end)
 	})
 
-	server.RegisterExexutor("RPOP", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("RPOP", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, cnt, err := nextPopArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.RPop(ctx, key, cnt)
+		return server.userCommandHandler.RPop(conn, key, cnt)
 	})
 
-	server.RegisterExexutor("RPUSH", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("RPUSH", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		opt := PushOption{X: false}
-		return server.userCommandHandler.RPush(ctx, key, elems, opt)
+		return server.userCommandHandler.RPush(conn, key, elems, opt)
 	})
 
-	server.RegisterExexutor("RPUSHX", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("RPUSHX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, elems, err := nextPushArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
 		opt := PushOption{X: true}
-		return server.userCommandHandler.RPush(ctx, key, elems, opt)
+		return server.userCommandHandler.RPush(conn, key, elems, opt)
 	})
 
 	// Set commands.
 
-	server.RegisterExexutor("SADD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SADD", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -447,18 +447,18 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.SAdd(ctx, key, members)
+		return server.userCommandHandler.SAdd(conn, key, members)
 	})
 
-	server.RegisterExexutor("SMEMBERS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SMEMBERS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.SMembers(ctx, key)
+		return server.userCommandHandler.SMembers(conn, key)
 	})
 
-	server.RegisterExexutor("SREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SREM", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -467,12 +467,12 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.SRem(ctx, key, members)
+		return server.userCommandHandler.SRem(conn, key, members)
 	})
 
 	// ZSet commands.
 
-	server.RegisterExexutor("ZADD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZADD", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -536,10 +536,10 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		return server.userCommandHandler.ZAdd(ctx, key, members, opt)
+		return server.userCommandHandler.ZAdd(conn, key, members, opt)
 	})
 
-	server.RegisterExexutor("ZINCRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZINCRBY", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -552,10 +552,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.ZIncBy(ctx, key, inc, member)
+		return server.userCommandHandler.ZIncBy(conn, key, inc, member)
 	})
 
-	server.RegisterExexutor("ZRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZRANGE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -579,13 +579,13 @@ func (server *Server) registerCoreExecutors() {
 		if opt.BYSCORE {
 			opt.MINEXCLUSIVE = startEx
 			opt.MAXEXCLUSIVE = stopEx
-			return server.userCommandHandler.ZRangeByScore(ctx, key, start, stop, opt)
+			return server.userCommandHandler.ZRangeByScore(conn, key, start, stop, opt)
 		}
 
-		return server.userCommandHandler.ZRange(ctx, key, int(start), int(stop), opt)
+		return server.userCommandHandler.ZRange(conn, key, int(start), int(stop), opt)
 	})
 
-	server.RegisterExexutor("ZREVRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZREVRANGE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -606,7 +606,7 @@ func (server *Server) registerCoreExecutors() {
 			return nil, err
 		}
 
-		msg, err := server.userCommandHandler.ZRange(ctx, key, start, stop, opt)
+		msg, err := server.userCommandHandler.ZRange(conn, key, start, stop, opt)
 		if err != nil {
 			return msg, err
 		}
@@ -622,7 +622,7 @@ func (server *Server) registerCoreExecutors() {
 		return NewArrayMessageWithArray(array.Reverse()), nil
 	})
 
-	server.RegisterExexutor("ZRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZRANGEBYSCORE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -645,10 +645,10 @@ func (server *Server) registerCoreExecutors() {
 		opt.MINEXCLUSIVE = minEx
 		opt.MAXEXCLUSIVE = maxEx
 
-		return server.userCommandHandler.ZRangeByScore(ctx, key, min, max, opt)
+		return server.userCommandHandler.ZRangeByScore(conn, key, min, max, opt)
 	})
 
-	server.RegisterExexutor("ZREVRANGEBYSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZREVRANGEBYSCORE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -671,7 +671,7 @@ func (server *Server) registerCoreExecutors() {
 		opt.MINEXCLUSIVE = minEx
 		opt.MAXEXCLUSIVE = maxEx
 
-		msg, err := server.userCommandHandler.ZRangeByScore(ctx, key, min, max, opt)
+		msg, err := server.userCommandHandler.ZRangeByScore(conn, key, min, max, opt)
 		if err != nil {
 			return msg, err
 		}
@@ -687,7 +687,7 @@ func (server *Server) registerCoreExecutors() {
 		return NewArrayMessageWithArray(array.Reverse()), nil
 	})
 
-	server.RegisterExexutor("ZREM", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZREM", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -696,10 +696,10 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.ZRem(ctx, key, members)
+		return server.userCommandHandler.ZRem(conn, key, members)
 	})
 
-	server.RegisterExexutor("ZSCORE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZSCORE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -708,6 +708,6 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.ZScore(ctx, key, member)
+		return server.userCommandHandler.ZScore(conn, key, member)
 	})
 }
