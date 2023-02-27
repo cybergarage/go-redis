@@ -1,7 +1,8 @@
 # Changelog
 
-## v1.2.2 (2023-xx-xx)
-- Add sync.Map interface to redis.DBContext to store user data
+## v1.3.0 (2023-xx-xx)
+- Update executer methods to pass redis.Conn intead of redis.Context
+- Add sync.Map interface to redis.Conn to store user data
 - Add profiling option to go-redis-server
 
 ## v1.2.1 (2023-02-24)
