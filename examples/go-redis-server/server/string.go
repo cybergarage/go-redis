@@ -20,8 +20,8 @@ import (
 	"github.com/cybergarage/go-redis/redis"
 )
 
-func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redis.SetOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Set(conn *redis.Conn, key string, val string, opt redis.SetOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +67,8 @@ func (server *Server) Set(ctx *redis.DBContext, key string, val string, opt redi
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) Get(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) Get(conn *redis.Conn, key string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -83,10 +83,10 @@ func (server *Server) Get(ctx *redis.DBContext, key string) (*redis.Message, err
 	return redis.NewNilMessage(), nil
 }
 
-func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
+func (server *Server) MSet(conn *redis.Conn, dict map[string]string, opt redis.MSetOption) (*redis.Message, error) {
 	if opt.NX {
 		for key := range dict {
-			res, err := server.Get(ctx, key)
+			res, err := server.Get(conn, key)
 			if err != nil {
 				return nil, err
 			}
@@ -108,7 +108,7 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 		GET:     false,
 	}
 	for key, val := range dict {
-		if _, err := server.Set(ctx, key, val, setOpt); err != nil {
+		if _, err := server.Set(conn, key, val, setOpt); err != nil {
 			return nil, err
 		}
 	}
@@ -119,11 +119,11 @@ func (server *Server) MSet(ctx *redis.DBContext, dict map[string]string, opt red
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) MGet(ctx *redis.DBContext, keys []string) (*redis.Message, error) {
+func (server *Server) MGet(conn *redis.Conn, keys []string) (*redis.Message, error) {
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, key := range keys {
-		msg, err := server.Get(ctx, key)
+		msg, err := server.Get(conn, key)
 		if err != nil {
 			return nil, err
 		}

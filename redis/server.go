@@ -144,7 +144,7 @@ func (server *Server) serve() error {
 func (server *Server) receive(conn io.ReadWriteCloser) error {
 	defer conn.Close()
 
-	ctx := newDBContext()
+	handlerConn := newHanderCon()
 
 	parser := proto.NewParserWithReader(conn)
 	reqMsg, parserErr := parser.Next()
@@ -155,7 +155,7 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 		}
 		var resMsg *Message
 		var reqErr error
-		resMsg, reqErr = server.handleMessage(ctx, reqMsg)
+		resMsg, reqErr = server.handleMessage(handlerConn, reqMsg)
 		if reqErr != nil {
 			if !errors.Is(reqErr, errQuit) {
 				resMsg = NewErrorMessage(reqErr)
@@ -176,7 +176,7 @@ func (server *Server) receive(conn io.ReadWriteCloser) error {
 }
 
 // handleMessage handles a client message.
-func (server *Server) handleMessage(ctx *DBContext, msg *proto.Message) (*Message, error) {
+func (server *Server) handleMessage(conn *Conn, msg *proto.Message) (*Message, error) {
 	switch msg.Type {
 	case proto.StringMessage:
 		return nil, nil
@@ -189,7 +189,7 @@ func (server *Server) handleMessage(ctx *DBContext, msg *proto.Message) (*Messag
 		if err != nil {
 			return nil, err
 		}
-		return server.handleArrayMessage(ctx, msg)
+		return server.handleArrayMessage(conn, msg)
 	case proto.ErrorMessage:
 		return nil, nil
 	}
@@ -213,7 +213,7 @@ func (server *Server) responseMessage(conn io.Writer, msg *Message) error {
 }
 
 // handleMessage handles a client message.
-func (server *Server) handleArrayMessage(ctx *DBContext, arrayMsg *proto.Array) (*Message, error) {
+func (server *Server) handleArrayMessage(conn *Conn, arrayMsg *proto.Array) (*Message, error) {
 	firstMsg, err := arrayMsg.Next()
 	if err != nil {
 		return nil, err
@@ -225,7 +225,7 @@ func (server *Server) handleArrayMessage(ctx *DBContext, arrayMsg *proto.Array) 
 		if err != nil {
 			return nil, err
 		}
-		return server.handleArrayMessage(ctx, nestedArrayMsg)
+		return server.handleArrayMessage(conn, nestedArrayMsg)
 	}
 
 	cmd, err := firstMsg.String()
@@ -233,5 +233,5 @@ func (server *Server) handleArrayMessage(ctx *DBContext, arrayMsg *proto.Array) 
 		return nil, err
 	}
 
-	return server.executeCommand(ctx, cmd, arrayMsg)
+	return server.executeCommand(conn, cmd, arrayMsg)
 }

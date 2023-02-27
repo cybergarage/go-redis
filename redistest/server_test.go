@@ -35,7 +35,7 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	// ctx := context.Background()
+	// conn := context.Background()
 
 	t.Run("Command", func(t *testing.T) {
 		CommandTest(t, client)

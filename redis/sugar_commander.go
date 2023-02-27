@@ -20,8 +20,8 @@ import "strconv"
 func (server *Server) registerSugarExecutors() {
 	// common internal sugar functions
 
-	incdecExecutor := func(ctx *DBContext, cmd string, key string, val int) (*Message, error) {
-		getRet, err := server.userCommandHandler.Get(ctx, key)
+	incdecExecutor := func(conn *Conn, cmd string, key string, val int) (*Message, error) {
+		getRet, err := server.userCommandHandler.Get(conn, key)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +35,7 @@ func (server *Server) registerSugarExecutors() {
 		}
 		newVal := currVal + val
 		opt := newDefaultSetOption()
-		_, err = server.userCommandHandler.Set(ctx, key, strconv.Itoa(newVal), opt)
+		_, err = server.userCommandHandler.Set(conn, key, strconv.Itoa(newVal), opt)
 		if err != nil {
 			return nil, err
 		}
@@ -44,12 +44,12 @@ func (server *Server) registerSugarExecutors() {
 
 	// Registers sugar string commands.
 
-	server.RegisterExexutor("APPEND", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("APPEND", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, appendVal, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		getRet, err := server.userCommandHandler.Get(ctx, key)
+		getRet, err := server.userCommandHandler.Get(conn, key)
 		if err != nil {
 			return nil, err
 		}
@@ -58,22 +58,22 @@ func (server *Server) registerSugarExecutors() {
 			newVal = getVal + appendVal
 		}
 		opt := newDefaultSetOption()
-		_, err = server.userCommandHandler.Set(ctx, key, newVal, opt)
+		_, err = server.userCommandHandler.Set(conn, key, newVal, opt)
 		if err != nil {
 			return nil, err
 		}
 		return NewIntegerMessage(len(newVal)), nil
 	})
 
-	server.RegisterExexutor("DECR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("DECR", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return incdecExecutor(ctx, cmd, key, -1)
+		return incdecExecutor(conn, cmd, key, -1)
 	})
 
-	server.RegisterExexutor("DECRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("DECRBY", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -82,10 +82,10 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return incdecExecutor(ctx, cmd, key, -inc)
+		return incdecExecutor(conn, cmd, key, -inc)
 	})
 
-	server.RegisterExexutor("GETRANGE", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("GETRANGE", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		rageValidiator := func(val int, max int) int {
 			if val < 0 {
 				val = max + val
@@ -110,7 +110,7 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		getRet, err := server.userCommandHandler.Get(ctx, key)
+		getRet, err := server.userCommandHandler.Get(conn, key)
 		if err != nil {
 			return NewNilMessage(), nil
 		}
@@ -123,15 +123,15 @@ func (server *Server) registerSugarExecutors() {
 		return NewBulkMessage(getVal[start:(end + 1)]), nil
 	})
 
-	server.RegisterExexutor("INCR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("INCR", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return incdecExecutor(ctx, cmd, key, 1)
+		return incdecExecutor(conn, cmd, key, 1)
 	})
 
-	server.RegisterExexutor("INCRBY", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("INCRBY", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -140,11 +140,11 @@ func (server *Server) registerSugarExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return incdecExecutor(ctx, cmd, key, inc)
+		return incdecExecutor(conn, cmd, key, inc)
 	})
 
-	server.RegisterExexutor("STRLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		getRet, err := server.executeCommand(ctx, "GET", args)
+	server.RegisterExexutor("STRLEN", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		getRet, err := server.executeCommand(conn, "GET", args)
 		if err != nil {
 			return NewIntegerMessage(0), nil
 		}
@@ -155,14 +155,14 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(len(getVal)), nil
 	})
 
-	server.RegisterExexutor("SUBSTR", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		return server.executeCommand(ctx, "GETRANGE", args)
+	server.RegisterExexutor("SUBSTR", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		return server.executeCommand(conn, "GETRANGE", args)
 	})
 
 	// Registers sugar hash commands.
 
-	server.RegisterExexutor("HEXISTS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		getRet, err := server.executeCommand(ctx, "HGET", args)
+	server.RegisterExexutor("HEXISTS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		getRet, err := server.executeCommand(conn, "HGET", args)
 		if err != nil {
 			return NewIntegerMessage(0), nil
 		}
@@ -173,8 +173,8 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(1), nil
 	})
 
-	server.RegisterExexutor("HKEYS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		getAllRet, err := server.executeCommand(ctx, "HGETALL", args)
+	server.RegisterExexutor("HKEYS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		getAllRet, err := server.executeCommand(conn, "HGETALL", args)
 		if err != nil {
 			return nil, err
 		}
@@ -208,8 +208,8 @@ func (server *Server) registerSugarExecutors() {
 		return retMsg, nil
 	})
 
-	server.RegisterExexutor("HLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		retMsg, err := server.executeCommand(ctx, "HKEYS", args)
+	server.RegisterExexutor("HLEN", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		retMsg, err := server.executeCommand(conn, "HKEYS", args)
 		if err != nil {
 			return nil, err
 		}
@@ -220,8 +220,8 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(arrayMsg.Size()), nil
 	})
 
-	server.RegisterExexutor("HSTRLEN", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		retMsg, err := server.executeCommand(ctx, "HGET", args)
+	server.RegisterExexutor("HSTRLEN", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		retMsg, err := server.executeCommand(conn, "HGET", args)
 		if err != nil {
 			return nil, err
 		}
@@ -235,8 +235,8 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(len(retStr)), nil
 	})
 
-	server.RegisterExexutor("HVALS", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
-		getAllRet, err := server.executeCommand(ctx, "HGETALL", args)
+	server.RegisterExexutor("HVALS", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		getAllRet, err := server.executeCommand(conn, "HGETALL", args)
 		if err != nil {
 			return nil, err
 		}
@@ -271,12 +271,12 @@ func (server *Server) registerSugarExecutors() {
 
 	// Registers sugar set commands.
 
-	server.RegisterExexutor("SCARD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SCARD", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		retMsg, err := server.userCommandHandler.SMembers(ctx, key)
+		retMsg, err := server.userCommandHandler.SMembers(conn, key)
 		if err != nil {
 			return nil, err
 		}
@@ -296,7 +296,7 @@ func (server *Server) registerSugarExecutors() {
 		return NewIntegerMessage(memberCount), nil
 	})
 
-	server.RegisterExexutor("SISMEMBER", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("SISMEMBER", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -306,7 +306,7 @@ func (server *Server) registerSugarExecutors() {
 			return nil, err
 		}
 
-		retMsg, err := server.userCommandHandler.SMembers(ctx, key)
+		retMsg, err := server.userCommandHandler.SMembers(conn, key)
 		if err != nil {
 			return nil, err
 		}
@@ -333,7 +333,7 @@ func (server *Server) registerSugarExecutors() {
 
 	// Registers sugar set commands.
 
-	server.RegisterExexutor("ZCARD", func(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+	server.RegisterExexutor("ZCARD", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
@@ -350,7 +350,7 @@ func (server *Server) registerSugarExecutors() {
 			Count:        -1,
 		}
 
-		retMsg, err := server.userCommandHandler.ZRange(ctx, key, 0, -1, opt)
+		retMsg, err := server.userCommandHandler.ZRange(conn, key, 0, -1, opt)
 		if err != nil {
 			return nil, err
 		}

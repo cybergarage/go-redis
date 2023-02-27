@@ -16,21 +16,26 @@ package redis
 
 import "sync"
 
-// DBContext represents a database connection context.
-type DBContext struct {
+// Conn represents a database connection.
+type Conn struct {
 	id int
 	sync.Map
 }
 
-// newDBContext returns a database connection context.
-func newDBContext() *DBContext {
-	return &DBContext{
+// newHanderCon returns a database connection.
+func newHanderCon() *Conn {
+	return &Conn{
 		id:  0,
 		Map: sync.Map{},
 	}
 }
 
-// ID returns the current selected database ID.
-func (ctx *DBContext) ID() int {
-	return ctx.id
+// SetDatabase sets th selected database number to the connection.
+func (conn *Conn) SetDatabase(id int) {
+	conn.id = id
+}
+
+// Database returns the current selected database number in the connection.
+func (conn *Conn) Database() int {
+	return conn.id
 }

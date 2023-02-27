@@ -56,8 +56,8 @@ func (hash Hash) Del(fields []string) int {
 // Hash command handler
 ////////////////////////////////////////////////////////////
 
-func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) HDel(conn *redis.Conn, key string, fields []string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,8 @@ func (server *Server) HDel(ctx *redis.DBContext, key string, fields []string) (*
 }
 
 // nolint: ifshort
-func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) HSet(conn *redis.Conn, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +104,8 @@ func (server *Server) HSet(ctx *redis.DBContext, key string, field string, val s
 	return redis.NewIntegerMessage(hash.Set(field, val, opt)), nil
 }
 
-func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) HGet(conn *redis.Conn, key string, field string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -124,10 +124,10 @@ func (server *Server) HGet(ctx *redis.DBContext, key string, field string) (*red
 	return redis.NewStringMessage(hashData), nil
 }
 
-func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message, error) {
+func (server *Server) HGetAll(conn *redis.Conn, key string) (*redis.Message, error) {
 	arrayMsg := redis.NewArrayMessage()
 
-	db, err := server.GetDatabase(ctx.ID())
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -150,23 +150,23 @@ func (server *Server) HGetAll(ctx *redis.DBContext, key string) (*redis.Message,
 	return arrayMsg, nil
 }
 
-func (server *Server) HMSet(ctx *redis.DBContext, key string, dict map[string]string) (*redis.Message, error) {
+func (server *Server) HMSet(conn *redis.Conn, key string, dict map[string]string) (*redis.Message, error) {
 	hsetOpt := redis.HSetOption{
 		NX: false,
 	}
 	for field, val := range dict {
-		if _, err := server.HSet(ctx, key, field, val, hsetOpt); err != nil {
+		if _, err := server.HSet(conn, key, field, val, hsetOpt); err != nil {
 			return nil, err
 		}
 	}
 	return redis.NewOKMessage(), nil
 }
 
-func (server *Server) HMGet(ctx *redis.DBContext, key string, fields []string) (*redis.Message, error) {
+func (server *Server) HMGet(conn *redis.Conn, key string, fields []string) (*redis.Message, error) {
 	arrayMsg := redis.NewArrayMessage()
 	array, _ := arrayMsg.Array()
 	for _, field := range fields {
-		msg, err := server.HGet(ctx, key, field)
+		msg, err := server.HGet(conn, key, field)
 		if err != nil {
 			return nil, err
 		}

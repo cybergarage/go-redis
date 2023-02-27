@@ -109,8 +109,8 @@ func (list *List) Len() int {
 // List command handler
 ////////////////////////////////////////////////////////////
 
-func (server *Server) pop(ctx *redis.DBContext, key string, count int, isLPop bool) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) pop(conn *redis.Conn, key string, count int, isLPop bool) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +152,8 @@ func (server *Server) pop(ctx *redis.DBContext, key string, count int, isLPop bo
 	return arrayMsg, nil
 }
 
-func (server *Server) push(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption, isLPop bool) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) push(conn *redis.Conn, key string, elems []string, opt redis.PushOption, isLPop bool) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -179,24 +179,24 @@ func (server *Server) push(ctx *redis.DBContext, key string, elems []string, opt
 	return redis.NewIntegerMessage(cnt), nil
 }
 
-func (server *Server) LPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
-	return server.pop(ctx, key, count, true)
+func (server *Server) LPop(conn *redis.Conn, key string, count int) (*redis.Message, error) {
+	return server.pop(conn, key, count, true)
 }
 
-func (server *Server) LPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
-	return server.push(ctx, key, elems, opt, true)
+func (server *Server) LPush(conn *redis.Conn, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
+	return server.push(conn, key, elems, opt, true)
 }
 
-func (server *Server) RPop(ctx *redis.DBContext, key string, count int) (*redis.Message, error) {
-	return server.pop(ctx, key, count, false)
+func (server *Server) RPop(conn *redis.Conn, key string, count int) (*redis.Message, error) {
+	return server.pop(conn, key, count, false)
 }
 
-func (server *Server) RPush(ctx *redis.DBContext, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
-	return server.push(ctx, key, elems, opt, false)
+func (server *Server) RPush(conn *redis.Conn, key string, elems []string, opt redis.PushOption) (*redis.Message, error) {
+	return server.push(conn, key, elems, opt, false)
 }
 
-func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop int) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) LRange(conn *redis.Conn, key string, start int, stop int) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -216,8 +216,8 @@ func (server *Server) LRange(ctx *redis.DBContext, key string, start int, stop i
 	return arrayMsg, nil
 }
 
-func (server *Server) LIndex(ctx *redis.DBContext, key string, idx int) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) LIndex(conn *redis.Conn, key string, idx int) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}
@@ -235,8 +235,8 @@ func (server *Server) LIndex(ctx *redis.DBContext, key string, idx int) (*redis.
 	return redis.NewBulkMessage(elem), nil
 }
 
-func (server *Server) LLen(ctx *redis.DBContext, key string) (*redis.Message, error) {
-	db, err := server.GetDatabase(ctx.ID())
+func (server *Server) LLen(conn *redis.Conn, key string) (*redis.Message, error) {
+	db, err := server.GetDatabase(conn.Database())
 	if err != nil {
 		return nil, err
 	}

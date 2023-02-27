@@ -22,11 +22,11 @@ import (
 )
 
 type Arguments = *proto.Array
-type Executor func(*DBContext, string, Arguments) (*Message, error)
+type Executor func(*Conn, string, Arguments) (*Message, error)
 type Executors map[string]Executor
 
 // executeCommand handles a client command message.
-func (server *Server) executeCommand(ctx *DBContext, cmd string, args Arguments) (*Message, error) {
+func (server *Server) executeCommand(conn *Conn, cmd string, args Arguments) (*Message, error) {
 	if server.userCommandHandler == nil {
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
@@ -37,5 +37,5 @@ func (server *Server) executeCommand(ctx *DBContext, cmd string, args Arguments)
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
 
-	return cmdExecutor(ctx, cmd, args)
+	return cmdExecutor(conn, cmd, args)
 }

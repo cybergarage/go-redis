@@ -16,65 +16,65 @@ package redis
 
 // ConnectionManagementCommandHandler represents a hander interface for connection management commands.
 type ConnectionManagementCommandHandler interface {
-	Ping(ctx *DBContext, arg string) (*Message, error)
-	Echo(ctx *DBContext, arg string) (*Message, error)
-	Select(ctx *DBContext, index int) (*Message, error)
-	Quit(ctx *DBContext) (*Message, error)
+	Ping(conn *Conn, arg string) (*Message, error)
+	Echo(conn *Conn, arg string) (*Message, error)
+	Select(conn *Conn, index int) (*Message, error)
+	Quit(conn *Conn) (*Message, error)
 }
 
 // ServerManagementCommandHandler represents a hander interface for server management commands.
 type ServerManagementCommandHandler interface {
 	// 2.0.0
-	ConfigSet(ctx *DBContext, params map[string]string) (*Message, error)
-	ConfigGet(ctx *DBContext, keys []string) (*Message, error)
+	ConfigSet(conn *Conn, params map[string]string) (*Message, error)
+	ConfigGet(conn *Conn, keys []string) (*Message, error)
 }
 
 // GenericCommandHandler represents a hander interface for genelic commands.
 type GenericCommandHandler interface {
 	// 1.0.0
-	Del(ctx *DBContext, keys []string) (*Message, error)
-	Exists(ctx *DBContext, keys []string) (*Message, error)
-	Expire(ctx *DBContext, key string, opt ExpireOption) (*Message, error)
-	Keys(ctx *DBContext, pattern string) (*Message, error)
-	Rename(ctx *DBContext, key string, newkey string, opt RenameOption) (*Message, error)
-	Type(ctx *DBContext, key string) (*Message, error)
-	TTL(ctx *DBContext, key string) (*Message, error)
+	Del(conn *Conn, keys []string) (*Message, error)
+	Exists(conn *Conn, keys []string) (*Message, error)
+	Expire(conn *Conn, key string, opt ExpireOption) (*Message, error)
+	Keys(conn *Conn, pattern string) (*Message, error)
+	Rename(conn *Conn, key string, newkey string, opt RenameOption) (*Message, error)
+	Type(conn *Conn, key string) (*Message, error)
+	TTL(conn *Conn, key string) (*Message, error)
 }
 
 // StringHandler represents a core command hander interface for string commands.
 type StringCommandHandler interface {
-	Set(ctx *DBContext, key string, val string, opt SetOption) (*Message, error)
-	Get(ctx *DBContext, key string) (*Message, error)
-	MSet(ctx *DBContext, dict map[string]string, opt MSetOption) (*Message, error)
-	MGet(ctx *DBContext, keys []string) (*Message, error)
+	Set(conn *Conn, key string, val string, opt SetOption) (*Message, error)
+	Get(conn *Conn, key string) (*Message, error)
+	MSet(conn *Conn, dict map[string]string, opt MSetOption) (*Message, error)
+	MGet(conn *Conn, keys []string) (*Message, error)
 }
 
 // HashCommandHandler represents a core command hander interface for hash commands.
 type HashCommandHandler interface {
-	HDel(ctx *DBContext, key string, fields []string) (*Message, error)
-	HSet(ctx *DBContext, key string, field string, val string, opt HSetOption) (*Message, error)
-	HGet(ctx *DBContext, key string, field string) (*Message, error)
-	HGetAll(ctx *DBContext, key string) (*Message, error)
-	HMSet(ctx *DBContext, key string, dict map[string]string) (*Message, error)
-	HMGet(ctx *DBContext, key string, fields []string) (*Message, error)
+	HDel(conn *Conn, key string, fields []string) (*Message, error)
+	HSet(conn *Conn, key string, field string, val string, opt HSetOption) (*Message, error)
+	HGet(conn *Conn, key string, field string) (*Message, error)
+	HGetAll(conn *Conn, key string) (*Message, error)
+	HMSet(conn *Conn, key string, dict map[string]string) (*Message, error)
+	HMGet(conn *Conn, key string, fields []string) (*Message, error)
 }
 
 // ListCommandHandler represents a core command hander interface for list commands.
 type ListCommandHandler interface {
-	LPush(ctx *DBContext, key string, elements []string, opt PushOption) (*Message, error)
-	RPush(ctx *DBContext, key string, elements []string, opt PushOption) (*Message, error)
-	LPop(ctx *DBContext, key string, count int) (*Message, error)
-	RPop(ctx *DBContext, key string, count int) (*Message, error)
-	LRange(ctx *DBContext, key string, start int, stop int) (*Message, error)
-	LIndex(ctx *DBContext, key string, index int) (*Message, error)
-	LLen(ctx *DBContext, key string) (*Message, error)
+	LPush(conn *Conn, key string, elements []string, opt PushOption) (*Message, error)
+	RPush(conn *Conn, key string, elements []string, opt PushOption) (*Message, error)
+	LPop(conn *Conn, key string, count int) (*Message, error)
+	RPop(conn *Conn, key string, count int) (*Message, error)
+	LRange(conn *Conn, key string, start int, stop int) (*Message, error)
+	LIndex(conn *Conn, key string, index int) (*Message, error)
+	LLen(conn *Conn, key string) (*Message, error)
 }
 
 // SetCommandHandler represents a core command hander interface for set commands.
 type SetCommandHandler interface {
-	SAdd(ctx *DBContext, key string, members []string) (*Message, error)
-	SMembers(ctx *DBContext, key string) (*Message, error)
-	SRem(ctx *DBContext, key string, members []string) (*Message, error)
+	SAdd(conn *Conn, key string, members []string) (*Message, error)
+	SMembers(conn *Conn, key string) (*Message, error)
+	SRem(conn *Conn, key string, members []string) (*Message, error)
 }
 
 // ZSetMember represents a parameter for ZSetCommandHandler.
@@ -85,12 +85,12 @@ type ZSetMember struct {
 
 // ZSetCommandHandler represents a core command hander interface for zset commands.
 type ZSetCommandHandler interface {
-	ZAdd(ctx *DBContext, key string, members []*ZSetMember, opt ZAddOption) (*Message, error)
-	ZRange(ctx *DBContext, key string, start int, stop int, opt ZRangeOption) (*Message, error)
-	ZRangeByScore(ctx *DBContext, key string, min float64, max float64, opt ZRangeOption) (*Message, error)
-	ZRem(ctx *DBContext, key string, members []string) (*Message, error)
-	ZScore(ctx *DBContext, key string, member string) (*Message, error)
-	ZIncBy(ctx *DBContext, key string, inc float64, member string) (*Message, error)
+	ZAdd(conn *Conn, key string, members []*ZSetMember, opt ZAddOption) (*Message, error)
+	ZRange(conn *Conn, key string, start int, stop int, opt ZRangeOption) (*Message, error)
+	ZRangeByScore(conn *Conn, key string, min float64, max float64, opt ZRangeOption) (*Message, error)
+	ZRem(conn *Conn, key string, members []string) (*Message, error)
+	ZScore(conn *Conn, key string, member string) (*Message, error)
+	ZIncBy(conn *Conn, key string, inc float64, member string) (*Message, error)
 }
 
 // UserCommandHandler represents a command hander interface for user commands.
