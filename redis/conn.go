@@ -14,12 +14,16 @@
 
 package redis
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 // Conn represents a database connection.
 type Conn struct {
 	id int
 	sync.Map
+	ts time.Time
 }
 
 // newHanderCon returns a database connection.
@@ -27,6 +31,7 @@ func newHanderCon() *Conn {
 	return &Conn{
 		id:  0,
 		Map: sync.Map{},
+		ts:  time.Now(),
 	}
 }
 
@@ -38,4 +43,9 @@ func (conn *Conn) SetDatabase(id int) {
 // Database returns the current selected database number in the connection.
 func (conn *Conn) Database() int {
 	return conn.id
+}
+
+// Timestamp returns the creation time of the connection.
+func (conn *Conn) Timestamp() time.Time {
+	return conn.ts
 }
