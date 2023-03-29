@@ -9,7 +9,7 @@ The go-redis handles all system commands such as PING and SELECT automatically, 
 
 ## Supported commands
 
-The go-redis defines the [CommandHandler](../redis/handler.go) for the following supported Redis commands as the system and user command handler.
+The go-redis defines the link:../redis/handler.go[CommandHandler] for the following supported Redis commands as the system and user command handler.
 
 ### Connection commands
 
