@@ -97,7 +97,7 @@ The go-redis defines the [CommandHandler](../redis/handler.go) for the following
 
 ### List commands
 
-|Supported|\Command|Redis Version|Note|
+|Supported|Command|Redis Version|Note|
 |---------|------------|-------------|----|
 |-        |BLMOVE      |7.0.0        |    |
 |-        |BLMPOP      |7.0.0        |    |
