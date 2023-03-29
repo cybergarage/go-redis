@@ -1,0 +1,5 @@
+Supported,Connection Command,Redis Version,Note
+O,ECHO,1.0.0,
+O,PING,1.0.0,
+O,QUIT,1.0.0,
+O,SELECT,1.0.0,

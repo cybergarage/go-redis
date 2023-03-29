@@ -1,0 +1,8 @@
+Supported,Bitmap Command,Redis Version,Note
+-,BITCOUNT,2.6.0,
+-,BITFIELD,3.2.0,
+-,BITFIELD_RO,6.0.0,
+-,BITOP,2.6.0,
+-,BITPOS,2.8.7,
+-,GETBIT,2.2.0,
+-,SETBIT,2.2.0,
