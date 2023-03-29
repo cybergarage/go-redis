@@ -54,10 +54,15 @@ TEST_PKGS=\
 
 all: test
 
+%.md : %.adoc
+	asciidoctor -b docbook -a leveloffset=+1 -o - $< | pandoc  --markdown-headings=atx --wrap=preserve -t markdown_strict -f docbook > $@
+docs := $(patsubst %.adoc,%.md,$(wildcard doc/*.adoc))
+doc: $(docs)
+
 version:
 	@pushd ${PKG_SRC_DIR} && ./version.gen > version.go && popd
 
-format: version
+format: version doc
 	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
