@@ -142,10 +142,12 @@ func (server *Server) serve() error {
 }
 
 // receive handles a client connection.
-func (server *Server) receive(conn io.ReadWriteCloser) error {
+func (server *Server) receive(conn net.Conn) error {
 	defer conn.Close()
 
 	handlerConn := newHanderCon()
+
+	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
 	parser := proto.NewParserWithReader(conn)
 	reqMsg, parserErr := parser.Next()
