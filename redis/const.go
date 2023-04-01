@@ -15,7 +15,11 @@
 package redis
 
 const (
-	LocalHost   = "localhost"
+	// PackageName is the package name.
+	PackageName = "go-redis"
+	// LocalHost is the local host name.
+	LocalHost = "localhost"
+	// DefaultPort is the default port number.
 	DefaultPort = 6379
 	OK          = "OK"
 )
