@@ -15,7 +15,7 @@
 package redistest
 
 import (
-	"github.com/cybergarage/go-redis/examples/go-redis-server/server"
+	"github.com/cybergarage/go-redis/examples/go-redisd/server"
 )
 
 // Server represents an example server.
