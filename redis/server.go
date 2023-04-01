@@ -18,6 +18,7 @@ import (
 	"errors"
 	"io"
 	"net"
+	"os"
 	"strconv"
 
 	"github.com/cybergarage/go-logger/log"
@@ -64,17 +65,14 @@ func (server *Server) RegisterExexutor(cmd string, executor Executor) {
 
 // Start starts the server.
 func (server *Server) Start() error {
-	err := server.Stop()
-	if err != nil {
-		return err
-	}
-
-	err = server.open()
+	err := server.open()
 	if err != nil {
 		return err
 	}
 
 	go server.serve()
+
+	log.Infof("%s/%s (PID:%d) started", PackageName, Version, os.Getpid())
 
 	return nil
 }
@@ -84,6 +82,9 @@ func (server *Server) Stop() error {
 	if err := server.close(); err != nil {
 		return err
 	}
+
+	log.Infof("%s/%s (PID:%d) terminated", PackageName, Version, os.Getpid())
+
 	return nil
 }
 
