@@ -33,3 +33,4 @@ linters:
     - typecheck
     - exhaustruct
     - nilerr
+    - ifshort
