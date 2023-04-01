@@ -21,6 +21,8 @@ SHELL := bash
 MODULE_ROOT=github.com/cybergarage/go-redis
 
 PKG_NAME=redis
+PKG_VER=$(shell git describe --abbrev=0 --tags)
+
 PKG_ID=${MODULE_ROOT}/${PKG_NAME}
 PKG_SRC_DIR=${PKG_NAME}
 PKG_SRCS=\
@@ -34,7 +36,8 @@ PKGS=\
 
 BIN_DIR=examples
 BIN_ID=${MODULE_ROOT}/${BIN_DIR}
-BIN_SERVER=go-redis-server
+BIN_SERVER=go-redisd
+BIN_SERVER_DOCKER_TAG=cybergarage/${BIN_SERVER}:${PKG_VER}
 BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
 BIN_SRCS=\
 	${BIN_DIR}/${BIN_SERVER} \
@@ -56,7 +59,7 @@ all: test
 
 %.md : %.adoc
 	asciidoctor -b docbook -a leveloffset=+1 -o - $< | pandoc  --markdown-headings=atx --wrap=preserve -t markdown_strict -f docbook > $@
-docs := $(patsubst %.adoc,%.md,$(wildcard doc/*.adoc))
+docs := $(patsubst %.adoc,%.md,$(wildcard *.adoc doc/*.adoc))
 doc: $(docs)
 
 version:
@@ -71,14 +74,23 @@ vet: format
 lint: vet
 	golangci-lint run ${PKG_SRCS} ${BIN_SRCS} ${TEST_PKG_SRCS}
 
-build:
-	go build -v ${PKGS}
-
 test: lint
 	go test -v -cover -timeout 60s ${PKGS} ${TEST_PKGS}
 
-install:
+build: test
+	go build -v ${BINS}
+
+install: test
 	go install ${BINS}
+
+run: build
+	./${BIN_SERVER}
+
+image: test
+	docker image build -t ${BIN_SERVER_DOCKER_TAG} .
+
+rund: image
+	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG}
 
 clean:
 	go clean -i ${PKGS}
