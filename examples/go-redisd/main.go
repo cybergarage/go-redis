@@ -39,7 +39,7 @@ import (
 	"syscall"
 
 	clog "github.com/cybergarage/go-logger/log"
-	"github.com/cybergarage/go-redis/examples/go-redis-server/server"
+	"github.com/cybergarage/go-redis/examples/go-redisd/server"
 )
 
 const (
