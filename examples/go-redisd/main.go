@@ -51,9 +51,11 @@ func main() {
 	isProfileEnabled := flag.Bool("profile", false, "enable profiling server")
 	flag.Parse()
 
+	logLevel := clog.LevelTrace
 	if *isDebugEnabled {
-		clog.SetStdoutDebugEnbled(true)
+		logLevel = clog.LevelDebug
 	}
+	clog.SetSharedLogger(clog.NewStdoutLogger(logLevel))
 
 	if *isProfileEnabled {
 		go func() {
