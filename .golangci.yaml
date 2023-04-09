@@ -34,3 +34,9 @@ linters:
     - exhaustruct
     - nilerr
     - ifshort
+
+linters-settings:
+  revive:
+    rules:
+      - name: unused-parameter
+        disabled: true
