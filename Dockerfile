@@ -2,8 +2,6 @@ FROM golang:1.20-alpine
 
 USER root
 
-RUN apk add bash
-
 COPY . /go-redis
 WORKDIR /go-redis
 
