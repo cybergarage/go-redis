@@ -155,6 +155,7 @@ func (server *Server) receive(conn net.Conn) error {
 
 	handlerConn := newConn()
 	handlerConn.SpanContext = server.Tracer.StartSpan(spanRoot)
+	defer handlerConn.SpanContext.Span().Finish()
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
