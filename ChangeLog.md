@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.2 (2023-xx-xx)
+- Add tracing interface
+
 ## v1.3.1 (2023-04-02)
 - Add connection logs
 - Add Dockerfile
