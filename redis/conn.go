@@ -17,6 +17,8 @@ package redis
 import (
 	"sync"
 	"time"
+
+	"github.com/cybergarage/go-tracing/tracer"
 )
 
 // Conn represents a database connection.
@@ -24,14 +26,15 @@ type Conn struct {
 	id int
 	sync.Map
 	ts time.Time
+	tracer.SpanContext
 }
 
-// newHanderCon returns a database connection.
-func newHanderCon() *Conn {
+func newConn() *Conn {
 	return &Conn{
-		id:  0,
-		Map: sync.Map{},
-		ts:  time.Now(),
+		id:          0,
+		Map:         sync.Map{},
+		ts:          time.Now(),
+		SpanContext: nil,
 	}
 }
 
