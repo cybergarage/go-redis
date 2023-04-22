@@ -1,5 +1,7 @@
 github.com/cybergarage/go-logger v1.3.3 h1:ppR2jxOxjo5Q47HEAZdqfKEK84hRmtrhzedbxaoHeJw=
 github.com/cybergarage/go-logger v1.3.3/go.mod h1:2iMjinHam5oqyKEGsKIzeQQmmOPxpCgro95LOlEC2ks=
+github.com/cybergarage/go-tracing v0.8.0 h1:zM62QvgDMLX/yQxwiB6/J+hQCA6cAZFwmMCNRMFYsaQ=
+github.com/cybergarage/go-tracing v0.8.0/go.mod h1:KN09KvqpypNVvEUg/Tn8Id14XQbwEUlzfLFppFmnRr8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
