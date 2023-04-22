@@ -41,7 +41,7 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
-		Tracer:               nil,
+		Tracer:               tracer.NullTracer,
 		Addr:                 "",
 		Port:                 DefaultPort,
 		tcpListener:          nil,
@@ -154,9 +154,7 @@ func (server *Server) receive(conn net.Conn) error {
 	defer conn.Close()
 
 	handlerConn := newConn()
-	if server.Tracer != nil {
-		handlerConn.SpanContext = server.Tracer.StartSpan(spanRoot)
-	}
+	handlerConn.SpanContext = server.Tracer.StartSpan(spanRoot)
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
