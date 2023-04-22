@@ -23,11 +23,13 @@ import (
 
 	"github.com/cybergarage/go-logger/log"
 	"github.com/cybergarage/go-redis/redis/proto"
+	"github.com/cybergarage/go-tracing/tracer"
 )
 
 // Server is an instance for Redis protocols.
 type Server struct {
 	Config
+	tracer.Tracer
 	Addr                 string
 	Port                 int
 	tcpListener          net.Listener
@@ -39,6 +41,7 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
+		Tracer:               nil,
 		Addr:                 "",
 		Port:                 DefaultPort,
 		tcpListener:          nil,
@@ -51,6 +54,11 @@ func NewServer() *Server {
 	server.registerSugarExecutors()
 	server.systemCommandHandler = server
 	return server
+}
+
+// SetTracer sets a tracing tracer.
+func (server *Server) SetTracer(t tracer.Tracer) {
+	server.Tracer = t
 }
 
 // SetCommandHandler sets a user handler to handle user commands.
