@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.3.2 (2023-xx-xx)
+## v1.3.2 (2023-04-23)
 - Add tracing interface
 
 ## v1.3.1 (2023-04-02)
