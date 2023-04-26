@@ -18,7 +18,6 @@ import (
 	"errors"
 	"io"
 	"net"
-	"os"
 	"strconv"
 
 	"github.com/cybergarage/go-logger/log"
@@ -90,7 +89,8 @@ func (server *Server) Start() error {
 
 	go server.serve()
 
-	log.Infof("%s/%s (PID:%d) started", PackageName, Version, os.Getpid())
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 
 	return nil
 }
@@ -101,7 +101,8 @@ func (server *Server) Stop() error {
 		return err
 	}
 
-	log.Infof("%s/%s (PID:%d) terminated", PackageName, Version, os.Getpid())
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
 
 	return nil
 }
