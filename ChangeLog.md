@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.4 (2023-xx-xx)
+- Update logger functions to output more detail messages
+
 ## v1.3.3 (2023-04-26)
 - Add Server::SetPort() and SetAddress()
 
