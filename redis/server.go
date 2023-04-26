@@ -71,6 +71,16 @@ func (server *Server) RegisterExexutor(cmd string, executor Executor) {
 	server.commandExecutors[cmd] = executor
 }
 
+// SetPort sets a listen port number.
+func (server *Server) SetPort(port int) {
+	server.Port = port
+}
+
+// SetAddress sets a listen address.
+func (server *Server) SetAddress(addr string) {
+	server.Addr = addr
+}
+
 // Start starts the server.
 func (server *Server) Start() error {
 	err := server.open()
