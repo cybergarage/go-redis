@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/cybergarage/go-logger v1.3.3
-	github.com/cybergarage/go-tracing v0.8.1
+	github.com/cybergarage/go-tracing v1.0.0
 	github.com/go-redis/redis v6.15.9+incompatible
 )
 
