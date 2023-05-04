@@ -2,6 +2,7 @@
 
 ## v1.3.5 (2023-05-xx)
 - Update tracing spans
+- Update Conn interfaces
 
 ## v1.3.4 (2023-05-04)
 - Update logger functions to output more detail messages
