@@ -37,8 +37,8 @@ func (server *Server) executeCommand(conn *Conn, cmd string, args Arguments) (*M
 		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
 	}
 
-	s := conn.SpanContext().Span().StartSpan(upperCmd)
-	defer s.Span().Finish()
+	conn.StartSpan(upperCmd)
+	defer conn.FinishSpan()
 
 	return cmdExecutor(conn, cmd, args)
 }
