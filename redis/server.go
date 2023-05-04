@@ -178,14 +178,15 @@ func (server *Server) receive(conn net.Conn) error {
 		var resMsg *Message
 		var reqErr error
 
-		handlerConn.SpanContext = server.Tracer.StartSpan(PackageName)
+		span := server.Tracer.StartSpan(PackageName)
+		handlerConn.SetSpanContext(span)
 		resMsg, reqErr = server.handleMessage(handlerConn, reqMsg)
 		if reqErr != nil {
 			if !errors.Is(reqErr, errQuit) {
 				resMsg = NewErrorMessage(reqErr)
 			}
 		}
-		handlerConn.SpanContext.Span().Finish()
+		span.Span().Finish()
 
 		resErr := server.responseMessage(conn, resMsg)
 		if resErr != nil {
