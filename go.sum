@@ -1,9 +1,5 @@
-github.com/cybergarage/go-logger v1.3.3 h1:ppR2jxOxjo5Q47HEAZdqfKEK84hRmtrhzedbxaoHeJw=
-github.com/cybergarage/go-logger v1.3.3/go.mod h1:2iMjinHam5oqyKEGsKIzeQQmmOPxpCgro95LOlEC2ks=
-github.com/cybergarage/go-tracing v0.8.0 h1:zM62QvgDMLX/yQxwiB6/J+hQCA6cAZFwmMCNRMFYsaQ=
-github.com/cybergarage/go-tracing v0.8.0/go.mod h1:KN09KvqpypNVvEUg/Tn8Id14XQbwEUlzfLFppFmnRr8=
-github.com/cybergarage/go-tracing v0.8.1 h1:Q6UbJpBp6ZDsRY5Ux7uRnKyfuEpMGC8+ZT4jHnmxNbI=
-github.com/cybergarage/go-tracing v0.8.1/go.mod h1:KN09KvqpypNVvEUg/Tn8Id14XQbwEUlzfLFppFmnRr8=
+github.com/cybergarage/go-logger v1.3.4 h1:UTgYZr/LwQtYVOncS3NJ64We5kCe7ce6L85y/MOYfrM=
+github.com/cybergarage/go-logger v1.3.4/go.mod h1:2iMjinHam5oqyKEGsKIzeQQmmOPxpCgro95LOlEC2ks=
 github.com/cybergarage/go-tracing v1.0.0 h1:IBwi48YcohXiz9vQEVLcjOS/+aBYInPOKOgIxjttod4=
 github.com/cybergarage/go-tracing v1.0.0/go.mod h1:smRez9HytS4YklbMMq5QoOu6l75ClrO4x+3UaRiSg5I=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -62,7 +58,7 @@ golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210112080510-489259a85091/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e h1:fLOSk5Q00efkSvAm+4xcoXD+RRmLmmulPn5I3Y9F2EM=
+golang.org/x/sys v0.7.0 h1:3jlCCIQZPdOYu1h8BkNvLz8Kgwtae2cagcG/VamtZRU=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.3.7 h1:olpwvP2KacW1ZWvsR7uQhoyTYvKAupfQrRGBFM352Gk=
