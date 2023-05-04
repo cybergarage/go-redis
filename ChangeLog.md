@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.6 (2023-05-04)
+- Update Conn to embed tracer context
+- Update tracer spans
+
 ## v1.3.5 (2023-05-04)
 - Update tracing spans
 - Update Conn interfaces
