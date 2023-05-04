@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.3.5 (2023-05-xx)
+## v1.3.5 (2023-05-04)
 - Update tracing spans
 - Update Conn interfaces
 
