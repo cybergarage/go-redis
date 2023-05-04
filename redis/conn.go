@@ -25,16 +25,16 @@ import (
 type Conn struct {
 	id int
 	sync.Map
-	ts   time.Time
-	span tracer.SpanContext
+	ts time.Time
+	tracer.Context
 }
 
 func newConn() *Conn {
 	return &Conn{
-		id:   0,
-		Map:  sync.Map{},
-		ts:   time.Now(),
-		span: nil,
+		id:      0,
+		Map:     sync.Map{},
+		ts:      time.Now(),
+		Context: nil,
 	}
 }
 
@@ -54,11 +54,11 @@ func (conn *Conn) Timestamp() time.Time {
 }
 
 // SetSpanContext sets a span context to the connection.
-func (conn *Conn) SetSpanContext(span tracer.SpanContext) {
-	conn.span = span
+func (conn *Conn) SetSpanContext(span tracer.Context) {
+	conn.Context = span
 }
 
 // SpanContext returns the span context of the connection.
-func (conn *Conn) SpanContext() tracer.SpanContext {
-	return conn.span
+func (conn *Conn) SpanContext() tracer.Context {
+	return conn.Context
 }
