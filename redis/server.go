@@ -169,35 +169,46 @@ func (server *Server) receive(conn net.Conn) error {
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
 	parser := proto.NewParserWithReader(conn)
-	reqMsg, parserErr := parser.Next()
-	for reqMsg != nil {
+
+	for {
+		span := server.Tracer.StartSpan(PackageName)
+		handlerConn.SetSpanContext(span)
+
+		handlerConn.StartSpan("parse")
+		reqMsg, parserErr := parser.Next()
+		handlerConn.FinishSpan()
 		if parserErr != nil {
+			span.Span().Finish()
 			log.Error(parserErr)
 			return parserErr
 		}
+		if reqMsg == nil {
+			span.Span().Finish()
+			break
+		}
+
 		var resMsg *Message
 		var reqErr error
 
-		span := server.Tracer.StartSpan(PackageName)
-		handlerConn.SetSpanContext(span)
 		resMsg, reqErr = server.handleMessage(handlerConn, reqMsg)
 		if reqErr != nil {
 			if !errors.Is(reqErr, errQuit) {
 				resMsg = NewErrorMessage(reqErr)
 			}
 		}
-		span.Span().Finish()
 
+		handlerConn.StartSpan("response")
 		resErr := server.responseMessage(conn, resMsg)
+		handlerConn.FinishSpan()
 		if resErr != nil {
 			log.Error(resErr)
 		}
 		if errors.Is(reqErr, errQuit) {
+			span.Span().Finish()
 			conn.Close()
 			return nil
 		}
-
-		reqMsg, parserErr = parser.Next()
+		span.Span().Finish()
 	}
 
 	return nil
