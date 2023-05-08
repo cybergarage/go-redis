@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.7 (2023-xx-xx)
+- Update go-tracer
+
 ## v1.3.6 (2023-05-04)
 - Update Conn to embed tracer context
 - Update tracer spans
