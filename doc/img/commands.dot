@@ -1,0 +1,41 @@
+graph G {
+  fontname="Helvetica,Arial,sans-serif"
+  node [shape=ellipse,fontname="Helvetica,Arial,sans-serif"]
+  edge [fontname="Helvetica,Arial,sans-serif"]
+  resp [shape=box,label="RESP Parser"];
+  cmd [shape=box,label="Command Parser"];
+  subgraph cluster_syscmd {
+    label="System Commands"
+    ECHO
+    PING
+    QUIT
+    SELECT
+  }
+  subgraph cluster_sugar {
+    label="User Commands (Sugar)"
+    APPEND
+    GETSET
+    GETRANGE
+    STRLEN
+  }
+  subgraph cluster_core {
+    label="User Commands (Core)"
+    GET
+    SET
+  }
+  resp -- cmd;
+  cmd -- ECHO;
+  cmd -- PING;
+  cmd -- QUIT;
+  cmd -- SELECT;
+  cmd -- GETSET;
+  cmd -- APPEND;
+  cmd -- GETSET;
+  cmd -- SET;
+  cmd -- GET;
+  APPEND -- GET;
+  APPEND -- SET;
+  GETSET -- SET;
+  GETRANGE -- GET;
+  STRLEN -- GET;
+}
