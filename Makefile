@@ -14,9 +14,8 @@
 
 SHELL := bash
 
-#PREFIX?=$(shell pwd)
-#GOPATH:=$(shell pwd)
-#export GOPATH
+GOBIN := $(shell go env GOPATH)/bin
+PATH := $(GOBIN):$(PATH)
 
 MODULE_ROOT=github.com/cybergarage/go-redis
 
@@ -83,8 +82,8 @@ build: test
 install: test
 	go install ${BINS}
 
-run: build
-	./${BIN_SERVER}
+run: install
+	$(GOBIN)/${BIN_SERVER}
 
 image: test
 	docker image build -t ${BIN_SERVER_DOCKER_TAG} .
