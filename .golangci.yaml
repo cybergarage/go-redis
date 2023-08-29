@@ -34,6 +34,7 @@ linters:
     - exhaustruct
     - nilerr
     - ifshort
+    - depguard
 
 linters-settings:
   revive:
