@@ -22,7 +22,7 @@ Sinse the go-redis handles all system commands such as PING and SELECT automatic
 ## Examples
 
 - [Examples](doc/examples.md)
-  - [go-redis-server](examples/go-redis-server)
+  - [go-redisd](examples/go-redisd)
 
 ## References
 
