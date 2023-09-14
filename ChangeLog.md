@@ -27,7 +27,7 @@
 ## v1.3.0 (2023-03-28)
 - Update executer methods to pass redis.Conn intead of redis.Context
 - Add sync.Map interface to redis.Conn to store user data
-- Add profiling option to go-redis-server
+- Add profiling option to go-redisd
 
 ## v1.2.1 (2023-02-24)
 - Upgrade to go 1.20
@@ -35,8 +35,8 @@
 
 ## v1.2.0 (2023-01-13)
 - Add a new interface for server management commands
-- Update go-redis-server using sync.Map for redis-benchmark
-- Check go-redis-server working only with GET/SET commands of redis-benchmark
+- Update go-redisd using sync.Map for redis-benchmark
+- Check go-redisd working only with GET/SET commands of redis-benchmark
 ###  Supported
 - CONFIG SET, CONFIG GET
 
