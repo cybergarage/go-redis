@@ -1,8 +1,8 @@
-# go-redis-server
+# go-redisd
 
-The `go-redis` is disributed with the `go-redis-server` which is a example Redis-compatible server implemetation using the `go-redis`.
+The `go-redis` is disributed with the `go-redisd` which is a example Redis-compatible server implemetation using the `go-redis`.
 
-- [go-redis-server](../examples/go-redis-server)
+- [go-redisd](../examples/go-redisd)
 
 This example is implemented to return the same responses and errors as the official Redis server, but its performance characteristics may vary due to the simple and naive implementation.
 
