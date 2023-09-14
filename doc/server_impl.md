@@ -72,4 +72,4 @@ To know the server implementation using go-redis in more detail, let's check the
 
 - [Inside of go-redis](server_inside.md)
 - Examples
-    - [go-redis-server](../examples/go-redis-server)
+    - [go-redisd](../examples/go-redisd)
