@@ -2,8 +2,6 @@ module github.com/cybergarage/go-redis
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	github.com/cybergarage/go-logger v1.3.4
 	github.com/cybergarage/go-tracing v1.1.3
