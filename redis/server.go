@@ -30,7 +30,6 @@ type Server struct {
 	ServerConfig
 	tracer.Tracer
 	Addr                 string
-	Port                 int
 	tcpListener          net.Listener
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   UserCommandHandler
@@ -42,13 +41,13 @@ func NewServer() *Server {
 	server := &Server{
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
-		Port:                 DefaultPort,
 		tcpListener:          nil,
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
 		ServerConfig:         *newServerConfig(),
 	}
+	server.SetPort(DefaultPort)
 	server.registerCoreExecutors()
 	server.registerSugarExecutors()
 	server.systemCommandHandler = server
@@ -70,16 +69,6 @@ func (server *Server) RegisterExexutor(cmd string, executor Executor) {
 	server.commandExecutors[cmd] = executor
 }
 
-// SetPort sets a listen port number.
-func (server *Server) SetPort(port int) {
-	server.Port = port
-}
-
-// SetAddress sets a listen address.
-func (server *Server) SetAddress(addr string) {
-	server.Addr = addr
-}
-
 // Start starts the server.
 func (server *Server) Start() error {
 	err := server.open()
@@ -89,7 +78,7 @@ func (server *Server) Start() error {
 
 	go server.serve()
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
 	log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 
 	return nil
@@ -101,7 +90,7 @@ func (server *Server) Stop() error {
 		return err
 	}
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
 	log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
 
 	return nil
@@ -118,7 +107,7 @@ func (server *Server) Restart() error {
 // open opens a listen socket.
 func (server *Server) open() error {
 	var err error
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
 	server.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err
