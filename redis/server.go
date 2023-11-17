@@ -27,7 +27,7 @@ import (
 
 // Server is an instance for Redis protocols.
 type Server struct {
-	Config
+	ServerConfig
 	tracer.Tracer
 	Addr                 string
 	Port                 int
@@ -47,7 +47,7 @@ func NewServer() *Server {
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
-		Config:               *newConfig(),
+		ServerConfig:         *newServerConfig(),
 	}
 	server.registerCoreExecutors()
 	server.registerSugarExecutors()
