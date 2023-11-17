@@ -23,7 +23,8 @@ import (
 
 // Conn represents a database connection.
 type Conn struct {
-	id int
+	id        int
+	authrized bool
 	sync.Map
 	ts time.Time
 	tracer.Context
@@ -31,14 +32,15 @@ type Conn struct {
 
 func newConn() *Conn {
 	return &Conn{
-		id:      0,
-		Map:     sync.Map{},
-		ts:      time.Now(),
-		Context: nil,
+		authrized: false,
+		id:        0,
+		Map:       sync.Map{},
+		ts:        time.Now(),
+		Context:   nil,
 	}
 }
 
-// SetDatabase sets th selected database number to the connection.
+// SetDatabase sets the selected database number to the connection.
 func (conn *Conn) SetDatabase(id int) {
 	conn.id = id
 }
@@ -48,12 +50,22 @@ func (conn *Conn) Database() int {
 	return conn.id
 }
 
+// SetAuthrized sets the authrized flag to the connection.
+func (conn *Conn) SetAuthrized(authrized bool) {
+	conn.authrized = authrized
+}
+
+// IsAuthrized returns true if the connection is authrized.
+func (conn *Conn) IsAuthrized() bool {
+	return conn.authrized
+}
+
 // Timestamp returns the creation time of the connection.
 func (conn *Conn) Timestamp() time.Time {
 	return conn.ts
 }
 
-// SetSpanContext sets a span context to the connection.
+// SetAuthrizedxt to the connection.
 func (conn *Conn) SetSpanContext(span tracer.Context) {
 	conn.Context = span
 }
