@@ -57,6 +57,10 @@ func (cfg *ServerConfig) SetRequirePass(password string) {
 }
 
 // ConfigRequirePass returns a password.
-func (cfg *ServerConfig) ConfigRequirePass() (string, bool) {
-	return cfg.ConfigParameter(requirePass)
+func (cfg *ServerConfig) ConfigRequirePass() (bool, string) {
+	passwd, ok := cfg.ConfigParameter(requirePass)
+	if !ok {
+		return false, ""
+	}
+	return true, passwd
 }
