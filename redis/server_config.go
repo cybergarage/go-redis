@@ -14,6 +14,12 @@
 
 package redis
 
+import "strconv"
+
+const (
+	portConfig = "port"
+)
+
 // ServerConfig is a configuration for the Redis server.
 type ServerConfig struct {
 	*Config
@@ -23,4 +29,17 @@ func newServerConfig() *ServerConfig {
 	return &ServerConfig{
 		Config: newConfig(),
 	}
+}
+
+// SetPort sets a listen port number.
+func (cfg *ServerConfig) SetPort(port int) {
+	cfg.SetConfig(portConfig, strconv.Itoa(port))
+}
+
+func (cfg *ServerConfig) GetPort() int {
+	port, err := strconv.Atoi(cfg.params[portConfig])
+	if err != nil {
+		return DefaultPort
+	}
+	return port
 }
