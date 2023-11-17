@@ -45,7 +45,7 @@ func NewServer() *Server {
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
-		ServerConfig:         *newServerConfig(),
+		ServerConfig:         *NewDefaultServerConfig(),
 	}
 	server.SetPort(DefaultPort)
 	server.registerCoreExecutors()
@@ -78,7 +78,7 @@ func (server *Server) Start() error {
 
 	go server.serve()
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
 	log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 
 	return nil
@@ -90,7 +90,7 @@ func (server *Server) Stop() error {
 		return err
 	}
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
 	log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
 
 	return nil
@@ -107,7 +107,7 @@ func (server *Server) Restart() error {
 // open opens a listen socket.
 func (server *Server) open() error {
 	var err error
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.GetPort()))
+	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
 	server.tcpListener, err = net.Listen("tcp", addr)
 	if err != nil {
 		return err
@@ -153,7 +153,10 @@ func (server *Server) serve() error {
 func (server *Server) receive(conn net.Conn) error {
 	defer conn.Close()
 
+	isPasswdRequired, _ := server.ConfigRequirePass()
+
 	handlerConn := newConn()
+	handlerConn.SetAuthrized(!isPasswdRequired)
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
