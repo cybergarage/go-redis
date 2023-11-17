@@ -17,7 +17,8 @@ package redis
 import "strconv"
 
 const (
-	portConfig = "port"
+	portConfig  = "port"
+	requirePass = "requirepass"
 )
 
 // ServerConfig is a configuration for the Redis server.
@@ -25,7 +26,8 @@ type ServerConfig struct {
 	*Config
 }
 
-func newServerConfig() *ServerConfig {
+// NewDefaultServerConfig returns a default server configuration.
+func NewDefaultServerConfig() *ServerConfig {
 	return &ServerConfig{
 		Config: newConfig(),
 	}
@@ -36,10 +38,25 @@ func (cfg *ServerConfig) SetPort(port int) {
 	cfg.SetConfig(portConfig, strconv.Itoa(port))
 }
 
-func (cfg *ServerConfig) GetPort() int {
-	port, err := strconv.Atoi(cfg.params[portConfig])
+// ConfigPort returns a listen port number.
+func (cfg *ServerConfig) ConfigPort() int {
+	portStr, ok := cfg.ConfigParameter(portConfig)
+	if !ok {
+		return DefaultPort
+	}
+	port, err := strconv.Atoi(portStr)
 	if err != nil {
 		return DefaultPort
 	}
 	return port
+}
+
+// SetRequirePass sets a password.
+func (cfg *ServerConfig) SetRequirePass(password string) {
+	cfg.SetConfig(requirePass, password)
+}
+
+// ConfigRequirePass returns a password.
+func (cfg *ServerConfig) ConfigRequirePass() (string, bool) {
+	return cfg.ConfigParameter(requirePass)
 }
