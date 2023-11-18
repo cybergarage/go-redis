@@ -95,7 +95,7 @@ type ZSetCommandHandler interface {
 
 // AuthCommandHandler represents a hander interface for authentication commands.
 type AuthCommandHandler interface {
-	Auth(conn *Conn, password string) (*Message, error)
+	Auth(conn *Conn, username string, password string) (*Message, error)
 }
 
 // UserCommandHandler represents a command hander interface for user commands.
