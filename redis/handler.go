@@ -24,14 +24,12 @@ type ConnectionManagementCommandHandler interface {
 
 // ServerManagementCommandHandler represents a hander interface for server management commands.
 type ServerManagementCommandHandler interface {
-	// 2.0.0
 	ConfigSet(conn *Conn, params map[string]string) (*Message, error)
 	ConfigGet(conn *Conn, keys []string) (*Message, error)
 }
 
 // GenericCommandHandler represents a hander interface for genelic commands.
 type GenericCommandHandler interface {
-	// 1.0.0
 	Del(conn *Conn, keys []string) (*Message, error)
 	Exists(conn *Conn, keys []string) (*Message, error)
 	Expire(conn *Conn, key string, opt ExpireOption) (*Message, error)
@@ -41,12 +39,12 @@ type GenericCommandHandler interface {
 	TTL(conn *Conn, key string) (*Message, error)
 }
 
-// StringHandler represents a core command hander interface for string commands.
+// StringCommandHandler represents a core command hander interface for string commands.
 type StringCommandHandler interface {
+	// Set represents a handler interface for SET, SETNX, SETEX, PSETEX, MSET and MSETNX commands.
 	Set(conn *Conn, key string, val string, opt SetOption) (*Message, error)
+	// Get represents a handler interface for GET and MGET commands.
 	Get(conn *Conn, key string) (*Message, error)
-	MSet(conn *Conn, dict map[string]string, opt MSetOption) (*Message, error)
-	MGet(conn *Conn, keys []string) (*Message, error)
 }
 
 // HashCommandHandler represents a core command hander interface for hash commands.
