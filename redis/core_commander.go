@@ -356,11 +356,19 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		dir, err := nextMSetArguments(cmd, args)
+		dict, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HMSet(conn, hash, dir)
+		hsetOpt := HSetOption{
+			NX: false,
+		}
+		for field, val := range dict {
+			if _, err := server.userCommandHandler.HSet(conn, hash, field, val, hsetOpt); err != nil {
+				return nil, err
+			}
+		}
+		return NewOKMessage(), nil
 	})
 
 	server.RegisterExexutor("HMGET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
@@ -368,11 +376,20 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		keys, err := nextKeysArguments(cmd, args)
+		fields, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.HMGet(conn, hash, keys)
+		arrayMsg := NewArrayMessage()
+		array, _ := arrayMsg.Array()
+		for _, field := range fields {
+			msg, err := server.userCommandHandler.HGet(conn, hash, field)
+			if err != nil {
+				return nil, err
+			}
+			array.Append(msg)
+		}
+		return arrayMsg, nil
 	})
 
 	// List commands.
