@@ -2,7 +2,7 @@
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/cybergarage/go-redis)
 [![test](https://github.com/cybergarage/go-redis/actions/workflows/make.yml/badge.svg)](https://github.com/cybergarage/go-redis/actions/workflows/make.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-redis.svg)](https://pkg.go.dev/github.com/cybergarage/go-redis)
+[![Go Reference](https://pkg.go.dev/badge/github.com/cybergarage/go-redis.svg)](https://pkg.go.dev/github.com/cybergarage/go-redis)[![codecov](https://codecov.io/gh/cybergarage/go-redis/graph/badge.svg?token=L7OQDIRHW8)](https://codecov.io/gh/cybergarage/go-redis)
 
 The go-redis is a database framework for implementing a [Redis](https://redis.io)-compatible server using Go easily.
 
