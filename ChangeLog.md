@@ -3,6 +3,7 @@
 ## v1.4.0 (2023-xx-xx)
 - Changed command handler interfaces
   - String command handler to remove MGet and MSet interfaces
+  - Hash command handler to remove HMGet and HMSet interfaces
 - Update go-tracing package
 
 ## v1.3.6 (2023-05-04)
