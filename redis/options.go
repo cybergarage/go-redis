@@ -35,10 +35,6 @@ type SetOption struct {
 	GET     bool
 }
 
-type MSetOption struct {
-	NX bool
-}
-
 type HSetOption struct {
 	NX bool
 }
