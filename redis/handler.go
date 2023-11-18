@@ -49,13 +49,16 @@ type StringCommandHandler interface {
 }
 
 // HashCommandHandler represents a core command hander interface for hash commands.
+// HMSET and HMGET commands are implemented by the HashCommandHandler.
 type HashCommandHandler interface {
+	// HDel represents a handler interface for HDEL command.
 	HDel(conn *Conn, key string, fields []string) (*Message, error)
+	// HSet represents a handler interface for HSET and HSETNX commands.
 	HSet(conn *Conn, key string, field string, val string, opt HSetOption) (*Message, error)
+	// HGet represents a handler interface for HGET command.
 	HGet(conn *Conn, key string, field string) (*Message, error)
+	// HGetAll represents a handler interface for HGETALL command.
 	HGetAll(conn *Conn, key string) (*Message, error)
-	HMSet(conn *Conn, key string, dict map[string]string) (*Message, error)
-	HMGet(conn *Conn, key string, fields []string) (*Message, error)
 }
 
 // ListCommandHandler represents a core command hander interface for list commands.
