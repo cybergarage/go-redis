@@ -40,6 +40,7 @@ type GenericCommandHandler interface {
 }
 
 // StringCommandHandler represents a core command hander interface for string commands.
+// APPEND, DECR, DECRBY, GETRANGE, GETSET, INCR, INCRBY, MGET, MSET, MSETNX, SETRANGE, STRLEN commands are implemented by the StringCommandHandler.
 type StringCommandHandler interface {
 	// Set represents a handler interface for SET, SETNX, SETEX, PSETEX, MSET and MSETNX commands.
 	Set(conn *Conn, key string, val string, opt SetOption) (*Message, error)
