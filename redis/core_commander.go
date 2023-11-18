@@ -223,25 +223,41 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("MSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
-		opt := MSetOption{
-			NX: false,
-		}
-		dir, err := nextMSetArguments(cmd, args)
+		opt := newDefaultSetOption()
+		dict, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MSet(conn, dir, opt)
+		for key, val := range dict {
+			if _, err := server.userCommandHandler.Set(conn, key, val, opt); err != nil {
+				return nil, err
+			}
+		}
+		return NewOKMessage(), nil
 	})
 
 	server.RegisterExexutor("MSETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
-		opt := MSetOption{
-			NX: true,
-		}
-		dir, err := nextMSetArguments(cmd, args)
+		dict, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MSet(conn, dir, opt)
+		for key := range dict {
+			res, err := server.userCommandHandler.Get(conn, key)
+			if err != nil {
+				return nil, err
+			}
+			if !res.IsNil() {
+				return NewIntegerMessage(0), nil
+			}
+		}
+		opt := newDefaultSetOption()
+		opt.NX = true
+		for key, val := range dict {
+			if _, err := server.userCommandHandler.Set(conn, key, val, opt); err != nil {
+				return nil, err
+			}
+		}
+		return NewIntegerMessage(1), nil
 	})
 
 	server.RegisterExexutor("MGET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
@@ -249,7 +265,16 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		return server.userCommandHandler.MGet(conn, keys)
+		arrayMsg := NewArrayMessage()
+		array, _ := arrayMsg.Array()
+		for _, key := range keys {
+			msg, err := server.userCommandHandler.Get(conn, key)
+			if err != nil {
+				return nil, err
+			}
+			array.Append(msg)
+		}
+		return arrayMsg, nil
 	})
 
 	server.RegisterExexutor("SETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
