@@ -149,28 +149,3 @@ func (server *Server) HGetAll(conn *redis.Conn, key string) (*redis.Message, err
 
 	return arrayMsg, nil
 }
-
-func (server *Server) HMSet(conn *redis.Conn, key string, dict map[string]string) (*redis.Message, error) {
-	hsetOpt := redis.HSetOption{
-		NX: false,
-	}
-	for field, val := range dict {
-		if _, err := server.HSet(conn, key, field, val, hsetOpt); err != nil {
-			return nil, err
-		}
-	}
-	return redis.NewOKMessage(), nil
-}
-
-func (server *Server) HMGet(conn *redis.Conn, key string, fields []string) (*redis.Message, error) {
-	arrayMsg := redis.NewArrayMessage()
-	array, _ := arrayMsg.Array()
-	for _, field := range fields {
-		msg, err := server.HGet(conn, key, field)
-		if err != nil {
-			return nil, err
-		}
-		array.Append(msg)
-	}
-	return arrayMsg, nil
-}
