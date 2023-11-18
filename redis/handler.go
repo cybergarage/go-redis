@@ -93,6 +93,11 @@ type ZSetCommandHandler interface {
 	ZIncBy(conn *Conn, key string, inc float64, member string) (*Message, error)
 }
 
+// AuthCommandHandler represents a hander interface for authentication commands.
+type AuthCommandHandler interface {
+	Auth(conn *Conn, password string) (*Message, error)
+}
+
 // UserCommandHandler represents a command hander interface for user commands.
 type UserCommandHandler interface {
 	GenericCommandHandler
