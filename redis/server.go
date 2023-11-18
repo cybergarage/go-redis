@@ -31,6 +31,7 @@ type Server struct {
 	tracer.Tracer
 	Addr                 string
 	tcpListener          net.Listener
+	authCommandHandler   AuthCommandHandler
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   UserCommandHandler
 	commandExecutors     Executors
@@ -42,6 +43,7 @@ func NewServer() *Server {
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
 		tcpListener:          nil,
+		authCommandHandler:   nil,
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
@@ -57,6 +59,11 @@ func NewServer() *Server {
 // SetTracer sets a tracing tracer.
 func (server *Server) SetTracer(t tracer.Tracer) {
 	server.Tracer = t
+}
+
+// SetAuthCommandHandler sets a auth handler to handle auth commands.
+func (server *Server) SetAuthCommandHandler(handler AuthCommandHandler) {
+	server.authCommandHandler = handler
 }
 
 // SetCommandHandler sets a user handler to handle user commands.
