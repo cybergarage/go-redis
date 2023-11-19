@@ -64,3 +64,8 @@ func (cfg *ServerConfig) ConfigRequirePass() (bool, string) {
 	}
 	return true, passwd
 }
+
+// RemoveRequirePass removes a password.
+func (cfg *ServerConfig) RemoveRequirePass() {
+	cfg.RemoveConfig(requirePass)
+}
