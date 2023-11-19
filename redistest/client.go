@@ -26,8 +26,23 @@ type Client struct {
 	*goredis.Client
 }
 
+// ClientOptions represents a client options for the Redis server.
+type ClientOptions = goredis.Options
+
+// NewClientOptions returns a default client options.
+// nolint: exhaustivestruct
+func NewClientOptions() ClientOptions {
+	return goredis.Options{
+		DialTimeout:  time.Second,
+		ReadTimeout:  time.Second * 60,
+		WriteTimeout: time.Second * 60,
+		DB:           1,
+	}
+}
+
 // NewClient returns a client instance.
 func NewClient() *Client {
+	// nolint: exhaustivestruct
 	client := &Client{
 		Client: nil,
 	}
@@ -35,15 +50,14 @@ func NewClient() *Client {
 }
 
 // Open opens a connection with the specified host.
-// nolint: exhaustivestruct
 func (client *Client) Open(host string) error {
-	client.Client = goredis.NewClient(&goredis.Options{
-		Addr:         fmt.Sprintf("%s:%d", host, DefaultPort),
-		DialTimeout:  time.Second,
-		ReadTimeout:  time.Second * 60,
-		WriteTimeout: time.Second * 60,
-		DB:           1,
-	})
+	opts := NewClientOptions()
+	return client.OpenWith(host, &opts)
+}
+
+func (client *Client) OpenWith(host string, opts *ClientOptions) error {
+	opts.Addr = fmt.Sprintf("%s:%d", host, DefaultPort)
+	client.Client = goredis.NewClient(opts)
 	status := client.Ping()
 	if err := status.Err(); err != nil {
 		return err
