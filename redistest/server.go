@@ -15,36 +15,18 @@
 package redistest
 
 import (
-	"errors"
-
 	"github.com/cybergarage/go-redis/examples/go-redisd/server"
-	"github.com/cybergarage/go-redis/redis"
 )
 
 // Server represents an example server.
 type Server struct {
 	*server.Server
-	passwd string
 }
 
 // NewServer returns an example server instance.
 func NewServer() *Server {
 	server := &Server{
 		Server: server.NewServer(),
-		passwd: "",
 	}
-	server.SetAuthCommandHandler(server)
 	return server
-}
-
-func (server *Server) SetPassword(passwd string) {
-	server.passwd = passwd
-}
-
-func (server *Server) Auth(conn *redis.Conn, username string, password string) (*redis.Message, error) {
-	if server.passwd != password {
-		return nil, errors.New("invalid password")
-	}
-	conn.SetAuthrized(true)
-	return redis.NewOKMessage(), nil
 }
