@@ -27,6 +27,29 @@ import (
 func (server *Server) registerCoreExecutors() {
 	// Connection management commands.
 
+	server.RegisterExexutor("AUTH", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		var user, passwd string
+		var err error
+		passwd, err = args.NextString()
+		if err != nil {
+			return nil, newMissingArgumentError(cmd, "password", err)
+		}
+		if msg, _ := args.Next(); msg != nil {
+			token, err := msg.String()
+			if err != nil {
+				return nil, err
+			}
+			user = passwd
+			passwd = token
+		}
+
+		if server.authCommandHandler == nil {
+			return NewOKMessage(), nil
+		}
+
+		return server.authCommandHandler.Auth(conn, user, passwd)
+	})
+
 	server.RegisterExexutor("PING", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		arg := ""
 		var err error
