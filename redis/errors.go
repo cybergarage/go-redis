@@ -19,9 +19,12 @@ import (
 	"fmt"
 )
 
-var ErrNotSupported = errors.New("not supported")
-var ErrQuit = errors.New("QUIT")
-var ErrSystem = errors.New("internal system error")
+var (
+	ErrNotSupported = errors.New("not supported")
+	ErrQuit         = errors.New("QUIT")
+	ErrSystem       = errors.New("internal system error")
+	ErrNotAuthrized = errors.New("not authrized")
+)
 
 const (
 	errorNotSupportedCommand    = "'%s' is %w"
