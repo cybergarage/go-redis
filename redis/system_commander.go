@@ -31,7 +31,7 @@ func (server *Server) Select(conn *Conn, index int) (*Message, error) {
 }
 
 func (server *Server) Quit(conn *Conn) (*Message, error) {
-	return NewOKMessage(), errQuit
+	return NewOKMessage(), ErrQuit
 }
 
 func (server *Server) ConfigSet(conn *Conn, params map[string]string) (*Message, error) {
