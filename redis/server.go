@@ -191,7 +191,7 @@ func (server *Server) receive(conn net.Conn) error {
 
 		resMsg, reqErr = server.handleMessage(handlerConn, reqMsg)
 		if reqErr != nil {
-			if !errors.Is(reqErr, errQuit) {
+			if !errors.Is(reqErr, ErrQuit) {
 				resMsg = NewErrorMessage(reqErr)
 			}
 		}
@@ -202,7 +202,7 @@ func (server *Server) receive(conn net.Conn) error {
 		if resErr != nil {
 			log.Error(resErr)
 		}
-		if errors.Is(reqErr, errQuit) {
+		if errors.Is(reqErr, ErrQuit) {
 			span.Span().Finish()
 			conn.Close()
 			return nil
@@ -241,7 +241,7 @@ func (server *Server) responseMessage(conn io.Writer, msg *Message) error {
 	if msg != nil {
 		bytes, err = msg.RESPBytes()
 	} else {
-		bytes, err = NewErrorMessage(errSystem).Bytes()
+		bytes, err = NewErrorMessage(ErrSystem).Bytes()
 	}
 	if err != nil {
 		return err

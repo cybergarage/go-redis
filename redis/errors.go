@@ -19,19 +19,24 @@ import (
 	"fmt"
 )
 
+var ErrNotSupported = errors.New("not supported")
+var ErrQuit = errors.New("QUIT")
+var ErrSystem = errors.New("internal system error")
+
 const (
-	errorNotSupportedCommand    = "'%s' is not supported"
+	errorNotSupportedCommand    = "'%s' is %w"
 	errorMissingCommandArgument = "%s: missing argument (%s) %w"
 	errorUnkownCommandArgument  = "%s: unknown argument (%s)"
 )
 
-var ErrNotSupported = errors.New("not supported")
-var errQuit = errors.New("QUIT")
-var errSystem = errors.New("internal system error")
-
 // NewErrNotSupported returns a new ErrNotSupported.
 func NewErrNotSupported(target string) error {
-	return fmt.Errorf("%v is %w", target, ErrNotSupported)
+	return fmt.Errorf(errorNotSupportedCommand, target, ErrNotSupported)
+}
+
+// NewErrorNotSupportedMessage returns a new ErrNotSupported message.
+func NewErrorNotSupportedMessage(cmd string) *Message {
+	return NewErrorMessage(NewErrNotSupported(cmd))
 }
 
 func newMissingArgumentError(cmd string, arg string, err error) error {

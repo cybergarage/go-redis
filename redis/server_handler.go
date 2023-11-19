@@ -15,7 +15,6 @@
 package redis
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/cybergarage/go-redis/redis/proto"
@@ -28,13 +27,13 @@ type Executors map[string]Executor
 // executeCommand handles a client command message.
 func (server *Server) executeCommand(conn *Conn, cmd string, args Arguments) (*Message, error) {
 	if server.userCommandHandler == nil {
-		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
+		return NewErrorNotSupportedMessage(cmd), nil
 	}
 
 	upperCmd := strings.ToUpper(cmd)
 	cmdExecutor, ok := server.commandExecutors[upperCmd]
 	if !ok {
-		return NewErrorMessage(fmt.Errorf(errorNotSupportedCommand, cmd)), nil
+		return NewErrorNotSupportedMessage(cmd), nil
 	}
 
 	conn.StartSpan(upperCmd)
