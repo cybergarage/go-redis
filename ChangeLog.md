@@ -1,21 +1,24 @@
 # Changelog
 
-## v1.4.0 (2023-xx-xx)
-- Changed command handler interfaces
+## v1.4.0 (2023-11-20)
+- New features
+  - Added authorization interface
+    - Supported AUTH command
+- Changed user command handler interfaces
   - String command handler to remove MGet and MSet interfaces
   - Hash command handler to remove HMGet and HMSet interfaces
-- Update go-tracing package
+- Updated go-tracing package
 
 ## v1.3.6 (2023-05-04)
-- Update Conn to embed tracer context
-- Update tracer spans
+- Updated Conn to embed tracer context
+- Updated tracer spans
 
 ## v1.3.5 (2023-05-04)
-- Update tracing spans
-- Update Conn interfaces
+- Updated tracing spans
+- Updated Conn interfaces
 
 ## v1.3.4 (2023-05-04)
-- Update logger functions to output more detail messages
+- Updated logger functions to output more detail messages
 
 ## v1.3.3 (2023-04-26)
 - Add Server::SetPort() and SetAddress()
@@ -28,24 +31,24 @@
 - Add Dockerfile
 
 ## v1.3.0 (2023-03-28)
-- Update executer methods to pass redis.Conn intead of redis.Context
+- Updated executer methods to pass redis.Conn intead of redis.Context
 - Add sync.Map interface to redis.Conn to store user data
 - Add profiling option to go-redisd
 
 ## v1.2.1 (2023-02-24)
 - Upgrade to go 1.20
-- Update public helper functions in redistest 
+- Updated public helper functions in redistest 
 
 ## v1.2.0 (2023-01-13)
 - Add a new interface for server management commands
-- Update go-redisd using sync.Map for redis-benchmark
-- Check go-redisd working only with GET/SET commands of redis-benchmark
+- Updated go-redisd using sync.Map for redis-benchmark
+- Tested go-redisd working only with GET/SET commands of redis-benchmark
 ###  Supported
 - CONFIG SET, CONFIG GET
 
 ## v1.1.1 (2023-01-02)
-- Update go.mod to go 1.19
-- Update logger package
+- Updated go.mod to go 1.19
+- Updated logger package
 
 ## v1.1.0 (2022-09-03)
 - Support major set, sorted set and list commands
