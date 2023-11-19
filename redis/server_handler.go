@@ -39,5 +39,11 @@ func (server *Server) executeCommand(conn *Conn, cmd string, args Arguments) (*M
 	conn.StartSpan(upperCmd)
 	defer conn.FinishSpan()
 
+	if !conn.IsAuthrized() {
+		if upperCmd != "AUTH" {
+			return nil, ErrNotAuthrized
+		}
+	}
+
 	return cmdExecutor(conn, cmd, args)
 }
