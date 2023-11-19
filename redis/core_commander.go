@@ -44,7 +44,7 @@ func (server *Server) registerCoreExecutors() {
 		}
 
 		if server.authCommandHandler == nil {
-			return nil, NewErrNotSupported("AUTH")
+			return NewErrorNotSupportedMessage("AUTH"), nil
 		}
 
 		return server.authCommandHandler.Auth(conn, user, passwd)
