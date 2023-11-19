@@ -27,7 +27,7 @@ import (
 
 // Server is an instance for Redis protocols.
 type Server struct {
-	ServerConfig
+	*ServerConfig
 	tracer.Tracer
 	Addr                 string
 	tcpListener          net.Listener
@@ -47,7 +47,7 @@ func NewServer() *Server {
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
-		ServerConfig:         *NewDefaultServerConfig(),
+		ServerConfig:         NewDefaultServerConfig(),
 	}
 	server.SetPort(DefaultPort)
 	server.registerCoreExecutors()
