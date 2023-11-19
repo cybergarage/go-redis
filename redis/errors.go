@@ -25,8 +25,14 @@ const (
 	errorUnkownCommandArgument  = "%s: unknown argument (%s)"
 )
 
+var ErrNotSupported = errors.New("not supported")
 var errQuit = errors.New("QUIT")
 var errSystem = errors.New("internal system error")
+
+// NewErrNotSupported returns a new ErrNotSupported.
+func NewErrNotSupported(target string) error {
+	return fmt.Errorf("%v is %w", target, ErrNotSupported)
+}
 
 func newMissingArgumentError(cmd string, arg string, err error) error {
 	return fmt.Errorf(errorMissingCommandArgument, cmd, arg, err)
