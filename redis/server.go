@@ -53,6 +53,7 @@ func NewServer() *Server {
 	server.registerCoreExecutors()
 	server.registerSugarExecutors()
 	server.systemCommandHandler = server
+	server.authCommandHandler = server
 	return server
 }
 
