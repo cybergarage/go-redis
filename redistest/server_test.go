@@ -28,6 +28,12 @@ func TestServer(t *testing.T) {
 		return
 	}
 
+	// AuthCommandTest
+
+	AuthCommandTest(t, server)
+
+	// CommandTest
+
 	client := NewClient()
 	err = client.Open(LocalHost)
 	if err != nil {
@@ -35,13 +41,23 @@ func TestServer(t *testing.T) {
 		return
 	}
 
-	// conn := context.Background()
-
 	t.Run("Command", func(t *testing.T) {
 		CommandTest(t, client)
 	})
 
+	// // panic: not implemented
+	// err = client.Quit().Err()
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+
+	err = client.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
 	// redis-benchmark
+
 	params := []string{"-t get,set -n 10000"}
 	t.Run("redis-benchmark", func(t *testing.T) {
 		for _, param := range params {
@@ -61,17 +77,6 @@ func TestServer(t *testing.T) {
 			})
 		}
 	})
-
-	// // panic: not implemented
-	// err = client.Quit().Err()
-	// if err != nil {
-	// 	t.Error(err)
-	// }
-
-	err = client.Close()
-	if err != nil {
-		t.Error(err)
-	}
 
 	err = server.Stop()
 	if err != nil {
