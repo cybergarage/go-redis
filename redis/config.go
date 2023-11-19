@@ -52,3 +52,8 @@ func (cfg *Config) ConfigParameter(key string) (string, bool) {
 	params, ok := cfg.params[key]
 	return params, ok
 }
+
+// RemoveConfig removes the specified parameter.
+func (cfg *Config) RemoveConfig(key string) {
+	delete(cfg.params, key)
+}
