@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.4.1 (2023-12-14)
+- Updated Conn interface to embed net.Conn for authenticator
+
 ## v1.4.0 (2023-11-20)
 - New features
   - Added authorization interface
