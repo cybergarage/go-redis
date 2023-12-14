@@ -163,7 +163,7 @@ func (server *Server) receive(conn net.Conn) error {
 
 	isPasswdRequired, _ := server.ConfigRequirePass()
 
-	handlerConn := newConn()
+	handlerConn := newConnWith(conn)
 	handlerConn.SetAuthrized(!isPasswdRequired)
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())

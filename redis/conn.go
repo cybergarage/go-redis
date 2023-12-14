@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"net"
 	"sync"
 	"time"
 
@@ -23,6 +24,7 @@ import (
 
 // Conn represents a database connection.
 type Conn struct {
+	net.Conn
 	id        int
 	authrized bool
 	sync.Map
@@ -30,8 +32,9 @@ type Conn struct {
 	tracer.Context
 }
 
-func newConn() *Conn {
+func newConnWith(conn net.Conn) *Conn {
 	return &Conn{
+		Conn:      conn,
 		authrized: false,
 		id:        0,
 		Map:       sync.Map{},
