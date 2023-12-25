@@ -35,7 +35,7 @@ func NewServer() *Server {
 }
 
 // GetDatabase returns the database with the specified ID.
-func (server *Server) GetDatabase(id int) (*Database, error) {
+func (server *Server) GetDatabase(id redis.DatabaseID) (*Database, error) {
 	db, ok := server.Databases.GetDatabase(id)
 	if !ok {
 		db = NewDatabaseWithID(id)

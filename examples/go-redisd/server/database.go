@@ -17,16 +17,18 @@ package server
 import (
 	"fmt"
 	"time"
+
+	"github.com/cybergarage/go-redis/redis"
 )
 
 // Database represents a database.
 type Database struct {
-	ID int
+	ID redis.DatabaseID
 	*Records
 }
 
 // NewDatabaseWithID returns a new database with the specified ID.
-func NewDatabaseWithID(id int) *Database {
+func NewDatabaseWithID(id redis.DatabaseID) *Database {
 	return &Database{
 		ID:      id,
 		Records: NewRecords(),
