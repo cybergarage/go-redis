@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.4.2 (2023-12-25)
+- Added DatabaseID type
+
 ## v1.4.1 (2023-12-14)
 - Updated Conn interface to embed net.Conn for authenticator
 
