@@ -12,36 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package redis
 
-import (
-	"sync"
-
-	"github.com/cybergarage/go-redis/redis"
-)
-
-// Databases represents a database map.
-type Databases struct {
-	sync.Map
-}
-
-func NewDatabases() *Databases {
-	return &Databases{
-		Map: sync.Map{},
-	}
-}
-
-// SetDatabase set a database with the specified ID.
-func (dbs *Databases) SetDatabase(db *Database) {
-	dbs.Store(db.ID, db)
-}
-
-// GetDatabase returns the database with the specified ID.
-func (dbs *Databases) GetDatabase(id redis.DatabaseID) (*Database, bool) {
-	v, ok := dbs.Load(id)
-	if !ok {
-		return nil, false
-	}
-	db, ok := v.(*Database)
-	return db, ok
-}
+// DatabaseID is a database ID.
+type DatabaseID = int

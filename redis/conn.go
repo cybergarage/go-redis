@@ -25,7 +25,7 @@ import (
 // Conn represents a database connection.
 type Conn struct {
 	net.Conn
-	id        int
+	id        DatabaseID
 	authrized bool
 	sync.Map
 	ts time.Time
@@ -44,12 +44,12 @@ func newConnWith(conn net.Conn) *Conn {
 }
 
 // SetDatabase sets the selected database number to the connection.
-func (conn *Conn) SetDatabase(id int) {
+func (conn *Conn) SetDatabase(id DatabaseID) {
 	conn.id = id
 }
 
 // Database returns the current selected database number in the connection.
-func (conn *Conn) Database() int {
+func (conn *Conn) Database() DatabaseID {
 	return conn.id
 }
 
