@@ -37,6 +37,7 @@ type GenericCommandHandler interface {
 	Rename(conn *Conn, key string, newkey string, opt RenameOption) (*Message, error)
 	Type(conn *Conn, key string) (*Message, error)
 	TTL(conn *Conn, key string) (*Message, error)
+	Scan(conn *Conn, cursor int, opt ScanOption) (*Message, error)
 }
 
 // StringCommandHandler represents a core command hander interface for string commands.
