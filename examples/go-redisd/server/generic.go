@@ -146,3 +146,7 @@ func (server *Server) TTL(conn *redis.Conn, key string) (*redis.Message, error) 
 	}
 	return redis.NewIntegerMessage(int(ttl / time.Second)), nil
 }
+
+func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (*redis.Message, error) {
+	return nil, nil
+}
