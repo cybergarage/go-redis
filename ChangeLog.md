@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.4.3 (2024-xx-xx)
+###  Supported
+- SCAN
+
 ## v1.4.2 (2023-12-25)
 - Added DatabaseID type
 
