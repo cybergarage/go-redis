@@ -67,6 +67,9 @@ type ZRangeOption struct {
 	Count        int
 }
 
+type ScanOption struct {
+}
+
 func newDefaultSetOption() SetOption {
 	now := time.Now()
 	return SetOption{
