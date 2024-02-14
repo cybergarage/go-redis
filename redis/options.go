@@ -79,6 +79,8 @@ const (
 	SortedSetScan
 )
 
+const ScanCountDefault = 10
+
 type ScanOption struct {
 	MatchPattern *regexp.Regexp
 	Count        int
