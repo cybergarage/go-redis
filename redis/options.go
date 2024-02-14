@@ -73,7 +73,7 @@ type ZRangeOption struct {
 type ScanType int
 
 const (
-	Scan ScanType = iota
+	KeyScan ScanType = iota
 	SetScan
 	HashScan
 	SortedSetScan
@@ -89,7 +89,7 @@ type ScanOption struct {
 
 func newScanTypeFromString(str string) (ScanType, error) {
 	if len(str) == 0 {
-		return Scan, nil
+		return KeyScan, nil
 	}
 	switch str {
 	case "SSCAN":

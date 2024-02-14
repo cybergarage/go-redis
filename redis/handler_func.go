@@ -260,7 +260,7 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 	opt := ScanOption{
 		MatchPattern: nil,
 		Count:        ScanCountDefault,
-		Type:         Scan,
+		Type:         KeyScan,
 	}
 	var err error
 	param, err := args.NextString()
