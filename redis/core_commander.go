@@ -221,10 +221,9 @@ func (server *Server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
-		opt := ScanOption{
-			MatchPattern: nil,
-			Count:        0,
-			Type:         Scan,
+		opt, err := nextScanArgument(cmd, args)
+		if err != nil {
+			return nil, err
 		}
 		return server.userCommandHandler.Scan(conn, cursor, opt)
 	})
