@@ -259,7 +259,7 @@ func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption
 func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 	opt := ScanOption{
 		MatchPattern: nil,
-		Count:        ScanCountDefault,
+		Count:        DefaultScanCount,
 		Type:         KeyScan,
 	}
 	var err error

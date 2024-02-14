@@ -21,5 +21,10 @@ const (
 	LocalHost = "localhost"
 	// DefaultPort is the default port number.
 	DefaultPort = 6379
-	OK          = "OK"
+	// DefaultScanCount is the default scan count.
+	DefaultScanCount = 10
+)
+
+const (
+	OK = "OK"
 )
