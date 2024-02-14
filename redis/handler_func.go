@@ -16,6 +16,7 @@ package redis
 
 import (
 	"errors"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -249,6 +250,52 @@ func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption
 	}
 	if !errors.Is(err, proto.ErrEOM) {
 		return opt, err
+	}
+	return opt, nil
+}
+
+// Scan argument fuctions
+
+func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
+	opt := ScanOption{
+		MatchPattern: nil,
+		Count:        -1,
+		Type:         Scan,
+	}
+	var err error
+	param, err := args.NextString()
+	for err == nil {
+		switch strings.ToUpper(param) {
+		case "MATCH":
+			var pattern string
+			pattern, err = nextStringArgument(cmd, "pattern", args)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "pattern", err)
+			}
+			opt.MatchPattern, err = regexp.Compile(pattern)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "pattern", err)
+			}
+		case "COUNT":
+			opt.Count, err = nextIntegerArgument(cmd, "count", args)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "count", err)
+			}
+		case "Type":
+			var scanType string
+			scanType, err = nextStringArgument(cmd, "type", args)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "type", err)
+			}
+			opt.Type, err = newScanTypeFromString(scanType)
+			if err != nil {
+				return opt, newMissingArgumentError(cmd, "type", err)
+			}
+		}
+		param, err = args.NextString()
+	}
+	if !errors.Is(err, proto.ErrEOM) {
+		return opt, newMissingArgumentError(cmd, "", err)
 	}
 	return opt, nil
 }
