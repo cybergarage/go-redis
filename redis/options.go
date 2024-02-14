@@ -14,7 +14,10 @@
 
 package redis
 
-import "time"
+import (
+	"regexp"
+	"time"
+)
 
 type ExpireOption struct {
 	Time time.Time
@@ -67,7 +70,34 @@ type ZRangeOption struct {
 	Count        int
 }
 
+type ScanType int
+
+const (
+	Scan ScanType = iota
+	SetScan
+	HashScan
+	SortedSetScan
+)
+
 type ScanOption struct {
+	MatchPattern *regexp.Regexp
+	Count        int
+	Type         ScanType
+}
+
+func newScanTypeFromString(str string) (ScanType, error) {
+	if len(str) == 0 {
+		return Scan, nil
+	}
+	switch str {
+	case "SSCAN":
+		return SetScan, nil
+	case "HSCAN":
+		return HashScan, nil
+	case "ZSCAN":
+		return SortedSetScan, nil
+	}
+	return 0, NewErrNotSupported(str)
 }
 
 func newDefaultSetOption() SetOption {
