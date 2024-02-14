@@ -216,6 +216,19 @@ func (server *Server) registerCoreExecutors() {
 		return server.userCommandHandler.TTL(conn, key)
 	})
 
+	server.RegisterExexutor("SCAN", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		cursor, err := nextIntegerArgument(cmd, "cursor", args)
+		if err != nil {
+			return nil, err
+		}
+		opt := ScanOption{
+			MatchPattern: nil,
+			Count:        0,
+			Type:         Scan,
+		}
+		return server.userCommandHandler.Scan(conn, cursor, opt)
+	})
+
 	// String commands.
 
 	server.RegisterExexutor("GET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
