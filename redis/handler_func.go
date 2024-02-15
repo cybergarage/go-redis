@@ -205,11 +205,11 @@ func nextRangeOptionArguments(cmd string, args Arguments) (ZRangeOption, error) 
 		case "LIMIT":
 			opt.Offset, err = nextIntegerArgument(cmd, "offset", args)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "offset", err)
+				return opt, err
 			}
 			opt.Count, err = nextIntegerArgument(cmd, "count", args)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "count", err)
+				return opt, err
 			}
 		case "WITHSCORES":
 			opt.WITHSCORES = true
@@ -271,7 +271,7 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 			var pattern string
 			pattern, err = nextStringArgument(cmd, "pattern", args)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "pattern", err)
+				return opt, err
 			}
 			opt.MatchPattern, err = regexp.Compile(pattern)
 			if err != nil {
@@ -280,17 +280,17 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 		case "COUNT":
 			opt.Count, err = nextIntegerArgument(cmd, "count", args)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "count", err)
+				return opt, err
 			}
 		case "Type":
 			var scanType string
 			scanType, err = nextStringArgument(cmd, "type", args)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "type", err)
+				return opt, err
 			}
 			opt.Type, err = newScanTypeFromString(scanType)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "type", err)
+				return opt, err
 			}
 		}
 		param, err = args.NextString()
