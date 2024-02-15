@@ -261,6 +261,48 @@ func GenericCommandTest(t *testing.T, client *Client) {
 		}
 	})
 
+	t.Run("SCAN", func(t *testing.T) {
+		args := []string{
+			"scan_key:1", "1",
+			"scan_key:2", "2",
+			"scan_key:3", "3",
+			"scan_key:4", "4",
+			"scan_key:5", "5",
+			"scan_key:6", "6",
+			"scan_key:7", "7",
+			"scan_key:8", "8",
+			"scan_key:19", "9",
+			"scan_key:10", "10",
+			"scan_key:11", "11",
+			"scan_key:12", "12",
+			"scan_key:13", "13",
+			"scan_key:14", "14"}
+		err := client.MSet(args).Err()
+		if err != nil {
+			t.Error(err)
+		}
+		records := []struct {
+			count    int64
+			expected []string
+		}{
+			{count: 10, expected: []string{"scan_key:1", "scan_key:2", "scan_key:3", "scan_key:4", "scan_key:5", "scan_key:6", "scan_key:7", "scan_key:8", "scan_key:9", "scan_key:10"}},
+			{count: 10, expected: []string{"scan_key:11", "scan_key:12", "scan_key:13", "scan_key:14"}},
+		}
+		cursor := uint64(0)
+		for _, r := range records {
+			keys, nextCursor, err := client.Scan(cursor, "scan_key:*", r.count).Result()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			if !isStringsEqual(keys, r.expected) {
+				t.Errorf("%v != %v", keys, r.expected)
+				return
+			}
+			cursor = nextCursor
+		}
+	})
+
 	t.Run("RENAME", func(t *testing.T) {
 		if err := client.Set("mykey_rename", "Hello", 0).Err(); err != nil {
 			t.Error(err)
