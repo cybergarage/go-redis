@@ -166,6 +166,9 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 			continue
 		}
 		matchKeys.Append(redis.NewBulkMessage(key))
+		if opt.Count <= matchKeys.Size() {
+			break
+		}
 	}
 	array := proto.NewArray()
 	array.Append(redis.NewBulkMessage(strconv.Itoa(cursor)))
