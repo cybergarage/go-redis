@@ -15,8 +15,9 @@
 package redis
 
 import (
-	"regexp"
 	"time"
+
+	"github.com/cybergarage/go-redis/redis/glob"
 )
 
 type ExpireOption struct {
@@ -80,7 +81,7 @@ const (
 )
 
 type ScanOption struct {
-	MatchPattern *regexp.Regexp
+	MatchPattern *glob.Glob
 	Count        int
 	Type         ScanType
 }
