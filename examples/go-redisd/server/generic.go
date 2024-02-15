@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-redis/redis"
-	"github.com/cybergarage/go-redis/redis/regexp"
+	"github.com/cybergarage/go-redis/redis/glob"
 )
 
 func (server *Server) Del(conn *redis.Conn, keys []string) (*redis.Message, error) {
@@ -94,7 +94,7 @@ func (server *Server) Keys(conn *redis.Conn, pattern string) (*redis.Message, er
 	if err != nil {
 		return nil, err
 	}
-	r := regexp.MustCompile(pattern)
+	r := glob.MustCompile(pattern)
 	matchKeys := []string{}
 	for _, key := range db.Keys() {
 		if !r.MatchString(key) {
@@ -148,5 +148,13 @@ func (server *Server) TTL(conn *redis.Conn, key string) (*redis.Message, error) 
 }
 
 func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (*redis.Message, error) {
-	return nil, nil
+	db, err := server.GetDatabase(conn.Database())
+	if err != nil {
+		return nil, err
+	}
+	matchKeys := []string{}
+	for _, key := range db.Keys() {
+		matchKeys = append(matchKeys, key)
+	}
+	return redis.NewStringArrayMessage(matchKeys), nil
 }
