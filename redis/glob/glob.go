@@ -24,6 +24,15 @@ type Glob = regexp.Regexp
 
 // MustCompile compiles the specified glob-style patterns.
 func MustCompile(pattern string) *Glob {
+	return regexp.MustCompile(regexpFromGlob(pattern))
+}
+
+// Compile compiles the specified glob-style patterns.
+func Compile(pattern string) (*Glob, error) {
+	return regexp.Compile(regexpFromGlob(pattern))
+}
+
+func regexpFromGlob(pattern string) string {
 	// Syntax · google/re2 Wiki
 	// https://github.com/google/re2/wiki/Syntax
 	// glob (programming) - Wikipedia
@@ -39,5 +48,5 @@ func MustCompile(pattern string) *Glob {
 	for _, repstr := range repstrs {
 		re2Pattern = strings.ReplaceAll(re2Pattern, repstr.old, repstr.new)
 	}
-	return regexp.MustCompile(re2Pattern)
+	return re2Pattern
 }

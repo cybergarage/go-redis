@@ -94,7 +94,10 @@ func (server *Server) Keys(conn *redis.Conn, pattern string) (*redis.Message, er
 	if err != nil {
 		return nil, err
 	}
-	r := glob.MustCompile(pattern)
+	r, err := glob.Compile(pattern)
+	if err != nil {
+		return nil, err
+	}
 	matchKeys := []string{}
 	for _, key := range db.Keys() {
 		if !r.MatchString(key) {
