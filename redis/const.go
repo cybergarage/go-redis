@@ -23,6 +23,8 @@ const (
 	DefaultPort = 6379
 	// DefaultScanCount is the default scan count.
 	DefaultScanCount = 10
+	// DefaultScanPattern is the default scan pattern.
+	DefaultScanPattern = "*"
 )
 
 const (
