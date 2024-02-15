@@ -263,15 +263,15 @@ func GenericCommandTest(t *testing.T, client *Client) {
 
 	t.Run("SCAN", func(t *testing.T) {
 		args := []string{
-			"scan_key:1", "1",
-			"scan_key:2", "2",
-			"scan_key:3", "3",
-			"scan_key:4", "4",
-			"scan_key:5", "5",
-			"scan_key:6", "6",
-			"scan_key:7", "7",
-			"scan_key:8", "8",
-			"scan_key:19", "9",
+			"scan_key:01", "01",
+			"scan_key:02", "02",
+			"scan_key:03", "03",
+			"scan_key:04", "04",
+			"scan_key:05", "05",
+			"scan_key:06", "06",
+			"scan_key:07", "07",
+			"scan_key:08", "08",
+			"scan_key:19", "09",
 			"scan_key:10", "10",
 			"scan_key:11", "11",
 			"scan_key:12", "12",
@@ -285,7 +285,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			count    int64
 			expected []string
 		}{
-			{count: 10, expected: []string{"scan_key:1", "scan_key:2", "scan_key:3", "scan_key:4", "scan_key:5", "scan_key:6", "scan_key:7", "scan_key:8", "scan_key:9", "scan_key:10"}},
+			{count: 10, expected: []string{"scan_key:01", "scan_key:02", "scan_key:03", "scan_key:04", "scan_key:05", "scan_key:06", "scan_key:07", "scan_key:08", "scan_key:09", "scan_key:10"}},
 			{count: 10, expected: []string{"scan_key:11", "scan_key:12", "scan_key:13", "scan_key:14"}},
 		}
 		cursor := uint64(0)
