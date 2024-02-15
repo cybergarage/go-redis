@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cybergarage/go-redis/redis/glob"
 	"github.com/cybergarage/go-redis/redis/proto"
 )
 
@@ -258,7 +259,7 @@ func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption
 
 func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 	opt := ScanOption{
-		MatchPattern: nil,
+		MatchPattern: glob.MustCompile(DefaultScanPattern),
 		Count:        DefaultScanCount,
 		Type:         KeyScan,
 	}
