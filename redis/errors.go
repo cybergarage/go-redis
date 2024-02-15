@@ -24,6 +24,7 @@ var (
 	ErrQuit         = errors.New("QUIT")
 	ErrSystem       = errors.New("internal system error")
 	ErrNotAuthrized = errors.New("not authrized")
+	ErrInvalid      = errors.New("invalid")
 )
 
 const (
