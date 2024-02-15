@@ -161,7 +161,9 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 	keys := db.Keys()
 	sort.Strings(keys)
 	matchKeys := proto.NewArray()
+	lastCursor := 0
 	for n, key := range keys {
+		lastCursor = n
 		if n < cursor {
 			continue
 		}
@@ -173,8 +175,11 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 			break
 		}
 	}
+	if lastCursor == len(keys) {
+		lastCursor = 0
+	}
 	array := proto.NewArray()
-	array.Append(redis.NewBulkMessage(strconv.Itoa(cursor)))
+	array.Append(redis.NewBulkMessage(strconv.Itoa(lastCursor)))
 	array.Append(redis.NewArrayMessageWithArray(matchKeys))
 	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(array), nil
 }
