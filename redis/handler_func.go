@@ -261,7 +261,7 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 	opt := ScanOption{
 		MatchPattern: glob.MustCompile(DefaultScanPattern),
 		Count:        DefaultScanCount,
-		Type:         KeyScan,
+		Type:         DefaultScanType,
 	}
 	var err error
 	param, err := args.NextString()
