@@ -18,5 +18,31 @@ import (
 	"testing"
 )
 
-func TestCompile(t *testing.T) {
+func TestGlobMatches(t *testing.T) {
+	tests := []struct {
+		pattern string
+		value   string
+		want    bool
+	}{
+		{"a??_keys", "lastname_keys", false},
+		{"a??_keys", "firstname_keys", false},
+		{"a??_keys", "age_keys", true},
+		{"*_keys", "lastname_keys", true},
+		{"*_keys", "firstname_keys", true},
+		{"*_keys", "age_keys", true},
+		{"*name*_keys", "lastname_keys", true},
+		{"*name*_keys", "firstname_keys", true},
+		{"*name*_keys", "age_keys", false},
+	}
+
+	for _, tt := range tests {
+		glob, err := Compile(tt.pattern)
+		if err != nil {
+			t.Errorf("Glob(%s).Compile() = %v", tt.pattern, err)
+		}
+		if got := glob.MatchString(tt.value); got != tt.want {
+			t.Errorf("Glob(%s).MatchString(%s) = %v, want %v", tt.pattern, tt.value, got, tt.want)
+		}
+	}
+
 }
