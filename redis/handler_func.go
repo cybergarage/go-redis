@@ -290,7 +290,7 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 			}
 			opt.Type, err = newScanTypeFromString(scanType)
 			if err != nil {
-				return opt, err
+				return opt, newInvalidArgumentError(cmd, "type", err)
 			}
 		}
 		param, err = args.NextString()
