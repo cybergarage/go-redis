@@ -31,6 +31,7 @@ const (
 	errorNotSupportedCommand    = "'%s' is %w"
 	errorMissingCommandArgument = "%s: missing argument (%s) %w"
 	errorUnkownCommandArgument  = "%s: unknown argument (%s)"
+	errorInvalidCommandArgument = "%s: %w argument (%s - %w)"
 )
 
 // NewErrNotSupported returns a new ErrNotSupported.
@@ -49,4 +50,8 @@ func newMissingArgumentError(cmd string, arg string, err error) error {
 
 func newUnkownArgumentError(cmd string, arg string) error {
 	return fmt.Errorf(errorUnkownCommandArgument, cmd, arg)
+}
+
+func newInvalidArgumentError(cmd string, arg string, err error) error {
+	return fmt.Errorf(errorInvalidCommandArgument, cmd, ErrInvalid, arg, err)
 }

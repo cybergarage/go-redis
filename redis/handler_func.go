@@ -176,7 +176,7 @@ func nextRangeScoreIndexArgument(cmd string, name string, args Arguments) (float
 	}
 	rng, err := strconv.ParseFloat(str[offset:], 64)
 	if err != nil {
-		return 0, false, newMissingArgumentError(cmd, name, err)
+		return 0, false, newInvalidArgumentError(cmd, name, err)
 	}
 	return rng, exclusive, nil
 }
@@ -275,7 +275,7 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 			}
 			opt.MatchPattern, err = regexp.Compile(pattern)
 			if err != nil {
-				return opt, newMissingArgumentError(cmd, "pattern", err)
+				return opt, newInvalidArgumentError(cmd, "pattern", err)
 			}
 		case "COUNT":
 			opt.Count, err = nextIntegerArgument(cmd, "count", args)
