@@ -15,6 +15,7 @@
 package server
 
 import (
+	"sort"
 	"strconv"
 	"time"
 
@@ -157,8 +158,10 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 	if err != nil {
 		return nil, err
 	}
+	keys := db.Keys()
+	sort.Strings(keys)
 	matchKeys := proto.NewArray()
-	for n, key := range db.Keys() {
+	for n, key := range keys {
 		if n < cursor {
 			continue
 		}
