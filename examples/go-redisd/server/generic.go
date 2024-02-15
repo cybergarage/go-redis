@@ -15,10 +15,12 @@
 package server
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/cybergarage/go-redis/redis"
 	"github.com/cybergarage/go-redis/redis/glob"
+	"github.com/cybergarage/go-redis/redis/proto"
 )
 
 func (server *Server) Del(conn *redis.Conn, keys []string) (*redis.Message, error) {
@@ -155,9 +157,18 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 	if err != nil {
 		return nil, err
 	}
-	matchKeys := []string{}
-	for _, key := range db.Keys() {
-		matchKeys = append(matchKeys, key)
+	matchKeys := proto.NewArray()
+	for n, key := range db.Keys() {
+		if n < cursor {
+			continue
+		}
+		if !opt.MatchPattern.MatchString(key) {
+			continue
+		}
+		matchKeys.Append(redis.NewBulkMessage(key))
 	}
-	return redis.NewStringArrayMessage(matchKeys), nil
+	array := proto.NewArray()
+	array.Append(redis.NewBulkMessage(strconv.Itoa(cursor)))
+	array.Append(redis.NewArrayMessageWithArray(matchKeys))
+	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(array), nil
 }
