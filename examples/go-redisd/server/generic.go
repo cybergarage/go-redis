@@ -164,7 +164,7 @@ func (server *Server) Scan(conn *redis.Conn, cursor int, opt redis.ScanOption) (
 	lastCursor := 0
 	for n, key := range keys {
 		lastCursor = n
-		if n < cursor {
+		if 0 < cursor && n <= cursor {
 			continue
 		}
 		if !opt.MatchPattern.MatchString(key) {
