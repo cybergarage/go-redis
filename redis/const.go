@@ -25,6 +25,8 @@ const (
 	DefaultScanCount = 10
 	// DefaultScanPattern is the default scan pattern.
 	DefaultScanPattern = "*"
+	// DefaultScanType is the default scan type.
+	DefaultScanType = KeyScan
 )
 
 const (
