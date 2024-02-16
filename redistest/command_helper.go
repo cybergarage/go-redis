@@ -241,7 +241,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					return
 				}
 				if len(res) != len(r.expected) {
-					t.Skipf("%s: %s != %s", r.pattern, res, r.expected)
+					t.Errorf("%s: %s != %s", r.pattern, res, r.expected)
 					return
 				}
 				for _, ex := range r.expected {
@@ -253,7 +253,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 						}
 					}
 					if !found {
-						t.Skipf("%s: %s != %s", r.pattern, res, r.expected)
+						t.Errorf("%s: %s != %s", r.pattern, res, r.expected)
 						return
 					}
 				}
