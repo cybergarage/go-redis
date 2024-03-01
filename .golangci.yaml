@@ -1,9 +1,14 @@
-run:
-  timeout: 10m
-
+issues:
+  fix: true
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - goconst
+        - gosec
 linters:
   enable-all: true
   disable:
+    - exhaustruct
     - deadcode
     - paralleltest
     - testpackage
@@ -31,13 +36,20 @@ linters:
     - gochecknoglobals
     - scopelint
     - typecheck
-    - exhaustruct
-    - nilerr
-    - ifshort
+    - dupl
+    - exhaustive
+    - forbidigo
+    - maligned
+    - revive
     - depguard
-
+    - inamedparam
+    - interfacer
+    - ifshort
+    - structcheck
+    - nosnakecase
+    - exhaustivestruct
+    - golint
+    - musttag
 linters-settings:
-  revive:
-    rules:
-      - name: unused-parameter
-        disabled: true
+  staticcheck:
+    checks: ["all", "-SA5008", "-SA1008"]
