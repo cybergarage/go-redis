@@ -32,7 +32,7 @@ type ClientOptions = goredis.Options
 // NewClientOptions returns a default client options.
 // nolint: exhaustivestruct
 func NewClientOptions() ClientOptions {
-	return goredis.Options{
+	return goredis.Options{ // nolint:exhaustruct
 		DialTimeout:  time.Second,
 		ReadTimeout:  time.Second * 60,
 		WriteTimeout: time.Second * 60,
