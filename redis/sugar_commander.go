@@ -14,9 +14,11 @@
 
 package redis
 
-import "strconv"
+import (
+	"strconv"
+)
 
-// nolint: gocyclo, maintidx
+// nolint: gocyclo, maintidx, nilerr
 func (server *Server) registerSugarExecutors() {
 	// common internal sugar functions
 
