@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.4.4 (2024-xx-xx)
+- Fix ling warnings
+
 ## v1.4.3 (2024-01-26)
 - Updated glob package to match more strictly
 ###  Supported
