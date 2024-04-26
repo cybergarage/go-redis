@@ -102,14 +102,13 @@ func newScanTypeFromString(str string) (ScanType, error) {
 }
 
 func newDefaultSetOption() SetOption {
-	now := time.Now()
 	return SetOption{
 		NX:      false,
 		XX:      false,
 		EX:      0,
 		PX:      0,
-		EXAT:    now,
-		PXAT:    now,
+		EXAT:    time.Time{},
+		PXAT:    time.Time{},
 		KEEPTTL: false,
 		GET:     false,
 	}

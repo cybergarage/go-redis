@@ -16,6 +16,7 @@ package redis
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -113,12 +114,96 @@ func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	return key, val, err
 }
 
+func nextSetExArguments(cmd string, args Arguments) (string, int, string, error) {
+	key, err := args.NextString()
+	if err != nil {
+		return "", 0, "", newMissingArgumentError(cmd, "key", err)
+	}
+	seconds, err := args.NextInteger()
+	if err != nil {
+		return "", 0, "", newMissingArgumentError(cmd, "seconds", err)
+	}
+	if seconds < 1 {
+		return "", 0, "", newInvalidArgumentError(cmd, "seconds", fmt.Errorf(errorShouldBeGreaterThanInt, "argument", 0))
+	}
+	val, err := args.NextString()
+	if err != nil {
+		return "", 0, "", newMissingArgumentError(cmd, "value", err)
+	}
+	return key, seconds, val, err
+}
+
 func nextMGetArguments(cmd string, args Arguments) ([]string, error) {
 	return nextStringArrayArguments(cmd, "keys", args)
 }
 
 func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 	return nextStringMapArguments(cmd, args)
+}
+
+func nextSetOptionArguments(cmd string, args Arguments) (SetOption, error) {
+	opt := newDefaultSetOption()
+	for {
+		argStr, err := args.NextString()
+		if err != nil {
+			if errors.Is(err, proto.ErrEOM) {
+				break
+			} else {
+				return opt, err
+			}
+		}
+		argStr = strings.ToUpper(argStr)
+		switch argStr {
+		case "NX":
+			if opt.NX || opt.XX {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "NX|XX"))
+			}
+			opt.NX = true
+		case "XX":
+			if opt.NX || opt.XX {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "NX|XX"))
+			}
+			opt.XX = true
+		case "EX", "PX", "EXAT", "PXAT":
+			if opt.EX > 0 || opt.PX > 0 || !opt.EXAT.IsZero() || !opt.PXAT.IsZero() {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "EX|PX|EXAT|PXAT"))
+			}
+			argInt, err := args.NextInteger()
+			if err != nil {
+				if errors.Is(err, proto.ErrEOM) {
+					return opt, newMissingArgumentError(cmd, argStr, err)
+				} else {
+					return opt, err
+				}
+			}
+			if argInt < 1 {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorShouldBeGreaterThanInt, "expire", 0))
+			}
+			switch argStr {
+			case "EX":
+				opt.EX = time.Duration(argInt) * time.Second
+			case "PX":
+				opt.PX = time.Duration(argInt) * time.Millisecond
+			case "EXAT":
+				opt.EXAT = time.Unix(int64(argInt), 0)
+			case "PXAT":
+				opt.PXAT = time.UnixMilli(int64(argInt))
+			}
+		case "KEEPTTL":
+			if opt.KEEPTTL {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, ""))
+			}
+			opt.KEEPTTL = true
+		case "GET":
+			if opt.GET {
+				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, ""))
+			}
+			opt.GET = true
+		default:
+			return opt, newUnkownArgumentError(cmd, argStr)
+		}
+	}
+	return opt, nil
 }
 
 // Hash argument fuctions
