@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.4.4 (2024-xx-xx)
+## v1.4.4 (2024-03-20)
 - Fix ling warnings
 
 ## v1.4.3 (2024-01-26)
