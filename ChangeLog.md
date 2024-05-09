@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.5 (2024-05-09)
+- New features
+###  Supported
+- Thanks for @Peter-Sh
+- SET options and SETEX command
+
 ## v1.4.4 (2024-03-20)
 - Fix ling warnings
 
