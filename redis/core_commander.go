@@ -239,11 +239,26 @@ func (server *Server) registerCoreExecutors() {
 	})
 
 	server.RegisterExexutor("SET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
-		opt := newDefaultSetOption()
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
+		opt, err := nextSetOptionArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		return server.userCommandHandler.Set(conn, key, val, opt)
+	})
+
+	server.RegisterExexutor("SETEX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
+		key, seconds, val, err := nextSetExArguments(cmd, args)
+		if err != nil {
+			return nil, err
+		}
+		opt := newDefaultSetOption()
+		opt.EX = time.Duration(seconds) * time.Second
+
 		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 

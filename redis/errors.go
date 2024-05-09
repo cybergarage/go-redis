@@ -32,6 +32,8 @@ const (
 	errorMissingCommandArgument = "%s: missing argument (%s) %w"
 	errorUnkownCommandArgument  = "%s: unknown argument (%s)"
 	errorInvalidCommandArgument = "%s: %w argument (%s - %s)"
+	errorUseOnlyOnce            = "%s may be used only once"
+	errorShouldBeGreaterThanInt = "%s should be greater than %d"
 )
 
 // NewErrNotSupported returns a new ErrNotSupported.
