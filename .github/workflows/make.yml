@@ -11,10 +11,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
         go-version: '1.22.x'
 
@@ -33,7 +33,7 @@ jobs:
       run: env CGO_ENABLED=0 YCSB_ROOT=`pwd`/ycsb-0.17.0 make test
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: redis-cover.out
