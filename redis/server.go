@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"crypto/tls"
 	"errors"
 	"io"
 	"net"
@@ -30,7 +31,9 @@ type Server struct {
 	*ServerConfig
 	tracer.Tracer
 	Addr                 string
-	tcpListener          net.Listener
+	portListener         net.Listener
+	tlsPortListener      net.Listener
+	tlsConfig            *tls.Config
 	authCommandHandler   AuthCommandHandler
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   UserCommandHandler
@@ -42,7 +45,9 @@ func NewServer() *Server {
 	server := &Server{
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
-		tcpListener:          nil,
+		portListener:         nil,
+		tlsPortListener:      nil,
+		tlsConfig:            nil,
 		authCommandHandler:   nil,
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
@@ -84,10 +89,13 @@ func (server *Server) Start() error {
 		return err
 	}
 
-	go server.serve()
+	if server.IsPortEnabled() {
+		go server.serve()
+	}
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
-	log.Infof("%s/%s (%s) started", PackageName, Version, addr)
+	if server.IsTLSPortEnabled() {
+		go server.tlsServe()
+	}
 
 	return nil
 }
@@ -98,8 +106,15 @@ func (server *Server) Stop() error {
 		return err
 	}
 
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
-	log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
+	if server.IsPortEnabled() {
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
+		log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
+	}
+
+	if server.IsTLSPortEnabled() {
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigTLSPort()))
+		log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
+	}
 
 	return nil
 }
@@ -115,24 +130,49 @@ func (server *Server) Restart() error {
 // open opens a listen socket.
 func (server *Server) open() error {
 	var err error
-	addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
-	server.tcpListener, err = net.Listen("tcp", addr)
-	if err != nil {
-		return err
+
+	if server.IsPortEnabled() {
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
+		server.portListener, err = net.Listen("tcp", addr)
+		if err != nil {
+			return err
+		}
+		log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 	}
+
+	if server.IsTLSPortEnabled() {
+		server.tlsConfig, err = NewTLSConfigFrom(server.ServerConfig)
+		if err != nil {
+			return err
+		}
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigTLSPort()))
+		server.tlsPortListener, err = net.Listen("tcp", addr)
+		if err != nil {
+			return err
+		}
+		log.Infof("%s/%s (%s) started", PackageName, Version, addr)
+	}
+
 	return nil
 }
 
 // close closes a listening socket.
 func (server *Server) close() error {
-	if server.tcpListener != nil {
-		err := server.tcpListener.Close()
+	if server.portListener != nil {
+		err := server.portListener.Close()
 		if err != nil {
 			return err
 		}
+		server.portListener = nil
 	}
 
-	server.tcpListener = nil
+	if server.tlsPortListener != nil {
+		err := server.tlsPortListener.Close()
+		if err != nil {
+			return err
+		}
+		server.tlsPortListener = nil
+	}
 
 	return nil
 }
@@ -141,7 +181,7 @@ func (server *Server) close() error {
 func (server *Server) serve() error {
 	defer server.close()
 
-	l := server.tcpListener
+	l := server.portListener
 	for {
 		if l == nil {
 			break
@@ -151,6 +191,26 @@ func (server *Server) serve() error {
 			return err
 		}
 
+		go server.receive(conn)
+	}
+
+	return nil
+}
+
+// tlsServe handles client connections with TLS.
+func (server *Server) tlsServe() error {
+	defer server.close()
+	l := server.tlsPortListener
+	for {
+		if l == nil {
+			break
+		}
+		conn, err := l.Accept()
+		if err != nil {
+			return err
+		}
+
+		conn = tls.Server(conn, server.tlsConfig)
 		go server.receive(conn)
 	}
 
