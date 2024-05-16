@@ -14,7 +14,10 @@
 
 package redis
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 const (
 	ConfigSep = " "
@@ -51,6 +54,19 @@ func (cfg *Config) AppendConfig(key string, params string) {
 func (cfg *Config) ConfigString(key string) (string, bool) {
 	params, ok := cfg.params[key]
 	return params, ok
+}
+
+// ConfigInteger returns the specified parameter as an integer.
+func (cfg *Config) ConfigInteger(key string) (int, bool) {
+	params, ok := cfg.params[key]
+	if !ok {
+		return 0, false
+	}
+	v, err := strconv.Atoi(params)
+	if err != nil {
+		return 0, false
+	}
+	return v, true
 }
 
 // RemoveConfig removes the specified parameter.
