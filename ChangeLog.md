@@ -1,7 +1,10 @@
 # Changelog
 
-## v1.4.5 (2024-05-09)
+## v1.5.0 (2024-05-xx)
 - New features
+  - Supported TLS connection
+
+## v1.4.5 (2024-05-09)
 ###  Supported
 - Thanks for @Peter-Sh
 - SET options and SETEX command
