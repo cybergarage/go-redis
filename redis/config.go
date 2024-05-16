@@ -47,8 +47,8 @@ func (cfg *Config) AppendConfig(key string, params string) {
 	cfg.params[key] = strings.Join([]string{currParams, params}, ConfigSep)
 }
 
-// ConfigParameter return the specified parameter.
-func (cfg *Config) ConfigParameter(key string) (string, bool) {
+// ConfigString return the specified parameter.
+func (cfg *Config) ConfigString(key string) (string, bool) {
 	params, ok := cfg.params[key]
 	return params, ok
 }

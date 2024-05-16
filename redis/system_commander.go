@@ -45,7 +45,7 @@ func (server *Server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
 	msg := NewArrayMessage()
 	for _, key := range keys {
 		msg.Append(NewBulkMessage(key))
-		param, ok := server.ConfigParameter(key)
+		param, ok := server.ConfigString(key)
 		if ok {
 			msg.Append(NewBulkMessage(param))
 		} else {

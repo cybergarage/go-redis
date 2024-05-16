@@ -44,7 +44,7 @@ func (cfg *ServerConfig) SetPort(port int) {
 
 // ConfigPort returns a listen port number.
 func (cfg *ServerConfig) ConfigPort() int {
-	portStr, ok := cfg.ConfigParameter(portConfig)
+	portStr, ok := cfg.ConfigString(portConfig)
 	if !ok {
 		return DefaultPort
 	}
@@ -62,7 +62,7 @@ func (cfg *ServerConfig) SetTLSPort(port int) {
 
 // ConfigTLSPort returns a listen port number for TLS.
 func (cfg *ServerConfig) ConfigTLSPort() int {
-	portStr, ok := cfg.ConfigParameter(tlsPortConfig)
+	portStr, ok := cfg.ConfigString(tlsPortConfig)
 	if !ok {
 		return DefaultTLSPort
 	}
@@ -80,7 +80,7 @@ func (cfg *ServerConfig) SetTLSCertFile(certFile string) {
 
 // ConfigTLSCertFile returns a certificate file.
 func (cfg *ServerConfig) ConfigTLSCertFile() (string, bool) {
-	return cfg.ConfigParameter(tlsCertFile)
+	return cfg.ConfigString(tlsCertFile)
 }
 
 // SetTLSKeyFile sets a key file.
@@ -90,7 +90,7 @@ func (cfg *ServerConfig) SetTLSKeyFile(keyFile string) {
 
 // ConfigTLSKeyFile returns a key file.
 func (cfg *ServerConfig) ConfigTLSKeyFile() (string, bool) {
-	return cfg.ConfigParameter(tlsKeyFile)
+	return cfg.ConfigString(tlsKeyFile)
 }
 
 // SetTLSCaCertFile sets a CA certificate file.
@@ -100,7 +100,7 @@ func (cfg *ServerConfig) SetTLSCaCertFile(caCertFile string) {
 
 // ConfigTLSCaCertFile returns a CA certificate file.
 func (cfg *ServerConfig) ConfigTLSCaCertFile() (string, bool) {
-	return cfg.ConfigParameter(tlsCaCertFile)
+	return cfg.ConfigString(tlsCaCertFile)
 }
 
 // SetRequirePass sets a password.
@@ -110,7 +110,7 @@ func (cfg *ServerConfig) SetRequirePass(password string) {
 
 // ConfigRequirePass returns a password.
 func (cfg *ServerConfig) ConfigRequirePass() (string, bool) {
-	return cfg.ConfigParameter(requirePass)
+	return cfg.ConfigString(requirePass)
 }
 
 // RemoveRequirePass removes a password.
