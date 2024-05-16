@@ -73,12 +73,34 @@ func (cfg *ServerConfig) ConfigTLSPort() int {
 	return port
 }
 
+// SetTLSCertFile sets a certificate file.
 func (cfg *ServerConfig) SetTLSCertFile(certFile string) {
 	cfg.SetConfig(tlsCertFile, certFile)
 }
 
+// ConfigTLSCertFile returns a certificate file.
 func (cfg *ServerConfig) ConfigTLSCertFile() (string, bool) {
 	return cfg.ConfigParameter(tlsCertFile)
+}
+
+// SetTLSKeyFile sets a key file.
+func (cfg *ServerConfig) SetTLSKeyFile(keyFile string) {
+	cfg.SetConfig(tlsKeyFile, keyFile)
+}
+
+// ConfigTLSKeyFile returns a key file.
+func (cfg *ServerConfig) ConfigTLSKeyFile() (string, bool) {
+	return cfg.ConfigParameter(tlsKeyFile)
+}
+
+// SetTLSCaCertFile sets a CA certificate file.
+func (cfg *ServerConfig) SetTLSCaCertFile(caCertFile string) {
+	cfg.SetConfig(tlsCaCertFile, caCertFile)
+}
+
+// ConfigTLSCaCertFile returns a CA certificate file.
+func (cfg *ServerConfig) ConfigTLSCaCertFile() (string, bool) {
+	return cfg.ConfigParameter(tlsCaCertFile)
 }
 
 // SetRequirePass sets a password.
