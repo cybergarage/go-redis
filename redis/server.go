@@ -161,7 +161,7 @@ func (server *Server) serve() error {
 func (server *Server) receive(conn net.Conn) error {
 	defer conn.Close()
 
-	isPasswdRequired, _ := server.ConfigRequirePass()
+	_, isPasswdRequired := server.ConfigRequirePass()
 
 	handlerConn := newConnWith(conn)
 	handlerConn.SetAuthrized(!isPasswdRequired)

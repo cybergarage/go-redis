@@ -19,7 +19,7 @@ import (
 )
 
 func (server *Server) Auth(conn *Conn, username string, password string) (*Message, error) {
-	required, configPassword := server.ConfigRequirePass()
+	configPassword, required := server.ConfigRequirePass()
 	if required && password != configPassword {
 		return nil, errors.New("invalid password")
 	}
