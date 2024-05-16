@@ -22,7 +22,7 @@ const (
 	// DefaultPort is the default port number.
 	DefaultPort = 6379
 	// DefaultTLSPort is the default TLS port number.
-	DefaultTLSPort = DefaultPort
+	DefaultTLSPort = 0
 	// DefaultScanCount is the default scan count.
 	DefaultScanCount = 10
 	// DefaultScanPattern is the default scan pattern.
