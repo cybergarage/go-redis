@@ -51,6 +51,15 @@ func (cfg *ServerConfig) ConfigPort() int {
 	return port
 }
 
+// IsPortEnabled returns true if a listen port is enabled.
+func (cfg *ServerConfig) IsPortEnabled() bool {
+	port, ok := cfg.ConfigInteger(portConfig)
+	if !ok {
+		return false
+	}
+	return (0 < port)
+}
+
 // SetTLSPort sets a listen port number for TLS.
 func (cfg *ServerConfig) SetTLSPort(port int) {
 	cfg.SetConfig(tlsPortConfig, strconv.Itoa(port))
@@ -63,6 +72,15 @@ func (cfg *ServerConfig) ConfigTLSPort() int {
 		return DefaultTLSPort
 	}
 	return port
+}
+
+// IsTLSPortEnabled returns true if a listen port for TLS is enabled.
+func (cfg *ServerConfig) IsTLSPortEnabled() bool {
+	port, ok := cfg.ConfigInteger(tlsPortConfig)
+	if !ok {
+		return false
+	}
+	return (0 < port)
 }
 
 // SetTLSCertFile sets a certificate file.
