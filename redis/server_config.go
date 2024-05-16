@@ -17,8 +17,12 @@ package redis
 import "strconv"
 
 const (
-	portConfig  = "port"
-	requirePass = "requirepass"
+	portConfig    = "port"
+	requirePass   = "requirepass"
+	tlsPortConfig = "tls-port"
+	tlsCertFile   = "tls-cert-file"
+	tlsKeyFile    = "tls-key-file"
+	tlsCaCertFile = "tls-ca-cert-file"
 )
 
 // ServerConfig is a configuration for the Redis server.
@@ -51,18 +55,40 @@ func (cfg *ServerConfig) ConfigPort() int {
 	return port
 }
 
+// SetTLSPort sets a listen port number for TLS.
+func (cfg *ServerConfig) SetTLSPort(port int) {
+	cfg.SetConfig(tlsPortConfig, strconv.Itoa(port))
+}
+
+// ConfigTLSPort returns a listen port number for TLS.
+func (cfg *ServerConfig) ConfigTLSPort() int {
+	portStr, ok := cfg.ConfigParameter(tlsPortConfig)
+	if !ok {
+		return DefaultTLSPort
+	}
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		return DefaultTLSPort
+	}
+	return port
+}
+
+func (cfg *ServerConfig) SetTLSCertFile(certFile string) {
+	cfg.SetConfig(tlsCertFile, certFile)
+}
+
+func (cfg *ServerConfig) ConfigTLSCertFile() (string, bool) {
+	return cfg.ConfigParameter(tlsCertFile)
+}
+
 // SetRequirePass sets a password.
 func (cfg *ServerConfig) SetRequirePass(password string) {
 	cfg.SetConfig(requirePass, password)
 }
 
 // ConfigRequirePass returns a password.
-func (cfg *ServerConfig) ConfigRequirePass() (bool, string) {
-	passwd, ok := cfg.ConfigParameter(requirePass)
-	if !ok {
-		return false, ""
-	}
-	return true, passwd
+func (cfg *ServerConfig) ConfigRequirePass() (string, bool) {
+	return cfg.ConfigParameter(requirePass)
 }
 
 // RemoveRequirePass removes a password.
