@@ -44,13 +44,9 @@ func (cfg *ServerConfig) SetPort(port int) {
 
 // ConfigPort returns a listen port number.
 func (cfg *ServerConfig) ConfigPort() int {
-	portStr, ok := cfg.ConfigString(portConfig)
+	port, ok := cfg.ConfigInteger(portConfig)
 	if !ok {
-		return DefaultPort
-	}
-	port, err := strconv.Atoi(portStr)
-	if err != nil {
-		return DefaultPort
+		return DefaultTLSPort
 	}
 	return port
 }
@@ -62,12 +58,8 @@ func (cfg *ServerConfig) SetTLSPort(port int) {
 
 // ConfigTLSPort returns a listen port number for TLS.
 func (cfg *ServerConfig) ConfigTLSPort() int {
-	portStr, ok := cfg.ConfigString(tlsPortConfig)
+	port, ok := cfg.ConfigInteger(tlsPortConfig)
 	if !ok {
-		return DefaultTLSPort
-	}
-	port, err := strconv.Atoi(portStr)
-	if err != nil {
 		return DefaultTLSPort
 	}
 	return port
