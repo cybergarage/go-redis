@@ -1,8 +1,8 @@
 # Changelog
 
-## v1.5.0 (2024-05-xx)
+## v1.5.0 (2024-05-17)
 - New features
-  - Supported TLS connection
+  - Supported TLS connection and setting options
 
 ## v1.4.5 (2024-05-09)
 ###  Supported
