@@ -117,7 +117,6 @@ func TestTLSServer(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	// tlsConfig.ClientAuth = tls.NoClientCert
 	clientOpts.TLSConfig = tlsConfig
 
 	err = client.OpenWith(LocalHost, &clientOpts)
