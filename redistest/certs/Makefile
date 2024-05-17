@@ -20,7 +20,7 @@ all: certgen
 # https://www.postgresql.org/docs/current/ssl-tcp.html#SSL-CERTIFICATE-CREATION
 
 certgen: clean
-	openssl req -new -x509 -days 365 -nodes -text -out cert.pem -keyout key.pem -subj "/CN=dbhost.yourdomain.com"
+	openssl req -new -x509 -days 36500 -nodes -text -out cert.pem -keyout key.pem -extensions san -config san.cfg -subj "/CN=localhost"
 	chmod og-rwx key.pem
 	cp cert.pem root_cert.pem
 
