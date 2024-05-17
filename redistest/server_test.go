@@ -16,6 +16,14 @@ package redistest
 
 import (
 	"testing"
+
+	"github.com/cybergarage/go-redis/redis"
+)
+
+const (
+	serverKey  = "./certs/key.pem"
+	serverCert = "./certs/cert.pem"
+	rootCert   = "./certs/root_cert.pem"
 )
 
 func TestServer(t *testing.T) {
@@ -85,9 +93,16 @@ func TestServer(t *testing.T) {
 }
 
 func TestTLSServer(t *testing.T) {
-	server := NewServer()
+	var err error
 
-	err := server.Start()
+	server := NewServer()
+	server.SetPort(0)
+	server.SetTLSPort(redis.DefaultPort)
+	server.SetTLSKeyFile(serverKey)
+	server.SetTLSCertFile(serverCert)
+	server.SetTLSCaCertFile(rootCert)
+
+	err = server.Start()
 	if err != nil {
 		t.Error(err)
 		return
@@ -96,7 +111,16 @@ func TestTLSServer(t *testing.T) {
 	// CommandTest
 
 	client := NewClient()
-	err = client.Open(LocalHost)
+	clientOpts := NewClientOptions()
+	tlsConfig, err := redis.NewTLSConfigFrom(server.ServerConfig)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	// tlsConfig.ClientAuth = tls.NoClientCert
+	clientOpts.TLSConfig = tlsConfig
+
+	err = client.OpenWith(LocalHost, &clientOpts)
 	if err != nil {
 		t.Error(err)
 		return
