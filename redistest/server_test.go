@@ -18,7 +18,6 @@ import (
 	"testing"
 )
 
-// nolint: maintidx, gocyclo
 func TestServer(t *testing.T) {
 	server := NewServer()
 
@@ -82,5 +81,39 @@ func TestServer(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 		return
+	}
+}
+
+func TestTLSServer(t *testing.T) {
+	server := NewServer()
+
+	err := server.Start()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// CommandTest
+
+	client := NewClient()
+	err = client.Open(LocalHost)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	t.Run("Command", func(t *testing.T) {
+		CommandTest(t, client)
+	})
+
+	// // panic: not implemented
+	// err = client.Quit().Err()
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+
+	err = client.Close()
+	if err != nil {
+		t.Error(err)
 	}
 }
