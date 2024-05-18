@@ -139,4 +139,10 @@ func TestTLSServer(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = server.Stop()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }
