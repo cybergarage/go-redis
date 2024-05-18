@@ -17,6 +17,8 @@ package redistest
 import (
 	"strings"
 	"testing"
+
+	"github.com/cybergarage/go-redis/redis"
 )
 
 func AuthCommandTest(t *testing.T, server *Server) {
@@ -39,7 +41,7 @@ func AuthCommandTest(t *testing.T, server *Server) {
 			client := NewClient()
 			opts := NewClientOptions()
 			opts.Password = auth.passwd
-			err := client.OpenWith(LocalHost, &opts)
+			err := client.OpenWith(LocalHost, redis.DefaultPort, &opts)
 			if auth.expected {
 				if err != nil {
 					t.Error(err)

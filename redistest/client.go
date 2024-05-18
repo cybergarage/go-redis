@@ -52,11 +52,11 @@ func NewClient() *Client {
 // Open opens a connection with the specified host.
 func (client *Client) Open(host string) error {
 	opts := NewClientOptions()
-	return client.OpenWith(host, &opts)
+	return client.OpenWith(host, DefaultPort, &opts)
 }
 
-func (client *Client) OpenWith(host string, opts *ClientOptions) error {
-	opts.Addr = fmt.Sprintf("%s:%d", host, DefaultPort)
+func (client *Client) OpenWith(host string, port int, opts *ClientOptions) error {
+	opts.Addr = fmt.Sprintf("%s:%d", host, port)
 	client.Client = goredis.NewClient(opts)
 	status := client.Ping()
 	if err := status.Err(); err != nil {
