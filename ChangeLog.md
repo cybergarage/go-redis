@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.5.1 (2024-05-18)
+- Updated TLS settings to allow binary certificates
+
 ## v1.5.0 (2024-05-17)
 - New features
   - Supported TLS connection and setting options
@@ -10,7 +13,7 @@
 - SET options and SETEX command
 
 ## v1.4.4 (2024-03-20)
-- Fix ling warnings
+- Fixed ling warnings
 
 ## v1.4.3 (2024-01-26)
 - Updated glob package to match more strictly
