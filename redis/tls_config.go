@@ -18,31 +18,26 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"os"
 )
 
 // NewTLSConfigFrom returns a new TLS configuration from the specified server configuration.
 func NewTLSConfigFrom(config *ServerConfig) (*tls.Config, error) {
-	certFile, ok := config.ConfigTLSCertFile()
+	cert, ok := config.ConfigTLSCert()
 	if !ok {
-		return nil, errors.New("no certificate file")
+		return nil, errors.New("no server certificate")
 	}
-	keyFile, ok := config.ConfigTLSKeyFile()
+	key, ok := config.ConfigTLSKey()
 	if !ok {
-		return nil, errors.New("no key file")
+		return nil, errors.New("no server key")
 	}
-	serverCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	serverCert, err := tls.X509KeyPair(cert, key)
 	if err != nil {
 		return nil, err
 	}
 	certPool := x509.NewCertPool()
-	caFile, ok := config.ConfigTLSCaCertFile()
+	caCert, ok := config.ConfigTLSCACert()
 	if ok {
-		rootCert, err := os.ReadFile(caFile)
-		if err != nil {
-			return nil, err
-		}
-		certPool.AppendCertsFromPEM(rootCert)
+		certPool.AppendCertsFromPEM(caCert)
 	}
 	return &tls.Config{ // nolint: exhaustruct
 		MinVersion:   tls.VersionTLS12,
