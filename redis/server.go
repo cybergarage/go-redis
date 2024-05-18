@@ -141,9 +141,15 @@ func (server *Server) open() error {
 	}
 
 	if server.IsTLSPortEnabled() {
-		server.tlsConfig, err = NewTLSConfigFrom(server.ServerConfig)
-		if err != nil {
-			return err
+		tlsConfig, ok := server.ConfigTLSConfig()
+		if ok {
+			server.tlsConfig = tlsConfig
+		} else {
+			tlsConfig, err := NewTLSConfigFrom(server.ServerConfig)
+			if err != nil {
+				return err
+			}
+			server.tlsConfig = tlsConfig
 		}
 		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigTLSPort()))
 		server.tlsPortListener, err = net.Listen("tcp", addr)
