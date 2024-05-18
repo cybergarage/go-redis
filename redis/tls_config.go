@@ -22,6 +22,10 @@ import (
 
 // NewTLSConfigFrom returns a new TLS configuration from the specified server configuration.
 func NewTLSConfigFrom(config *ServerConfig) (*tls.Config, error) {
+	tlsConfig, ok := config.ConfigTLSConfig()
+	if ok {
+		return tlsConfig, nil
+	}
 	cert, ok := config.ConfigTLSCert()
 	if !ok {
 		return nil, errors.New("no server certificate")
