@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"crypto/tls"
 	"os"
 	"strconv"
 )
@@ -34,6 +35,7 @@ type ServerConfig struct {
 	ServerCert []byte
 	ServerKey  []byte
 	CACerts    []byte
+	TLSConfig  *tls.Config
 }
 
 // NewDefaultServerConfig returns a default server configuration.
@@ -43,6 +45,7 @@ func NewDefaultServerConfig() *ServerConfig {
 		ServerCert: nil,
 		ServerKey:  nil,
 		CACerts:    nil,
+		TLSConfig:  nil,
 	}
 }
 
@@ -162,6 +165,19 @@ func (cfg *ServerConfig) ConfigTLSCACert() ([]byte, bool) {
 		return nil, false
 	}
 	return cfg.CACerts, true
+}
+
+// SetTLSConfig sets a TLS configuration.
+func (cfg *ServerConfig) SetTLSConfig(tlsConfig *tls.Config) {
+	cfg.TLSConfig = tlsConfig
+}
+
+// ConfigTLSConfig returns a TLS configuration.
+func (cfg *ServerConfig) ConfigTLSConfig() (*tls.Config, bool) {
+	if cfg.TLSConfig == nil {
+		return nil, false
+	}
+	return cfg.TLSConfig, true
 }
 
 // SetRequirePass sets a password.
