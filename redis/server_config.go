@@ -14,7 +14,10 @@
 
 package redis
 
-import "strconv"
+import (
+	"os"
+	"strconv"
+)
 
 const (
 	portConfig    = "port"
@@ -22,18 +25,24 @@ const (
 	tlsPortConfig = "tls-port"
 	tlsCertFile   = "tls-cert-file"
 	tlsKeyFile    = "tls-key-file"
-	tlsCaCertFile = "tls-ca-cert-file"
+	tlsCACertFile = "tls-ca-cert-file"
 )
 
 // ServerConfig is a configuration for the Redis server.
 type ServerConfig struct {
 	*Config
+	ServerCert []byte
+	ServerKey  []byte
+	CACerts    []byte
 }
 
 // NewDefaultServerConfig returns a default server configuration.
 func NewDefaultServerConfig() *ServerConfig {
 	return &ServerConfig{
-		Config: newConfig(),
+		Config:     newConfig(),
+		ServerCert: nil,
+		ServerKey:  nil,
+		CACerts:    nil,
 	}
 }
 
@@ -84,8 +93,14 @@ func (cfg *ServerConfig) IsTLSPortEnabled() bool {
 }
 
 // SetTLSCertFile sets a certificate file.
-func (cfg *ServerConfig) SetTLSCertFile(certFile string) {
+func (cfg *ServerConfig) SetTLSCertFile(certFile string) error {
+	cert, err := os.ReadFile(certFile)
+	if err != nil {
+		return err
+	}
 	cfg.SetConfig(tlsCertFile, certFile)
+	cfg.ServerCert = cert
+	return nil
 }
 
 // ConfigTLSCertFile returns a certificate file.
@@ -93,9 +108,23 @@ func (cfg *ServerConfig) ConfigTLSCertFile() (string, bool) {
 	return cfg.ConfigString(tlsCertFile)
 }
 
+// ConfigTLSCert returns a certificate.
+func (cfg *ServerConfig) ConfigTLSCert() ([]byte, bool) {
+	if cfg.ServerCert == nil {
+		return nil, false
+	}
+	return cfg.ServerCert, true
+}
+
 // SetTLSKeyFile sets a key file.
-func (cfg *ServerConfig) SetTLSKeyFile(keyFile string) {
+func (cfg *ServerConfig) SetTLSKeyFile(keyFile string) error {
+	key, err := os.ReadFile(keyFile)
+	if err != nil {
+		return err
+	}
 	cfg.SetConfig(tlsKeyFile, keyFile)
+	cfg.ServerKey = key
+	return nil
 }
 
 // ConfigTLSKeyFile returns a key file.
@@ -103,14 +132,36 @@ func (cfg *ServerConfig) ConfigTLSKeyFile() (string, bool) {
 	return cfg.ConfigString(tlsKeyFile)
 }
 
-// SetTLSCaCertFile sets a CA certificate file.
-func (cfg *ServerConfig) SetTLSCaCertFile(caCertFile string) {
-	cfg.SetConfig(tlsCaCertFile, caCertFile)
+// ConfigTLSKey returns a key.
+func (cfg *ServerConfig) ConfigTLSKey() ([]byte, bool) {
+	if cfg.ServerKey == nil {
+		return nil, false
+	}
+	return cfg.ServerKey, true
 }
 
-// ConfigTLSCaCertFile returns a CA certificate file.
-func (cfg *ServerConfig) ConfigTLSCaCertFile() (string, bool) {
-	return cfg.ConfigString(tlsCaCertFile)
+// SetTLSCaCertFile sets a CA certificate file.
+func (cfg *ServerConfig) SetTLSCaCertFile(caCertFile string) error {
+	rootCert, err := os.ReadFile(caCertFile)
+	if err != nil {
+		return err
+	}
+	cfg.SetConfig(tlsCACertFile, caCertFile)
+	cfg.CACerts = rootCert
+	return nil
+}
+
+// ConfigTLSCACertFile returns a CA certificate file.
+func (cfg *ServerConfig) ConfigTLSCACertFile() (string, bool) {
+	return cfg.ConfigString(tlsCACertFile)
+}
+
+// ConfigTLSCACert returns a CA certificate.
+func (cfg *ServerConfig) ConfigTLSCACert() ([]byte, bool) {
+	if cfg.CACerts == nil {
+		return nil, false
+	}
+	return cfg.CACerts, true
 }
 
 // SetRequirePass sets a password.
