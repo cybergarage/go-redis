@@ -119,7 +119,7 @@ func TestTLSServer(t *testing.T) {
 	}
 	clientOpts.TLSConfig = tlsConfig
 
-	err = client.OpenWith(LocalHost, &clientOpts)
+	err = client.OpenWith(LocalHost, redis.DefaultPort, &clientOpts)
 	if err != nil {
 		t.Error(err)
 		return
