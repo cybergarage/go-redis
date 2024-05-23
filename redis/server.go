@@ -216,8 +216,12 @@ func (server *Server) tlsServe() error {
 			return err
 		}
 
-		conn = tls.Server(conn, server.tlsConfig)
-		go server.receive(conn)
+		tlsConn := tls.Server(conn, server.tlsConfig)
+		if err := tlsConn.Handshake(); err != nil {
+			return err
+		}
+
+		go server.receive(tlsConn)
 	}
 
 	return nil
