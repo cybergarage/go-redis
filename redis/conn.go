@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"crypto/tls"
 	"net"
 	"sync"
 	"time"
@@ -30,9 +31,10 @@ type Conn struct {
 	sync.Map
 	ts time.Time
 	tracer.Context
+	tlsState *tls.ConnectionState
 }
 
-func newConnWith(conn net.Conn) *Conn {
+func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 	return &Conn{
 		Conn:      conn,
 		authrized: false,
@@ -40,6 +42,7 @@ func newConnWith(conn net.Conn) *Conn {
 		Map:       sync.Map{},
 		ts:        time.Now(),
 		Context:   nil,
+		tlsState:  tlsState,
 	}
 }
 
@@ -76,4 +79,14 @@ func (conn *Conn) SetSpanContext(span tracer.Context) {
 // SpanContext returns the span context of the connection.
 func (conn *Conn) SpanContext() tracer.Context {
 	return conn.Context
+}
+
+// IsTLSConnection return true if the connection is enabled TLS.
+func (conn *Conn) IsTLSConnection() bool {
+	return conn.tlsState != nil
+}
+
+// TLSConnectionState returns the TLS connection state.
+func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
+	return conn.tlsState, conn.tlsState != nil
 }
