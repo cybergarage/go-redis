@@ -197,7 +197,7 @@ func (server *Server) serve() error {
 			return err
 		}
 
-		go server.receive(conn)
+		go server.receive(conn, nil)
 	}
 
 	return nil
@@ -220,20 +220,21 @@ func (server *Server) tlsServe() error {
 		if err := tlsConn.Handshake(); err != nil {
 			return err
 		}
+		tlsState := tlsConn.ConnectionState()
 
-		go server.receive(tlsConn)
+		go server.receive(tlsConn, &tlsState)
 	}
 
 	return nil
 }
 
 // receive handles a client connection.
-func (server *Server) receive(conn net.Conn) error {
+func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) error {
 	defer conn.Close()
 
 	_, isPasswdRequired := server.ConfigRequirePass()
 
-	handlerConn := newConnWith(conn)
+	handlerConn := newConnWith(conn, tlsState)
 	handlerConn.SetAuthrized(!isPasswdRequired)
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
