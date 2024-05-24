@@ -22,6 +22,7 @@ import (
 	"strconv"
 
 	"github.com/cybergarage/go-logger/log"
+	"github.com/cybergarage/go-redis/redis/auth"
 	"github.com/cybergarage/go-redis/redis/proto"
 	"github.com/cybergarage/go-tracing/tracer"
 )
@@ -29,6 +30,7 @@ import (
 // Server is an instance for Redis protocols.
 type Server struct {
 	*ServerConfig
+	*auth.AuthManager
 	tracer.Tracer
 	Addr                 string
 	portListener         net.Listener
@@ -43,6 +45,8 @@ type Server struct {
 // NewServer returns a new server instance.
 func NewServer() *Server {
 	server := &Server{
+		ServerConfig:         NewDefaultServerConfig(),
+		AuthManager:          auth.NewAuthManager(),
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
 		portListener:         nil,
@@ -52,7 +56,6 @@ func NewServer() *Server {
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
-		ServerConfig:         NewDefaultServerConfig(),
 	}
 	server.SetPort(DefaultPort)
 	server.registerCoreExecutors()
