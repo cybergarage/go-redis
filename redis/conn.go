@@ -45,6 +45,8 @@ func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 		ts:        time.Now(),
 		Context:   nil,
 		tlsState:  tlsState,
+		username:  "",
+		password:  "",
 	}
 }
 
