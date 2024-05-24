@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/cybergarage/go-redis/redis"
+	"github.com/cybergarage/go-redis/redis/auth"
 )
 
 const (
@@ -101,6 +102,8 @@ func TestTLSServer(t *testing.T) {
 	server.SetTLSKeyFile(serverKey)
 	server.SetTLSCertFile(serverCert)
 	server.SetTLSCaCertFile(rootCert)
+
+	server.AddAuthenticator(auth.NewCertificateAuthenticatorWith(auth.WithCommonName("localhost")))
 
 	err = server.Start()
 	if err != nil {
