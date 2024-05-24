@@ -26,7 +26,18 @@ func AuthCommandTest(t *testing.T, server *Server) {
 
 	requirePass := "password"
 	server.SetRequirePass(requirePass)
-	defer server.RemoveRequirePass()
+	err := server.Restart()
+	if err != nil {
+		t.Error(err)
+	}
+
+	defer func() {
+		server.RemoveRequirePass()
+		err := server.Restart()
+		if err != nil {
+			t.Error(err)
+		}
+	}()
 
 	auths := []struct {
 		passwd   string
