@@ -50,3 +50,17 @@ func (mgr *AuthManager) Authenticate(conn Conn) (bool, error) {
 	}
 	return true, nil
 }
+
+// HasClearTextPasswordAuthenticator returns true if the manager has the clear text password authenticator.
+func (mgr *AuthManager) HasClearTextPasswordAuthenticator(username string, password string) bool {
+	for _, authenticator := range mgr.authenticators {
+		clearTextAuthenticator, ok := authenticator.(*ClearTextPasswordAuthenticator)
+		if !ok {
+			continue
+		}
+		if clearTextAuthenticator.username == username && clearTextAuthenticator.password == password {
+			return true
+		}
+	}
+	return false
+}
