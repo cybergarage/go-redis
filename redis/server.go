@@ -87,6 +87,12 @@ func (server *Server) RegisterExexutor(cmd string, executor Executor) {
 
 // Start starts the server.
 func (server *Server) Start() error {
+	server.ClearAuthenticators()
+	password, requirePass := server.ConfigRequirePass()
+	if requirePass {
+		server.AddAuthenticator(auth.NewCleartextPasswordAuthenticatorWith("", password))
+	}
+
 	err := server.open()
 	if err != nil {
 		return err
