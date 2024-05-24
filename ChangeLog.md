@@ -1,5 +1,11 @@
 # Changelog
 
+
+## v1.5.2 (2024-05-25)
+- Added AuthManager
+  - Added password authenticator 
+  - Added certificate authentticator 
+
 ## v1.5.1 (2024-05-18)
 - Updated TLS settings to allow binary certificates
 
