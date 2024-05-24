@@ -38,11 +38,10 @@ func (authenticator *CleartextPasswordAuthenticator) Authenticate(conn Conn) (bo
 		}
 	}
 	password, ok := conn.Password()
-	if !ok {
-		return false, ErrAuthrizationFailed
-	}
-	if password != authenticator.password {
-		return false, ErrAuthrizationFailed
+	if ok {
+		if password != authenticator.password {
+			return false, ErrAuthrizationFailed
+		}
 	}
 	return true, nil
 }
