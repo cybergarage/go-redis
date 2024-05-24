@@ -19,9 +19,14 @@ import (
 )
 
 func (server *Server) Auth(conn *Conn, username string, password string) (*Message, error) {
-	configPassword, required := server.ConfigRequirePass()
-	if required && password != configPassword {
-		return nil, errors.New("invalid password")
+	conn.SetUserName(username)
+	conn.SetPassword(password)
+	ok, err := server.Authenticate(conn)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, errors.New("invalid username or password")
 	}
 	conn.SetAuthrized(true)
 	return NewOKMessage(), nil
