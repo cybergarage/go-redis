@@ -31,7 +31,7 @@ func NewClearTextPasswordAuthenticatorWith(username string, password string) *Cl
 
 // Authenticate authenticates the specified connection.
 func (authenticator *ClearTextPasswordAuthenticator) Authenticate(conn Conn) (bool, error) {
-	user, ok := conn.User()
+	user, ok := conn.UserName()
 	if ok {
 		if user != authenticator.username {
 			return false, ErrAuthrizationFailed
