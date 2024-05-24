@@ -246,6 +246,16 @@ func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) erro
 
 	handlerConn := newConnWith(conn, tlsState)
 	handlerConn.SetAuthrized(!isPasswdRequired)
+	if tlsState != nil {
+		ok, err := server.Authenticate(handlerConn)
+		if err != nil {
+			log.Error(err)
+			return err
+		}
+		if !ok {
+			return errors.New("invalid client certificates")
+		}
+	}
 
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
