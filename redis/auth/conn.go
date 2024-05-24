@@ -23,8 +23,8 @@ import (
 type Conn interface {
 	net.Conn
 
-	// User returns the user name and true if the connection has the user name.
-	User() (string, bool)
+	// UserName returns the user name and true if the connection has the user name.
+	UserName() (string, bool)
 	// Password returns the password and true if the connection has the password.
 	Password() (string, bool)
 

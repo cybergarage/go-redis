@@ -32,6 +32,8 @@ type Conn struct {
 	ts time.Time
 	tracer.Context
 	tlsState *tls.ConnectionState
+	username string
+	password string
 }
 
 func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
@@ -64,6 +66,26 @@ func (conn *Conn) SetAuthrized(authrized bool) {
 // IsAuthrized returns true if the connection is authrized.
 func (conn *Conn) IsAuthrized() bool {
 	return conn.authrized
+}
+
+// SetUserName sets the user name to the connection.
+func (conn *Conn) SetUserName(username string) {
+	conn.username = username
+}
+
+// UserName returns the user name and true if the connection has the user name.
+func (conn *Conn) UserName() (string, bool) {
+	return conn.username, 0 < len(conn.username)
+}
+
+// SetPassword sets the password to the connection.
+func (conn *Conn) SetPassword(password string) {
+	conn.password = password
+}
+
+// Password returns the password and true if the connection has the password.
+func (conn *Conn) Password() (string, bool) {
+	return conn.password, 0 < len(conn.password)
 }
 
 // Timestamp returns the creation time of the connection.
