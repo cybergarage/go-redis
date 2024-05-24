@@ -90,7 +90,7 @@ func (server *Server) Start() error {
 	server.ClearAuthenticators()
 	password, requirePass := server.ConfigRequirePass()
 	if requirePass {
-		server.AddAuthenticator(auth.NewCleartextPasswordAuthenticatorWith("", password))
+		server.AddAuthenticator(auth.NewClearTextPasswordAuthenticatorWith("", password))
 	}
 
 	err := server.open()
