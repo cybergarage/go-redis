@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/cybergarage/go-tracing/tracer"
+	"github.com/google/uuid"
 )
 
 // Conn represents a database connection.
@@ -34,6 +35,7 @@ type Conn struct {
 	tlsState *tls.ConnectionState
 	username string
 	password string
+	uuid     uuid.UUID
 }
 
 func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
@@ -47,6 +49,7 @@ func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 		tlsState:  tlsState,
 		username:  "",
 		password:  "",
+		uuid:      uuid.New(),
 	}
 }
 
@@ -113,4 +116,14 @@ func (conn *Conn) IsTLSConnection() bool {
 // TLSConnectionState returns the TLS connection state.
 func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	return conn.tlsState, conn.tlsState != nil
+}
+
+// SetUUID sets the UUID to the connection.
+func (conn *Conn) SetUUID(uuid uuid.UUID) {
+	conn.uuid = uuid
+}
+
+// UUID returns the UUID of the connection.
+func (conn *Conn) UUID() uuid.UUID {
+	return conn.uuid
 }
