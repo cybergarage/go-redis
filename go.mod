@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
 )
