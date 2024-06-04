@@ -118,11 +118,6 @@ func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	return conn.tlsState, conn.tlsState != nil
 }
 
-// SetUUID sets the UUID to the connection.
-func (conn *Conn) SetUUID(uuid uuid.UUID) {
-	conn.uuid = uuid
-}
-
 // UUID returns the UUID of the connection.
 func (conn *Conn) UUID() uuid.UUID {
 	return conn.uuid
