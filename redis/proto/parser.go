@@ -87,7 +87,7 @@ func (parser *Parser) nextLengthBytes(num int) ([]byte, error) {
 		}
 		totalRead += read
 	}
-	if (rune)(buf[num]) != cr || (rune)(buf[num+1]) != lf {
+	if buf[num] != cr || buf[num+1] != lf {
 		return nil, fmt.Errorf(errorInvalidBulkStringDelim, buf[num:n])
 	}
 	return buf[0:num], nil
