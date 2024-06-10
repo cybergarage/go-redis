@@ -15,6 +15,7 @@
 package redis
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/google/uuid"
@@ -55,6 +56,23 @@ func (mgr *ConnManager) DeleteConnByUID(uuid uuid.UUID) {
 	mgr.mutex.Lock()
 	defer mgr.mutex.Unlock()
 	delete(mgr.m, uuid)
+}
+
+// Start starts the connection manager.
+func (mgr *ConnManager) Start() error {
+	return nil
+}
+
+// Stop closes all connections.
+func (mgr *ConnManager) Stop() error {
+	var errs error
+	for _, conn := range mgr.m {
+		err := conn.Close()
+		if err != nil {
+			errs = errors.Join(errs, err)
+		}
+	}
+	return errs
 }
 
 // Length returns the included connection count.
