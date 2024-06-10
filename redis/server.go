@@ -31,6 +31,7 @@ import (
 type Server struct {
 	*ServerConfig
 	*auth.AuthManager
+	*ConnManager
 	tracer.Tracer
 	Addr                 string
 	portListener         net.Listener
@@ -47,6 +48,7 @@ func NewServer() *Server {
 	server := &Server{
 		ServerConfig:         NewDefaultServerConfig(),
 		AuthManager:          auth.NewAuthManager(),
+		ConnManager:          NewConnManager(),
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
 		portListener:         nil,
@@ -94,7 +96,12 @@ func (server *Server) Start() error {
 		}
 	}
 
-	err := server.open()
+	err := server.ConnManager.Start()
+	if err != nil {
+		return err
+	}
+
+	err = server.open()
 	if err != nil {
 		return err
 	}
@@ -112,6 +119,10 @@ func (server *Server) Start() error {
 
 // Stop stops the server.
 func (server *Server) Stop() error {
+	if err := server.ConnManager.Stop(); err != nil {
+		return err
+	}
+
 	if err := server.close(); err != nil {
 		return err
 	}
