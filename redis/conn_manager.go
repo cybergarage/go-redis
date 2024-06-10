@@ -43,8 +43,8 @@ func (mgr *ConnManager) AddConn(c *Conn) {
 	mgr.m[uuid] = c
 }
 
-// UUID returns a connection and true when the specified connection exists by the connection ID, otherwise nil and false.
-func (mgr *ConnManager) GetConnByUUID(uuid uuid.UUID) (*Conn, bool) {
+// ConnByUUID returns the connection by the specified UUID.
+func (mgr *ConnManager) ConnByUUID(uuid uuid.UUID) (*Conn, bool) {
 	mgr.mutex.RLock()
 	defer mgr.mutex.RUnlock()
 	c, ok := mgr.m[uuid]
