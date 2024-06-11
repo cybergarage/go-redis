@@ -22,6 +22,7 @@ const (
 	errorInvalidMessageType      = "invalid message type (%c)"
 	errorInvalidMessage          = "invalid message (%s)"
 	errorInvalidBulkStringLength = "invalid bulk string length (%d != %d)"
+	errorInvalidBulkStringDelim  = "invalid bulk string ending delimiter %s"
 )
 
 // ErrEOM is the error returned by Array::Next() when no more message is available.

@@ -69,7 +69,31 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	return lenBytes, nil
 }
 
-// nextBulkMessage gets a next line bytes.
+// get next bulk message bytes of length num
+func (parser *Parser) nextLengthBytes(num int) ([]byte, error) {
+	n := num + 2 // + crlf
+	buf := make([]byte, n)
+	totalRead := 0
+	for totalRead < n {
+		read, err := parser.reader.Read(buf[totalRead:])
+		if err != nil {
+			if err == io.EOF {
+				if totalRead+read < n {
+					return nil, fmt.Errorf(errorInvalidBulkStringLength, totalRead+read, num)
+				}
+				break
+			}
+			return nil, err
+		}
+		totalRead += read
+	}
+	if buf[num] != cr || buf[num+1] != lf {
+		return nil, fmt.Errorf(errorInvalidBulkStringDelim, buf[num:n])
+	}
+	return buf[0:num], nil
+}
+
+// nextBulkMessage gets a next bulk string bytes.
 func (parser *Parser) nextBulkMessage() (*Message, error) {
 	numBytes, err := parser.nextLineBytes()
 	if err != nil {
@@ -88,12 +112,9 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 		return msg, nil
 	}
 
-	msg.bytes, err = parser.nextLineBytes()
+	msg.bytes, err = parser.nextLengthBytes(num)
 	if err != nil {
 		return nil, err
-	}
-	if len(msg.bytes) != num {
-		return msg, fmt.Errorf(errorInvalidBulkStringLength, len(msg.bytes), num)
 	}
 	return msg, nil
 }
