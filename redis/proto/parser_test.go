@@ -16,16 +16,21 @@ package proto
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 )
 
-func testParserSingleMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any) {
+func testParserSingleMessages(t *testing.T, msgString string, compare func(*Message, any) (any, bool), expected any, expectedError error) {
 	t.Helper()
 
 	parser := NewParserWithBytes([]byte(msgString))
 	msg, err := parser.Next()
 	if err != nil {
-		t.Errorf("%s %s", msgString, err)
+		if expectedError == nil {
+			t.Errorf("%s %s", msgString, err)
+		} else if err.Error() != expectedError.Error() {
+			t.Errorf("Unexpected error message: %s, expecting: %s, msg: %s", err, expectedError, msgString)
+		}
 		return
 	}
 
@@ -86,7 +91,7 @@ func TestParserStringMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected, nil)
 	}
 }
 
@@ -129,7 +134,7 @@ func TestParserErrorMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected, nil)
 	}
 }
 
@@ -168,27 +173,46 @@ func TestParserIntegerMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected, nil)
 	}
 }
 
 func TestParserBulkStringrMessages(t *testing.T) {
 	// RESP protocol spec examples.
 	respExamples := []struct {
-		message  string
-		expected []byte
+		message       string
+		expected      []byte
+		expectedError error
 	}{
 		{
-			message:  "$5\r\nhello\r\n",
-			expected: []byte("hello"),
+			message:       "$5\r\nhello\r\n",
+			expected:      []byte("hello"),
+			expectedError: nil,
 		},
 		{
-			message:  "$0\r\n\r\n",
-			expected: []byte(""),
+			message:       "$6\r\nbina\ry\r\n",
+			expected:      []byte("bina\ry"),
+			expectedError: nil,
 		},
 		{
-			message:  "$-1\r\n",
-			expected: nil,
+			message:       "$200\r\nlength err\r\n",
+			expected:      []byte("noway"),
+			expectedError: fmt.Errorf(errorInvalidBulkStringLength, 12, 200),
+		},
+		{
+			message:       "$15\r\ndelimiter errorXY",
+			expected:      []byte("noway"),
+			expectedError: fmt.Errorf(errorInvalidBulkStringDelim, "XY"),
+		},
+		{
+			message:       "$0\r\n\r\n",
+			expected:      []byte(""),
+			expectedError: nil,
+		},
+		{
+			message:       "$-1\r\n",
+			expected:      nil,
+			expectedError: nil,
 		},
 	}
 
@@ -211,7 +235,7 @@ func TestParserBulkStringrMessages(t *testing.T) {
 	}
 
 	for _, respExample := range respExamples {
-		testParserSingleMessages(t, respExample.message, compare, respExample.expected)
+		testParserSingleMessages(t, respExample.message, compare, respExample.expected, respExample.expectedError)
 	}
 }
 
