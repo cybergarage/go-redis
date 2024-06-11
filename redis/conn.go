@@ -27,6 +27,7 @@ import (
 // Conn represents a database connection.
 type Conn struct {
 	net.Conn
+	isClosed  bool
 	id        DatabaseID
 	authrized bool
 	sync.Map
@@ -41,6 +42,7 @@ type Conn struct {
 func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 	return &Conn{
 		Conn:      conn,
+		isClosed:  false,
 		authrized: false,
 		id:        0,
 		Map:       sync.Map{},
@@ -51,6 +53,15 @@ func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 		password:  "",
 		uuid:      uuid.New(),
 	}
+}
+
+// Close closes the connection.
+func (conn *Conn) Close() error {
+	if conn.isClosed {
+		return nil
+	}
+	conn.isClosed = true
+	return conn.Conn.Close()
 }
 
 // SetDatabase sets the selected database number to the connection.
