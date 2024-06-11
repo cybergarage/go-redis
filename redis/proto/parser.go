@@ -69,7 +69,7 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	return lenBytes, nil
 }
 
-// get next bulk message bytes of length num
+// get next bulk message bytes of length num.
 func (parser *Parser) nextLengthBytes(num int) ([]byte, error) {
 	n := num + 2 // + crlf
 	buf := make([]byte, n)
