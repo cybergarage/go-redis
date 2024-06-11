@@ -251,24 +251,28 @@ func (server *Server) tlsServe() error {
 
 // receive handles a client connection.
 func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) error {
-	defer conn.Close()
-
 	_, isPasswdRequired := server.ConfigRequirePass()
 
 	handlerConn := newConnWith(conn, tlsState)
 	handlerConn.SetAuthrized(!isPasswdRequired)
 	if tlsState != nil {
 		ok, err := server.Authenticate(handlerConn)
+		if !ok {
+			err = errors.New("invalid client certificates")
+		}
 		if err != nil {
 			log.Error(err)
-			return err
-		}
-		if !ok {
-			return errors.New("invalid client certificates")
+			return errors.Join(err, handlerConn.Close())
 		}
 	}
 
+	server.AddConn(handlerConn)
 	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
+
+	defer func() {
+		handlerConn.Close()
+		server.RemoveConn(handlerConn)
+	}()
 
 	parser := proto.NewParserWithReader(conn)
 
@@ -307,7 +311,6 @@ func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) erro
 		}
 		if errors.Is(reqErr, ErrQuit) {
 			span.Span().Finish()
-			conn.Close()
 			return nil
 		}
 		span.Span().Finish()
