@@ -43,6 +43,17 @@ func (mgr *ConnManager) AddConn(c *Conn) {
 	mgr.m[uuid] = c
 }
 
+// Conns returns the included connections.
+func (mgr *ConnManager) Conns() []*Conn {
+	mgr.mutex.RLock()
+	defer mgr.mutex.RUnlock()
+	conns := make([]*Conn, 0, len(mgr.m))
+	for _, conn := range mgr.m {
+		conns = append(conns, conn)
+	}
+	return conns
+}
+
 // ConnByUUID returns the connection by the specified UUID.
 func (mgr *ConnManager) ConnByUUID(uuid uuid.UUID) (*Conn, bool) {
 	mgr.mutex.RLock()
@@ -66,6 +77,8 @@ func (mgr *ConnManager) Start() error {
 // Stop closes all connections.
 func (mgr *ConnManager) Stop() error {
 	var errs error
+	mgr.mutex.RLock()
+	defer mgr.mutex.RUnlock()
 	for _, conn := range mgr.m {
 		err := conn.Close()
 		if err != nil {
