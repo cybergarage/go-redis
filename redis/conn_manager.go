@@ -54,7 +54,7 @@ func (mgr *ConnManager) Conns() []*Conn {
 	return conns
 }
 
-// ConnByUUID returns the connection by the specified UUID.
+// ConnByUUID returns the connection with the specified UUID.
 func (mgr *ConnManager) ConnByUUID(uuid uuid.UUID) (*Conn, bool) {
 	mgr.mutex.RLock()
 	defer mgr.mutex.RUnlock()
@@ -62,11 +62,12 @@ func (mgr *ConnManager) ConnByUUID(uuid uuid.UUID) (*Conn, bool) {
 	return c, ok
 }
 
-// DeleteConnByUID deletes the specified connection by the connection ID.
-func (mgr *ConnManager) DeleteConnByUID(uuid uuid.UUID) {
+// RemoveConn deletes the specified connection from the map.
+func (mgr *ConnManager) RemoveConn(conn *Conn) error {
 	mgr.mutex.Lock()
 	defer mgr.mutex.Unlock()
-	delete(mgr.m, uuid)
+	delete(mgr.m, conn.UUID())
+	return nil
 }
 
 // Start starts the connection manager.
@@ -74,23 +75,27 @@ func (mgr *ConnManager) Start() error {
 	return nil
 }
 
-// Stop closes all connections.
-func (mgr *ConnManager) Stop() error {
+// Close closes the connection manager.
+func (mgr *ConnManager) Close() error {
 	var errs error
-	mgr.mutex.RLock()
-	defer mgr.mutex.RUnlock()
-	for _, conn := range mgr.m {
+	conns := mgr.Conns()
+	for _, conn := range conns {
 		err := conn.Close()
-		if err != nil {
+		if err == nil {
+			if err := mgr.RemoveConn(conn); err != nil {
+				errs = errors.Join(errs, err)
+			}
+		} else {
 			errs = errors.Join(errs, err)
 		}
 	}
 	return errs
 }
 
-// Length returns the included connection count.
-func (mgr *ConnManager) Length() int {
-	mgr.mutex.RLock()
-	defer mgr.mutex.RUnlock()
-	return len(mgr.m)
+// Stop closes all connections.
+func (mgr *ConnManager) Stop() error {
+	if err := mgr.Close(); err != nil {
+		return err
+	}
+	return nil
 }
