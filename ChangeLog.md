@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.5.3 (2024-06-12)
+- Added ConnManager to hande connected client connections
+- Fixed decoding binary bulk strings containing \r (Thanks for @Peter-Sh)
 
 ## v1.5.2 (2024-05-25)
 - Added AuthManager
@@ -10,20 +13,18 @@
 - Updated TLS settings to allow binary certificates
 
 ## v1.5.0 (2024-05-17)
-- New features
-  - Supported TLS connection and setting options
+- Supported TLS connection and setting options
 
 ## v1.4.5 (2024-05-09)
-###  Supported
-- Thanks for @Peter-Sh
-- SET options and SETEX command
+### Supported
+- SET options and SETEX command (Thanks for @Peter-Sh)
 
 ## v1.4.4 (2024-03-20)
 - Fixed ling warnings
 
 ## v1.4.3 (2024-01-26)
 - Updated glob package to match more strictly
-###  Supported
+### Supported
 - SCAN
 
 ## v1.4.2 (2023-12-25)
@@ -53,26 +54,26 @@
 - Updated logger functions to output more detail messages
 
 ## v1.3.3 (2023-04-26)
-- Add Server::SetPort() and SetAddress()
+- Added Server::SetPort() and SetAddress()
 
 ## v1.3.2 (2023-04-23)
-- Add tracing interface
+- Added tracing interface
 
 ## v1.3.1 (2023-04-02)
-- Add connection logs
-- Add Dockerfile
+- Added connection logs
+- Added Dockerfile
 
 ## v1.3.0 (2023-03-28)
 - Updated executer methods to pass redis.Conn intead of redis.Context
-- Add sync.Map interface to redis.Conn to store user data
-- Add profiling option to go-redisd
+- Added sync.Map interface to redis.Conn to store user data
+- Added profiling option to go-redisd
 
 ## v1.2.1 (2023-02-24)
 - Upgrade to go 1.20
 - Updated public helper functions in redistest 
 
 ## v1.2.0 (2023-01-13)
-- Add a new interface for server management commands
+- Added a new interface for server management commands
 - Updated go-redisd using sync.Map for redis-benchmark
 - Tested go-redisd working only with GET/SET commands of redis-benchmark
 ###  Supported
