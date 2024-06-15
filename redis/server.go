@@ -254,6 +254,10 @@ func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) erro
 	_, isPasswdRequired := server.ConfigRequirePass()
 
 	handlerConn := newConnWith(conn, tlsState)
+	defer func() {
+		handlerConn.Close()
+	}()
+
 	handlerConn.SetAuthrized(!isPasswdRequired)
 	if tlsState != nil {
 		ok, err := server.Authenticate(handlerConn)
@@ -267,12 +271,11 @@ func (server *Server) receive(conn net.Conn, tlsState *tls.ConnectionState) erro
 	}
 
 	server.AddConn(handlerConn)
-	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
-
 	defer func() {
-		handlerConn.Close()
 		server.RemoveConn(handlerConn)
 	}()
+
+	log.Debugf("%s/%s (%s) accepted", PackageName, Version, conn.RemoteAddr().String())
 
 	parser := proto.NewParserWithReader(conn)
 
