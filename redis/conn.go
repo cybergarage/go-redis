@@ -60,8 +60,11 @@ func (conn *Conn) Close() error {
 	if conn.isClosed {
 		return nil
 	}
+	if err := conn.Conn.Close(); err != nil {
+		return err
+	}
 	conn.isClosed = true
-	return conn.Conn.Close()
+	return nil
 }
 
 // SetDatabase sets the selected database number to the connection.
