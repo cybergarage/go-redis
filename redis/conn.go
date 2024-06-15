@@ -112,7 +112,7 @@ func (conn *Conn) Timestamp() time.Time {
 	return conn.ts
 }
 
-// SetAuthrizedxt to the connection.
+// SetSpanContext sets the span context to the connection.
 func (conn *Conn) SetSpanContext(span tracer.Context) {
 	conn.Context = span
 }
