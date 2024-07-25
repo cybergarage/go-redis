@@ -16,6 +16,13 @@ import (
 type Server struct {
 	*redis.Server
 }
+
+fuc NewServer() *Server {
+	server: = &Server{
+		Server:    redis.NewServer(),
+	}
+	return server
+}
 ```
 
 ### STEP2: Implementing your user command handler
@@ -42,7 +49,7 @@ func (server *Server) Get(conn *redis.Conn, key string) (*redis.Message, error) 
 
 The Conn has the connection information such as the selected database identifier, and the all handler methods should return the appropriate RESP message response.
 
-### STEP4: Setting your user command handler
+### STEP3: Setting your user command handler
 
 Next, set your user command handler to your server using `Server::SetCommandHandler()` as the following:
 
@@ -56,7 +63,7 @@ func NewServer() *Server {
 }
 ```
 
-### STEP5: Starting server
+### STEP4: Starting server
 
 Finally, start your compatible server using `Server::Start()` as the following:
 
