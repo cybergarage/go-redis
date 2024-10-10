@@ -41,6 +41,7 @@ TEST_PKG_DIR=${TEST_PKG_NAME}
 TEST_PKG=${MODULE_ROOT}/${TEST_PKG_DIR}
 
 .PHONY: version format vet lint clean
+.IGNORE: lint
 
 all: test
 
@@ -51,8 +52,9 @@ doc: $(docs)
 
 version:
 	@pushd ${PKG_SRC_DIR} && ./version.gen > version.go && popd
+	@pushd ${PKG_SRC_DIR} && git commit version.go -m "Update version" || popd
 
-format: doc
+format: version doc
 	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
 
 vet: format
