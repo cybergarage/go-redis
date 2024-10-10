@@ -52,7 +52,7 @@ doc: $(docs)
 
 version:
 	@pushd ${PKG_SRC_DIR} && ./version.gen > version.go && popd
-	@pushd ${PKG_SRC_DIR} && git commit version.go -m "Update version" || popd
+	-git commit v${PKG_SRC_DIR}/version.go -m "Update version"
 
 format: version doc
 	gofmt -s -w ${PKG_SRC_DIR} ${BIN_DIR} ${TEST_PKG_DIR}
