@@ -22,8 +22,8 @@ import (
 type TLSConfig interface {
 	// SetTLSPort sets a listen port number for TLS.
 	SetTLSPort(port int)
-	// ConfigTLSPort returns a listen port number for TLS.
-	ConfigTLSPort() int
+	// TLSPort returns a listen port number for TLS.
+	TLSPort() int
 	// IsTLSPortEnabled returns true if a listen port for TLS is enabled.
 	IsTLSPortEnabled() bool
 

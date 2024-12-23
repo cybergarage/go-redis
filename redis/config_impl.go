@@ -77,8 +77,8 @@ func (cfg *serverConfig) SetTLSPort(port int) {
 	cfg.SetConfig(tlsPortConfig, strconv.Itoa(port))
 }
 
-// ConfigTLSPort returns a listen port number for TLS.
-func (cfg *serverConfig) ConfigTLSPort() int {
+// TLSPort returns a listen port number for TLS.
+func (cfg *serverConfig) TLSPort() int {
 	port, ok := cfg.ConfigInteger(tlsPortConfig)
 	if !ok {
 		return DefaultTLSPort

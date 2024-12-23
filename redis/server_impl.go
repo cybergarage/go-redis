@@ -137,7 +137,7 @@ func (server *server) Stop() error {
 	}
 
 	if server.IsTLSPortEnabled() {
-		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigTLSPort()))
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.TLSPort()))
 		log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
 	}
 
@@ -176,7 +176,7 @@ func (server *server) open() error {
 			}
 			server.tlsConfig = tlsConfig
 		}
-		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigTLSPort()))
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.TLSPort()))
 		server.tlsPortListener, err = net.Listen("tcp", addr)
 		if err != nil {
 			return err
