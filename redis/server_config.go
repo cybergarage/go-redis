@@ -31,7 +31,7 @@ const (
 
 // ServerConfig is a configuration for the Redis server.
 type ServerConfig struct {
-	*Config
+	*configMap
 	ServerCert []byte
 	ServerKey  []byte
 	CACerts    []byte
@@ -41,7 +41,7 @@ type ServerConfig struct {
 // NewDefaultServerConfig returns a default server configuration.
 func NewDefaultServerConfig() *ServerConfig {
 	return &ServerConfig{
-		Config:     newConfig(),
+		configMap:  newConfig(),
 		ServerCert: nil,
 		ServerKey:  nil,
 		CACerts:    nil,
