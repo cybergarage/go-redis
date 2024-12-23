@@ -99,9 +99,9 @@ func TestTLSServer(t *testing.T) {
 	server := NewServer()
 	server.SetPort(0)
 	server.SetTLSPort(redis.DefaultPort)
-	server.SetTLSKeyFile(serverKey)
-	server.SetTLSCertFile(serverCert)
-	server.SetTLSCaCertFile(rootCert)
+	server.SetServerKeyFile(serverKey)
+	server.SetServerCertFile(serverCert)
+	server.SetRootCertFiles(rootCert)
 
 	ca, err := auth.NewCertificateAuthenticator(auth.WithCertificateAuthenticatorCommonNameRegexp("localhost"))
 	if err != nil {
@@ -121,7 +121,7 @@ func TestTLSServer(t *testing.T) {
 	client := NewClient()
 	clientOpts := NewClientOptions()
 
-	tlsConfig, err := redis.NewTLSConfigFrom(server.Config())
+	tlsConfig, err := server.TLSConfig()
 	if err != nil {
 		t.Error(err)
 		return
