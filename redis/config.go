@@ -15,43 +15,19 @@
 package redis
 
 import (
-	"crypto/tls"
+	"github.com/cybergarage/go-authenticator/auth"
 )
 
-// o represents a server TLS configuration.
+// TLSConfig represents a server TLS configuration.
 type TLSConfig interface {
+	auth.CertConfig
+
 	// SetTLSPort sets a listen port number for TLS.
 	SetTLSPort(port int)
 	// TLSPort returns a listen port number for TLS.
 	TLSPort() int
 	// IsTLSPortEnabled returns true if a listen port for TLS is enabled.
 	IsTLSPortEnabled() bool
-
-	// SetTLSCertFile sets a certificate file.
-	SetTLSCertFile(certFile string) error
-	// ConfigTLSCertFile returns a certificate file.
-	ConfigTLSCertFile() (string, bool)
-	// ConfigTLSCert returns a certificate.
-	ConfigTLSCert() ([]byte, bool)
-
-	// SetTLSKeyFile sets a key file.
-	SetTLSKeyFile(keyFile string) error
-	// ConfigTLSKeyFile returns a key file.
-	ConfigTLSKeyFile() (string, bool)
-	// ConfigTLSKey returns a key.
-	ConfigTLSKey() ([]byte, bool)
-
-	// SetTLSCaCertFile sets a CA certificate file.
-	SetTLSCaCertFile(caCertFile string) error
-	// ConfigTLSCACertFile returns a CA certificate file.
-	ConfigTLSCACertFile() (string, bool)
-	// ConfigTLSCACert returns a CA certificate.
-	ConfigTLSCACert() ([]byte, bool)
-
-	// SetTLSConfig sets a TLS configuration.
-	SetTLSConfig(config *tls.Config)
-	// TLSConfig returns a TLS configuration.
-	TLSConfig() (*tls.Config, bool)
 }
 
 // Config represents a server configuration.

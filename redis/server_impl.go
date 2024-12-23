@@ -166,16 +166,11 @@ func (server *server) open() error {
 	}
 
 	if server.IsTLSPortEnabled() {
-		tlsConfig, ok := server.TLSConfig()
-		if ok {
-			server.tlsConfig = tlsConfig
-		} else {
-			tlsConfig, err := NewTLSConfigFrom(server.serverConfig)
-			if err != nil {
-				return err
-			}
-			server.tlsConfig = tlsConfig
+		tlsConfig, err := server.TLSConfig()
+		if err != nil {
+			return err
 		}
+		server.tlsConfig = tlsConfig
 		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.TLSPort()))
 		server.tlsPortListener, err = net.Listen("tcp", addr)
 		if err != nil {
