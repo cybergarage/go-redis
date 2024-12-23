@@ -28,7 +28,7 @@ import (
 )
 
 type server struct {
-	*ServerConfig
+	*serverConfig
 	*auth.AuthManager
 	*ConnManager
 	tracer.Tracer
@@ -45,7 +45,7 @@ type server struct {
 // NewServer returns a new server instance.
 func NewServer() Server {
 	server := &server{
-		ServerConfig:         NewDefaultServerConfig(),
+		serverConfig:         newDefaultServerConfig(),
 		AuthManager:          auth.NewAuthManager(),
 		ConnManager:          NewConnManager(),
 		Tracer:               tracer.NullTracer,
@@ -73,7 +73,7 @@ func (server *server) SetTracer(t tracer.Tracer) {
 
 // Config returns the server configuration.
 func (server *server) Config() Config {
-	return server.ServerConfig
+	return server.serverConfig
 }
 
 // SetAuthCommandHandler sets a auth handler to handle auth commands.
@@ -170,7 +170,7 @@ func (server *server) open() error {
 		if ok {
 			server.tlsConfig = tlsConfig
 		} else {
-			tlsConfig, err := NewTLSConfigFrom(server.ServerConfig)
+			tlsConfig, err := NewTLSConfigFrom(server.serverConfig)
 			if err != nil {
 				return err
 			}
