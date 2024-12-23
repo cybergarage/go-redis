@@ -20,7 +20,7 @@ import (
 
 // Server represents an example server.
 type Server struct {
-	*redis.Server
+	redis.Server
 	*Databases
 }
 

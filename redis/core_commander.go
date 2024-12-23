@@ -24,7 +24,7 @@ import (
 )
 
 // nolint: gocyclo, maintidx
-func (server *Server) registerCoreExecutors() {
+func (server *server) registerCoreExecutors() {
 	// Connection management commands.
 
 	server.RegisterExexutor("AUTH", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
