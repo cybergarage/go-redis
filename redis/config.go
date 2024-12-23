@@ -36,8 +36,8 @@ type Config interface {
 
 	// SetPort sets a listen port number.
 	SetPort(port int)
-	// ConfigPort returns a listen port number.
-	ConfigPort() int
+	// Port returns a listen port number.
+	Port() int
 	// IsPortEnabled returns true if a listen port is enabled.
 	IsPortEnabled() bool
 
