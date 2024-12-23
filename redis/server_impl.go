@@ -166,7 +166,7 @@ func (server *server) open() error {
 	}
 
 	if server.IsTLSPortEnabled() {
-		tlsConfig, ok := server.ConfigTLSConfig()
+		tlsConfig, ok := server.TLSConfig()
 		if ok {
 			server.tlsConfig = tlsConfig
 		} else {

@@ -50,8 +50,8 @@ type TLSConfig interface {
 
 	// SetTLSConfig sets a TLS configuration.
 	SetTLSConfig(config *tls.Config)
-	// ConfigTLSConfig returns a TLS configuration.
-	ConfigTLSConfig() (*tls.Config, bool)
+	// TLSConfig returns a TLS configuration.
+	TLSConfig() (*tls.Config, bool)
 }
 
 // Config represents a server configuration.
