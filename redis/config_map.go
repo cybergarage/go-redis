@@ -23,25 +23,25 @@ const (
 	ConfigSep = " "
 )
 
-// Config represents a server configuration.
-type Config struct {
+// configMap represents a server configuration.
+type configMap struct {
 	params map[string]string
 }
 
 // newConfig returns a new configuration.
-func newConfig() *Config {
-	return &Config{
+func newConfig() *configMap {
+	return &configMap{
 		params: map[string]string{},
 	}
 }
 
 // SetConfig sets a specified parameter.
-func (cfg *Config) SetConfig(key string, params string) {
+func (cfg *configMap) SetConfig(key string, params string) {
 	cfg.params[key] = params
 }
 
 // AppendConfig appends a specified parameter.
-func (cfg *Config) AppendConfig(key string, params string) {
+func (cfg *configMap) AppendConfig(key string, params string) {
 	currParams, ok := cfg.params[key]
 	if !ok {
 		cfg.params[key] = params
@@ -51,13 +51,13 @@ func (cfg *Config) AppendConfig(key string, params string) {
 }
 
 // ConfigString return the specified parameter.
-func (cfg *Config) ConfigString(key string) (string, bool) {
+func (cfg *configMap) ConfigString(key string) (string, bool) {
 	params, ok := cfg.params[key]
 	return params, ok
 }
 
 // ConfigInteger returns the specified parameter as an integer.
-func (cfg *Config) ConfigInteger(key string) (int, bool) {
+func (cfg *configMap) ConfigInteger(key string) (int, bool) {
 	params, ok := cfg.params[key]
 	if !ok {
 		return 0, false
@@ -70,6 +70,6 @@ func (cfg *Config) ConfigInteger(key string) (int, bool) {
 }
 
 // RemoveConfig removes the specified parameter.
-func (cfg *Config) RemoveConfig(key string) {
+func (cfg *configMap) RemoveConfig(key string) {
 	delete(cfg.params, key)
 }
