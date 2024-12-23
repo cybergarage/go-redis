@@ -71,6 +71,11 @@ func (server *server) SetTracer(t tracer.Tracer) {
 	server.Tracer = t
 }
 
+// Config returns the server configuration.
+func (server *server) Config() Config {
+	return server.ServerConfig
+}
+
 // SetAuthCommandHandler sets a auth handler to handle auth commands.
 func (server *server) SetAuthCommandHandler(handler AuthCommandHandler) {
 	server.authCommandHandler = handler
