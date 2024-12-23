@@ -18,7 +18,7 @@ import (
 	"errors"
 )
 
-func (server *Server) Auth(conn *Conn, username string, password string) (*Message, error) {
+func (server *server) Auth(conn *Conn, username string, password string) (*Message, error) {
 	conn.SetUserName(username)
 	conn.SetPassword(password)
 	ok, err := server.Authenticate(conn)

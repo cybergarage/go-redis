@@ -19,7 +19,7 @@ import (
 )
 
 // nolint: gocyclo, maintidx, nilerr
-func (server *Server) registerSugarExecutors() {
+func (server *server) registerSugarExecutors() {
 	// common internal sugar functions
 
 	incdecExecutor := func(conn *Conn, cmd string, key string, val int) (*Message, error) {

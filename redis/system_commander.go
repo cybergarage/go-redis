@@ -14,34 +14,34 @@
 
 package redis
 
-func (server *Server) Ping(conn *Conn, arg string) (*Message, error) {
+func (server *server) Ping(conn *Conn, arg string) (*Message, error) {
 	if len(arg) == 0 {
 		return NewStringMessage("PONG"), nil
 	}
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Echo(conn *Conn, arg string) (*Message, error) {
+func (server *server) Echo(conn *Conn, arg string) (*Message, error) {
 	return NewBulkMessage(arg), nil
 }
 
-func (server *Server) Select(conn *Conn, index int) (*Message, error) {
+func (server *server) Select(conn *Conn, index int) (*Message, error) {
 	conn.id = index
 	return NewOKMessage(), nil
 }
 
-func (server *Server) Quit(conn *Conn) (*Message, error) {
+func (server *server) Quit(conn *Conn) (*Message, error) {
 	return NewOKMessage(), ErrQuit
 }
 
-func (server *Server) ConfigSet(conn *Conn, params map[string]string) (*Message, error) {
+func (server *server) ConfigSet(conn *Conn, params map[string]string) (*Message, error) {
 	for key, param := range params {
 		server.SetConfig(key, param)
 	}
 	return NewOKMessage(), nil
 }
 
-func (server *Server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
+func (server *server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
 	msg := NewArrayMessage()
 	for _, key := range keys {
 		msg.Append(NewBulkMessage(key))

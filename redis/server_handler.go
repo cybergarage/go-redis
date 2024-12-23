@@ -25,7 +25,7 @@ type Executor func(*Conn, string, Arguments) (*Message, error)
 type Executors map[string]Executor
 
 // executeCommand handles a client command message.
-func (server *Server) executeCommand(conn *Conn, cmd string, args Arguments) (*Message, error) {
+func (server *server) executeCommand(conn *Conn, cmd string, args Arguments) (*Message, error) {
 	if server.userCommandHandler == nil {
 		return NewErrorNotSupportedMessage(cmd), nil
 	}
