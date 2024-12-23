@@ -132,7 +132,7 @@ func (server *server) Stop() error {
 	}
 
 	if server.IsPortEnabled() {
-		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port()))
 		log.Infof("%s/%s (%s) terminated", PackageName, Version, addr)
 	}
 
@@ -157,7 +157,7 @@ func (server *server) open() error {
 	var err error
 
 	if server.IsPortEnabled() {
-		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.ConfigPort()))
+		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port()))
 		server.portListener, err = net.Listen("tcp", addr)
 		if err != nil {
 			return err
