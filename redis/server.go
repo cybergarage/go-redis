@@ -15,62 +15,15 @@
 package redis
 
 import (
-	"crypto/tls"
-
 	"github.com/cybergarage/go-authenticator/auth"
 )
 
-type ServerConf interface {
-	// SetPort sets a listen port number.
-	SetPort(port int)
-	// ConfigPort returns a listen port number.
-	ConfigPort() int
-	// IsPortEnabled returns true if a listen port is enabled.
-	IsPortEnabled() bool
-	// SetTLSPort sets a listen port number for TLS.
-	SetTLSPort(port int)
-	// ConfigTLSPort returns a listen port number for TLS.
-	ConfigTLSPort() int
-	// IsTLSPortEnabled returns true if a listen port for TLS is enabled.
-	IsTLSPortEnabled() bool
-
-	// SetTLSCertFile sets a certificate file.
-	SetTLSCertFile(certFile string) error
-	// ConfigTLSCertFile returns a certificate file.
-	// ConfigTLSCert returns a certificate.
-	// SetTLSKeyFile sets a key file.
-	SetTLSKeyFile(keyFile string) error
-
-	// ConfigTLSKeyFile returns a key file.
-	ConfigTLSKeyFile() (string, bool)
-
-	// ConfigTLSKey returns a key.
-	ConfigTLSKey() ([]byte, bool)
-
-	// SetTLSCaCertFile sets a CA certificate file.
-	SetTLSCaCertFile(caCertFile string) error
-	// ConfigTLSCACertFile returns a CA certificate file.
-	ConfigTLSCACertFile() (string, bool)
-	// ConfigTLSCACert returns a CA certificate.
-	ConfigTLSCACert() ([]byte, bool)
-	// SetTLSConfig sets a TLS configuration.
-	SetTLSConfig(config *tls.Config)
-	// ConfigTLSConfig returns a TLS configuration.
-	ConfigTLSConfig() (*tls.Config, bool)
-
-	// SetRequirePass sets a password.
-	SetRequirePass(password string)
-
-	// ConfigRequirePass returns a password.
-	ConfigRequirePass() (string, bool)
-
-	// RemoveRequirePass removes a password.
-	RemoveRequirePass()
-}
-
 type Server interface {
 	auth.Manager
-	ServerConf
+	Config
+
+	// Config returns the server configuration.
+	Config() Config
 
 	// SetAuthCommandHandler sets a auth handler to handle auth commands.
 	SetAuthCommandHandler(handler AuthCommandHandler)

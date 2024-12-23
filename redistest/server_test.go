@@ -121,17 +121,12 @@ func TestTLSServer(t *testing.T) {
 	client := NewClient()
 	clientOpts := NewClientOptions()
 
-	serverTLSConfig, ok := server.ConfigTLSConfig()
-	if !ok {
-		t.Error("TLSConfig is not set")
+	tlsConfig, err := redis.NewTLSConfigFrom(server.Config())
+	if err != nil {
+		t.Error(err)
 		return
 	}
-	// tlsConfig, err := redis.NewTLSConfigFrom(serverTLSConfig)
-	// if err != nil {
-	// 	t.Error(err)
-	// 	return
-	// }
-	clientOpts.TLSConfig = serverTLSConfig
+	clientOpts.TLSConfig = tlsConfig
 
 	err = client.OpenWith(LocalHost, redis.DefaultPort, &clientOpts)
 	if err != nil {

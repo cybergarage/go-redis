@@ -21,7 +21,7 @@ import (
 )
 
 // NewTLSConfigFrom returns a new TLS configuration from the specified server configuration.
-func NewTLSConfigFrom(config *ServerConfig) (*tls.Config, error) {
+func NewTLSConfigFrom(config Config) (*tls.Config, error) {
 	tlsConfig, ok := config.ConfigTLSConfig()
 	if ok {
 		return tlsConfig, nil
