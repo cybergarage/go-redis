@@ -35,7 +35,7 @@ type serverConfig struct {
 	ServerCert []byte
 	ServerKey  []byte
 	CACerts    []byte
-	TLSConfig  *tls.Config
+	tlsConfig  *tls.Config
 }
 
 // newDefaultServerConfig returns a default server configuration.
@@ -45,7 +45,7 @@ func newDefaultServerConfig() *serverConfig {
 		ServerCert: nil,
 		ServerKey:  nil,
 		CACerts:    nil,
-		TLSConfig:  nil,
+		tlsConfig:  nil,
 	}
 }
 
@@ -169,15 +169,15 @@ func (cfg *serverConfig) ConfigTLSCACert() ([]byte, bool) {
 
 // SetTLSConfig sets a TLS configuration.
 func (cfg *serverConfig) SetTLSConfig(tlsConfig *tls.Config) {
-	cfg.TLSConfig = tlsConfig
+	cfg.tlsConfig = tlsConfig
 }
 
-// ConfigTLSConfig returns a TLS configuration.
-func (cfg *serverConfig) ConfigTLSConfig() (*tls.Config, bool) {
-	if cfg.TLSConfig == nil {
+// TLSConfig returns a TLS configuration.
+func (cfg *serverConfig) TLSConfig() (*tls.Config, bool) {
+	if cfg.tlsConfig == nil {
 		return nil, false
 	}
-	return cfg.TLSConfig, true
+	return cfg.tlsConfig, true
 }
 
 // SetRequirePass sets a password.

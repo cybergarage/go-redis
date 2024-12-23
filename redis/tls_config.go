@@ -22,7 +22,7 @@ import (
 
 // NewTLSConfigFrom returns a new TLS configuration from the specified server configuration.
 func NewTLSConfigFrom(config Config) (*tls.Config, error) {
-	tlsConfig, ok := config.ConfigTLSConfig()
+	tlsConfig, ok := config.TLSConfig()
 	if ok {
 		return tlsConfig, nil
 	}
