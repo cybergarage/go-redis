@@ -103,7 +103,9 @@ func TestTLSServer(t *testing.T) {
 	server.SetServerCertFile(serverCert)
 	server.SetRootCertFiles(rootCert)
 
-	ca, err := auth.NewCertificateAuthenticator(auth.WithCertificateAuthenticatorCommonNameRegexp("localhost"))
+	ca, err := auth.NewCertificateAuthenticator(
+		auth.WithCommonNameRegexp("localhost"),
+	)
 	if err != nil {
 		t.Error(err)
 		return
