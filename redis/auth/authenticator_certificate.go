@@ -25,8 +25,8 @@ type CertificateAuthenticator = auth.CertificateAuthenticator
 type CertificateAuthenticatorOption = auth.CertificateAuthenticatorOption
 
 // WithCertificateAuthenticatorCommonName sets the common name.
-func WithCertificateAuthenticatorCommonNameRegexp(regexps ...string) CertificateAuthenticatorOption {
-	return auth.WithCertificateAuthenticatorCommonNameRegexp(regexps...)
+func WithCommonNameRegexp(regexps ...string) CertificateAuthenticatorOption {
+	return auth.WithCommonNameRegexp(regexps...)
 }
 
 // NewCertificateAuthenticator returns a new certificate authenticator.
