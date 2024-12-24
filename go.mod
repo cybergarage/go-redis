@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/cybergarage/go-authenticator v0.0.1-0.20241224025002-f6a0c2421f60 // indirect
+	github.com/cybergarage/go-authenticator v0.0.1-0.20241224141332-dc8e31e1ef43 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect
