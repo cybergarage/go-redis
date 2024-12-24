@@ -17,7 +17,7 @@ package redis
 import (
 	"strconv"
 
-	"github.com/cybergarage/go-authenticator/auth"
+	"github.com/cybergarage/go-authenticator/auth/tls"
 )
 
 const (
@@ -32,14 +32,14 @@ const (
 // serverConfig is a configuration for the Redis server.
 type serverConfig struct {
 	*configMap
-	auth.CertConfig
+	tls.CertConfig
 }
 
 // newDefaultServerConfig returns a default server configuration.
 func newDefaultServerConfig() *serverConfig {
 	return &serverConfig{
 		configMap:  newConfig(),
-		CertConfig: auth.NewCertConfig()}
+		CertConfig: tls.NewCertConfig()}
 }
 
 // SetPort sets a listen port number.
