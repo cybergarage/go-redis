@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.5.4 (2024-12-xx)
+- Supported certificate authentication for TLS connection
+
 ## v1.5.3 (2024-06-12)
 - Added ConnManager to hande connected client connections
 - Fixed decoding binary bulk strings containing \r (Thanks for @Peter-Sh)
