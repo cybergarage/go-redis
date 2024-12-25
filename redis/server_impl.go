@@ -40,6 +40,7 @@ type server struct {
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   UserCommandHandler
 	commandExecutors     Executors
+	credStore            map[string]auth.Credential
 }
 
 // NewServer returns a new server instance.
@@ -57,12 +58,16 @@ func NewServer() Server {
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
+		credStore:            make(map[string]auth.Credential),
 	}
+
 	server.SetPort(DefaultPort)
 	server.registerCoreExecutors()
 	server.registerSugarExecutors()
 	server.systemCommandHandler = server
 	server.authCommandHandler = server
+	server.SetCredentialStore(server)
+
 	return server
 }
 
