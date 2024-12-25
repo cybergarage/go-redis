@@ -16,6 +16,8 @@ package redis
 
 import (
 	"errors"
+
+	"github.com/cybergarage/go-redis/redis/auth"
 )
 
 func (server *server) Auth(conn *Conn, username string, password string) (*Message, error) {
@@ -30,4 +32,16 @@ func (server *server) Auth(conn *Conn, username string, password string) (*Messa
 	}
 	conn.SetAuthrized(true)
 	return NewOKMessage(), nil
+}
+
+// SetCredential sets a credential.
+func (server *server) SetCredential(cred auth.Credential) {
+	server.credStore[cred.Username()] = cred
+}
+
+// LookupCredential looks up a credential.
+func (server *server) LookupCredential(q auth.Query) (auth.Credential, bool, error) {
+	user := q.Username()
+	cred, ok := server.credStore[user]
+	return cred, ok, nil
 }
