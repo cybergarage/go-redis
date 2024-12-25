@@ -31,7 +31,14 @@ func NewServer() *Server {
 		Server:  server.NewServer(),
 		credMap: make(map[string]auth.Credential),
 	}
+	server.SetCredentialStore(server)
+
 	return server
+}
+
+// SetCredential sets a credential.
+func (server *Server) SetCredential(cred auth.Credential) {
+	server.credMap[cred.Username()] = cred
 }
 
 // LookupCredential looks up a credential.
