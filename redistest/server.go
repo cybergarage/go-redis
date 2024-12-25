@@ -16,34 +16,18 @@ package redistest
 
 import (
 	"github.com/cybergarage/go-redis/examples/go-redisd/server"
-	"github.com/cybergarage/go-redis/redis/auth"
 )
 
 // Server represents an example server.
 type Server struct {
 	*server.Server
-	credMap map[string]auth.Credential
 }
 
 // NewServer returns an example server instance.
 func NewServer() *Server {
 	server := &Server{
-		Server:  server.NewServer(),
-		credMap: make(map[string]auth.Credential),
+		Server: server.NewServer(),
 	}
-	server.SetCredentialStore(server)
 
 	return server
-}
-
-// SetCredential sets a credential.
-func (server *Server) SetCredential(cred auth.Credential) {
-	server.credMap[cred.Username()] = cred
-}
-
-// LookupCredential looks up a credential.
-func (server *Server) LookupCredential(q auth.Query) (auth.Credential, bool, error) {
-	user := q.Username()
-	cred, ok := server.credMap[user]
-	return cred, ok, nil
 }
