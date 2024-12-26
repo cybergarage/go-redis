@@ -18,55 +18,15 @@ import (
 	"github.com/cybergarage/go-authenticator/auth"
 )
 
-// AuthManager represent an authenticator manager.
-type AuthManager struct {
+// Manader represent an authenticator manager.
+type Manader struct {
 	auth.Manager
-	authenticators []Authenticator
 }
 
-// NewAuthManager returns a new authenticator manager.
-func NewAuthManager() *AuthManager {
-	manager := &AuthManager{
-		Manager:        auth.NewManager(),
-		authenticators: make([]Authenticator, 0),
+// NewManader returns a new authenticator manager.
+func NewManader() *Manader {
+	manager := &Manader{
+		Manager: auth.NewManager(),
 	}
 	return manager
-}
-
-// AddAuthenticator adds a new authenticator.
-func (mgr *AuthManager) AddAuthenticator(authenticator Authenticator) {
-	mgr.authenticators = append(mgr.authenticators, authenticator)
-}
-
-// ClearAuthenticators clears all authenticators.
-func (mgr *AuthManager) ClearAuthenticators() {
-	mgr.authenticators = make([]Authenticator, 0)
-}
-
-// Authenticate authenticates the connection with the startup message.
-func (mgr *AuthManager) Authenticate(conn Conn) (bool, error) {
-	if len(mgr.authenticators) == 0 {
-		return true, nil
-	}
-	for _, authenticator := range mgr.authenticators {
-		ok, err := authenticator.Authenticate(conn)
-		if !ok {
-			return false, err
-		}
-	}
-	return true, nil
-}
-
-// HasClearTextPasswordAuthenticator returns true if the manager has the clear text password authenticator.
-func (mgr *AuthManager) HasClearTextPasswordAuthenticator(username string, password string) bool {
-	for _, authenticator := range mgr.authenticators {
-		clearTextAuthenticator, ok := authenticator.(*ClearTextPasswordAuthenticator)
-		if !ok {
-			continue
-		}
-		if clearTextAuthenticator.username == username && clearTextAuthenticator.password == password {
-			return true
-		}
-	}
-	return false
 }
