@@ -29,7 +29,7 @@ import (
 
 type server struct {
 	*serverConfig
-	*auth.AuthManager
+	*auth.Manader
 	*ConnManager
 	tracer.Tracer
 	Addr                 string
@@ -47,7 +47,7 @@ type server struct {
 func NewServer() Server {
 	server := &server{
 		serverConfig:         newDefaultServerConfig(),
-		AuthManager:          auth.NewAuthManager(),
+		Manader:              auth.NewManader(),
 		ConnManager:          NewConnManager(),
 		Tracer:               tracer.NullTracer,
 		Addr:                 "",
@@ -100,9 +100,10 @@ func (server *server) RegisterExexutor(cmd string, executor Executor) {
 func (server *server) Start() error {
 	password, requirePass := server.ConfigRequirePass()
 	if requirePass {
-		if !server.HasClearTextPasswordAuthenticator("", password) {
-			server.AddAuthenticator(auth.NewClearTextPasswordAuthenticatorWith("", password))
-		}
+		cred := auth.NewCredential(
+			auth.WithCredentialPassword(password),
+		)
+		server.SetCredential(cred)
 	}
 
 	err := server.ConnManager.Start()
@@ -251,26 +252,24 @@ func (server *server) tlsServe() error {
 			return err
 		}
 
-		tlsState := tlsConn.ConnectionState()
-
-		go server.receive(tlsConn, &tlsState)
+		go server.receive(tlsConn, tlsConn)
 	}
 
 	return nil
 }
 
 // receive handles a client connection.
-func (server *server) receive(conn net.Conn, tlsState *tls.ConnectionState) error {
+func (server *server) receive(conn net.Conn, tlsConn *tls.Conn) error {
 	_, isPasswdRequired := server.ConfigRequirePass()
 
-	handlerConn := newConnWith(conn, tlsState)
+	handlerConn := newConnWith(conn, tlsConn)
 	defer func() {
 		handlerConn.Close()
 	}()
 
 	handlerConn.SetAuthrized(!isPasswdRequired)
-	if tlsState != nil {
-		ok, err := server.Authenticate(handlerConn)
+	if tlsConn != nil {
+		ok, err := server.VerifyCertificate(tlsConn)
 		if !ok {
 			err = errors.New("invalid client certificates")
 		}

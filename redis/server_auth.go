@@ -21,15 +21,22 @@ import (
 )
 
 func (server *server) Auth(conn *Conn, username string, password string) (*Message, error) {
-	conn.SetUserName(username)
-	conn.SetPassword(password)
-	ok, err := server.Authenticate(conn)
+	q := auth.NewQuery(
+		auth.WithQueryUsername(username),
+		auth.WithQueryPassword(password),
+	)
+
+	ok, err := server.VerifyCredential(conn, q)
+
 	if err != nil {
 		return nil, err
 	}
 	if !ok {
 		return nil, errors.New("invalid username or password")
 	}
+
+	conn.SetUserName(username)
+	conn.SetPassword(password)
 	conn.SetAuthrized(true)
 	return NewOKMessage(), nil
 }

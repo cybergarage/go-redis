@@ -33,13 +33,13 @@ type Conn struct {
 	sync.Map
 	ts time.Time
 	tracer.Context
-	tlsState *tls.ConnectionState
+	tlsConn  *tls.Conn
 	username string
 	password string
 	uuid     uuid.UUID
 }
 
-func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
+func newConnWith(conn net.Conn, tlsConn *tls.Conn) *Conn {
 	return &Conn{
 		Conn:      conn,
 		isClosed:  false,
@@ -48,7 +48,7 @@ func newConnWith(conn net.Conn, tlsState *tls.ConnectionState) *Conn {
 		Map:       sync.Map{},
 		ts:        time.Now(),
 		Context:   nil,
-		tlsState:  tlsState,
+		tlsConn:   tlsConn,
 		username:  "",
 		password:  "",
 		uuid:      uuid.New(),
@@ -124,12 +124,16 @@ func (conn *Conn) SpanContext() tracer.Context {
 
 // IsTLSConnection return true if the connection is enabled TLS.
 func (conn *Conn) IsTLSConnection() bool {
-	return conn.tlsState != nil
+	return conn.tlsConn != nil
 }
 
 // TLSConnectionState returns the TLS connection state.
 func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
-	return conn.tlsState, conn.tlsState != nil
+	if conn.tlsConn == nil {
+		return nil, false
+	}
+	tlsState := conn.tlsConn.ConnectionState()
+	return &tlsState, true
 }
 
 // UUID returns the UUID of the connection.
