@@ -1,14 +1,16 @@
 # Changelog
 
-## v1.5.4 (2024-12-xx)
-- Supported certificate authentication for TLS connection
+## v1.5.4 (2024-12-28)
+- Updated authenticator interface
+  - Updated password authenticator 
+  - Updated certificate authentticator 
 
 ## v1.5.3 (2024-06-12)
 - Added ConnManager to hande connected client connections
 - Fixed decoding binary bulk strings containing \r (Thanks for @Peter-Sh)
 
 ## v1.5.2 (2024-05-25)
-- Added AuthManager
+- Added authenticator interface
   - Added password authenticator 
   - Added certificate authentticator 
 
