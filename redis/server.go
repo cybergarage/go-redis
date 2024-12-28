@@ -16,11 +16,13 @@ package redis
 
 import (
 	"github.com/cybergarage/go-authenticator/auth"
+	"github.com/cybergarage/go-tracing/tracer"
 )
 
 type Server interface {
 	auth.Manager
 	Config
+	tracer.Tracer
 
 	// Config returns the server configuration.
 	Config() Config
