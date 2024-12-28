@@ -22,6 +22,8 @@ import (
 type Server interface {
 	auth.Manager
 	Config
+
+	// SetTracer sets a tracer.
 	SetTracer(tracer.Tracer)
 
 	// Config returns the server configuration.
