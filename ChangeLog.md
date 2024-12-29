@@ -1,7 +1,7 @@
 # Changelog
 
 ## v1.5.5 (2024-12-30)
-- Removed deprecated authenticator interface
+- Removed deprecated authenticator interfaces
 - Update go-authenticator package
 
 ## v1.5.4 (2024-12-28)
