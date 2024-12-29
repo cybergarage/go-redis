@@ -29,8 +29,6 @@ type Server interface {
 	// Config returns the server configuration.
 	Config() Config
 
-	// SetAuthCommandHandler sets a auth handler to handle auth commands.
-	SetAuthCommandHandler(handler AuthCommandHandler)
 	// SetCommandHandler sets a user handler to handle user commands.
 	SetCommandHandler(handler UserCommandHandler)
 	// RegisterExexutor sets a command executor.

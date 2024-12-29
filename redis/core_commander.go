@@ -43,11 +43,7 @@ func (server *server) registerCoreExecutors() {
 			passwd = token
 		}
 
-		if server.authCommandHandler == nil {
-			return NewErrorNotSupportedMessage("AUTH"), nil
-		}
-
-		return server.authCommandHandler.Auth(conn, user, passwd)
+		return server.Auth(conn, user, passwd)
 	})
 
 	server.RegisterExexutor("PING", func(conn *Conn, cmd string, args Arguments) (*Message, error) {

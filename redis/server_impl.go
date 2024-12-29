@@ -36,7 +36,6 @@ type server struct {
 	portListener         net.Listener
 	tlsPortListener      net.Listener
 	tlsConfig            *tls.Config
-	authCommandHandler   AuthCommandHandler
 	systemCommandHandler SystemCommandHandler
 	userCommandHandler   UserCommandHandler
 	commandExecutors     Executors
@@ -54,7 +53,6 @@ func NewServer() Server {
 		portListener:         nil,
 		tlsPortListener:      nil,
 		tlsConfig:            nil,
-		authCommandHandler:   nil,
 		systemCommandHandler: nil,
 		userCommandHandler:   nil,
 		commandExecutors:     Executors{},
@@ -65,7 +63,6 @@ func NewServer() Server {
 	server.registerCoreExecutors()
 	server.registerSugarExecutors()
 	server.systemCommandHandler = server
-	server.authCommandHandler = server
 	server.SetCredentialStore(server)
 
 	return server
@@ -79,11 +76,6 @@ func (server *server) SetTracer(t tracer.Tracer) {
 // Config returns the server configuration.
 func (server *server) Config() Config {
 	return server.serverConfig
-}
-
-// SetAuthCommandHandler sets a auth handler to handle auth commands.
-func (server *server) SetAuthCommandHandler(handler AuthCommandHandler) {
-	server.authCommandHandler = handler
 }
 
 // SetCommandHandler sets a user handler to handle user commands.
