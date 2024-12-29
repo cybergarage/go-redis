@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.5 (2024-12-30)
+- Removed deprecated authenticator interface
+- Update go-authenticator package
+
 ## v1.5.4 (2024-12-28)
 - Updated authenticator interface
   - Updated password authenticator 
