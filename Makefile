@@ -30,7 +30,6 @@ PKG=${MODULE_ROOT}/${PKG_SRC_DIR}
 BIN_DIR=examples
 BIN_ID=${MODULE_ROOT}/${BIN_DIR}
 BIN_SERVER=go-redisd
-BIN_SERVER_DOCKER_TAG=cybergarage/${BIN_SERVER}:${PKG_VER}
 BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
 BINS=\
 	${BIN_SERVER_ID}
@@ -39,6 +38,9 @@ TEST_PKG_NAME=${PKG_NAME}test
 TEST_PKG_ID=${MODULE_ROOT}/${TEST_PKG_NAME}
 TEST_PKG_DIR=${TEST_PKG_NAME}
 TEST_PKG=${MODULE_ROOT}/${TEST_PKG_DIR}
+
+BIN_SERVER_DOCKER_TAG=cybergarage/${BIN_SERVER}:${PKG_VER}
+BIN_SERVER_DOCKER_TAG_LATEST=cybergarage/${BIN_SERVER}:latest
 
 .PHONY: version format vet lint clean
 .IGNORE: lint
@@ -76,8 +78,13 @@ install: test
 run: install
 	$(GOBIN)/${BIN_SERVER}
 
-image: test
-	docker image build -t ${BIN_SERVER_DOCKER_TAG} .
+image:
+	docker image build -t${BIN_SERVER_DOCKER_TAG_LATEST} .
+	docker push ${BIN_SERVER_DOCKER_TAG_LATEST}
+
+image-push: image
+	docker image build -t${BIN_SERVER_DOCKER_TAG}
+	docker push ${BIN_SERVER_DOCKER_TAG}
 
 rund: image
 	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG}
