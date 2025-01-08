@@ -78,7 +78,7 @@ install: test
 run: install
 	$(GOBIN)/${BIN_SERVER}
 
-image:
+image: test
 	docker image build -t${BIN_SERVER_DOCKER_TAG_LATEST} .
 	docker push ${BIN_SERVER_DOCKER_TAG_LATEST}
 
