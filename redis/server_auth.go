@@ -21,10 +21,13 @@ import (
 )
 
 func (server *server) Auth(conn *Conn, username string, password string) (*Message, error) {
-	q := auth.NewQuery(
+	q, err := auth.NewQuery(
 		auth.WithQueryUsername(username),
 		auth.WithQueryPassword(password),
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	ok, err := server.VerifyCredential(conn, q)
 

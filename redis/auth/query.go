@@ -28,7 +28,7 @@ type QueryOptionFn = auth.QueryOptionFn
 type QueryOption = auth.QueryOption
 
 // NewQuery returns a new query with options.
-func NewQuery(opts ...QueryOptionFn) Query {
+func NewQuery(opts ...QueryOptionFn) (Query, error) {
 	return auth.NewQuery(opts...)
 }
 
