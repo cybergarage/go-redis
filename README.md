@@ -22,9 +22,12 @@ Sinse the go-redis handles all system commands such as PING and SELECT automatic
 ## Examples
 
 - [Examples](doc/examples.md)
-  - [go-redisd](examples/go-redisd)
+  - [go-redisd](examples/go-redisd) [![Docker Image Version](https://img.shields.io/docker/v/cybergarage/go-redisd)](https://hub.docker.com/repository/docker/cybergarage/go-redisd/)
+  - [PuzzleDB](https://github.com/cybergarage/puzzledb-go) [![Docker Image Version](https://img.shields.io/docker/v/cybergarage/puzzledb)](https://hub.docker.com/repository/docker/cybergarage/puzzledb/)
+
 
 ## References
 
 - [Redis](https://redis.io)
-- [RESP (REdis Serialization Protocol)](https://github.com/cybergarage/go-redis.git)
+  - [RESP (REdis Serialization Protocol)](https://github.com/cybergarage/go-redis.git)
+- [Rust vs Go vs C: Database and IoT Application Performance Benchmarks – CyberGarage](https://www.cybergarage.org/blog/rust-eval-loc-perf/)
