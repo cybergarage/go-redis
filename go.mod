@@ -2,8 +2,6 @@ module github.com/cybergarage/go-redis
 
 go 1.23
 
-toolchain go1.23.3
-
 require (
 	github.com/cybergarage/go-authenticator v1.0.3
 	github.com/cybergarage/go-logger v1.3.8
