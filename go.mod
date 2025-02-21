@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/cybergarage/go-authenticator v1.0.3
-	github.com/cybergarage/go-logger v1.3.8
+	github.com/cybergarage/go-logger v1.3.9
 	github.com/cybergarage/go-tracing v1.1.4
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.6.0
