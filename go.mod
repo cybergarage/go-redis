@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	github.com/cybergarage/go-safecast v1.2.5 // indirect
+	github.com/cybergarage/go-safecast v1.3.3 // indirect
 	github.com/cybergarage/go-sasl v1.2.5 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.19.0 // indirect

@@ -2,8 +2,8 @@ github.com/cybergarage/go-authenticator v1.0.4 h1:sxv18cyh9geewmmbFytFjqDQIZxqZb
 github.com/cybergarage/go-authenticator v1.0.4/go.mod h1:mcJk22zUiOtQ7oJFMrVaDiYc/gIhelLem7wsSQ9CQMo=
 github.com/cybergarage/go-logger v1.3.11 h1:NwnC7cD/IDkdwBYhSODXaMEBmAu3c/jK4Q2XDsg1fno=
 github.com/cybergarage/go-logger v1.3.11/go.mod h1:SU5vzAFJOTs89JXk+Jn89RaNmcR07parcJgnW4e8aDw=
-github.com/cybergarage/go-safecast v1.2.5 h1:ZDiKmdsE15RTKETRXKAKbYTDIhAzNONwJEfCaxmhkvU=
-github.com/cybergarage/go-safecast v1.2.5/go.mod h1:fw2lE/5DIOjmyPj5kx0aYZSAL2bSFoh/Zith5TWVTz8=
+github.com/cybergarage/go-safecast v1.3.3 h1:ShXzs7PLDsomNeueg65IyPPEc+cw5QLd10+/JI+c2mI=
+github.com/cybergarage/go-safecast v1.3.3/go.mod h1:flFLUrI49kNK+U7ZeQDQxbaxxQyFVQGKpT7KYN3A4ew=
 github.com/cybergarage/go-sasl v1.2.5 h1:p/n77BpKwRSSZr0+4ANytDcQxAfZmI/izIxJ2+kQas0=
 github.com/cybergarage/go-sasl v1.2.5/go.mod h1:tgAGdhINFMElVjU/C2Ly6LkPDblUFpfQ8l8/0QoANVI=
 github.com/cybergarage/go-tracing v1.1.5 h1:woJLmGqTcRVpRQlOB3GqOwhujdZYUoIRr+XmdN3vhKg=
