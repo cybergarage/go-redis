@@ -30,11 +30,8 @@ PKG=${MODULE_ROOT}/${PKG_SRC_DIR}
 BIN_DIR=examples
 BIN_ID=${MODULE_ROOT}/${BIN_DIR}
 BIN_SERVER=go-redisd
-<<<<<<< HEAD
-=======
 BIN_SERVER_DOCKER_TAG=cybergarage/${BIN_SERVER}:${PKG_VER}
 BIN_SERVER_DOCKER_TAG_LATEST=cybergarage/${BIN_SERVER}:latest
->>>>>>> 6e70bb8 (Update Makefile)
 BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
 BINS=\
 	${BIN_SERVER_ID}
