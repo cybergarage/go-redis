@@ -30,6 +30,11 @@ PKG=${MODULE_ROOT}/${PKG_SRC_DIR}
 BIN_DIR=examples
 BIN_ID=${MODULE_ROOT}/${BIN_DIR}
 BIN_SERVER=go-redisd
+<<<<<<< HEAD
+=======
+BIN_SERVER_DOCKER_TAG=cybergarage/${BIN_SERVER}:${PKG_VER}
+BIN_SERVER_DOCKER_TAG_LATEST=cybergarage/${BIN_SERVER}:latest
+>>>>>>> 6e70bb8 (Update Makefile)
 BIN_SERVER_ID=${BIN_ID}/${BIN_SERVER}
 BINS=\
 	${BIN_SERVER_ID}
@@ -79,14 +84,13 @@ run: install
 	$(GOBIN)/${BIN_SERVER}
 
 image: test
-	docker image build -t${BIN_SERVER_DOCKER_TAG_LATEST} .
+	docker image build -t${BIN_SERVER_DOCKER_TAG} -t${BIN_SERVER_DOCKER_TAG_LATEST} .
 	docker push ${BIN_SERVER_DOCKER_TAG_LATEST}
 
-image-push: image
+image-push: test image
 	docker image build -t${BIN_SERVER_DOCKER_TAG}
-	docker push ${BIN_SERVER_DOCKER_TAG}
 
-rund: image
+rund:
 	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG}
 
 clean:
