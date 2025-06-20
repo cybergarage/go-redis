@@ -84,11 +84,11 @@ run: install
 	$(GOBIN)/${BIN_SERVER}
 
 image: test
-	docker image build -t${BIN_SERVER_DOCKER_TAG} -t${BIN_SERVER_DOCKER_TAG_LATEST} .
+	docker image build -t ${BIN_SERVER_DOCKER_TAG} -t ${BIN_SERVER_DOCKER_TAG_LATEST} .
 	docker push ${BIN_SERVER_DOCKER_TAG_LATEST}
 
-image-push: test image
-	docker image build -t${BIN_SERVER_DOCKER_TAG}
+image-push: image
+	docker push ${BIN_SERVER_DOCKER_TAG}
 
 rund:
 	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG}
