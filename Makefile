@@ -91,7 +91,7 @@ image-push: image
 	docker push ${BIN_SERVER_DOCKER_TAG}
 
 rund:
-	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG}
+	docker container run -it --rm -p 6379:6379 ${BIN_SERVER_DOCKER_TAG_LATEST}
 
 clean:
 	go clean -i ${PKG}
