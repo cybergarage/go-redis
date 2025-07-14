@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.0 (2025-XX-XX)
+- Support transaction commands
+  -  MULTI, EXEC, DISCARD 
+
 ## v1.5.6 (2025-05-30)
 - Update package
   - go-authenticator
