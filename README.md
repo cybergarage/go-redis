@@ -27,7 +27,7 @@ Sinse the go-redis handles all system commands such as PING and SELECT automatic
 
 # Related Projects
 
-The go-redis is being developed in collaboration with the following Cybergarage projects:
+The go-redis is developed in collaboration with the following Cybergarage projects:
 
 -   [go-authenticator](https://github.com/cybergarage/go-authenticator) ![go authenticator](https://img.shields.io/github/v/tag/cybergarage/go-authenticator)
 -   [go-logger](https://github.com/cybergarage/go-logger) ![go logger](https://img.shields.io/github/v/tag/cybergarage/go-logger)
