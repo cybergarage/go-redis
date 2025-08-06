@@ -377,8 +377,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			return
 		}
 
-		err = client.Set("myotherkey_renamenx", "World", 0).Err()
-		if err != nil {
+		if err := client.Set("myotherkey_renamenx", "World", 0).Err(); err != nil {
 			t.Error(err)
 			return
 		}
