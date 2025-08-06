@@ -90,16 +90,14 @@ func main() {
 			case syscall.SIGHUP:
 				clog.Infof("caught SIGHUP, restarting...")
 
-				err := server.Restart()
-				if err != nil {
+				if err := server.Restart(); err != nil {
 					clog.Errorf("%s couldn't be restarted (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 			case syscall.SIGINT, syscall.SIGTERM:
 				clog.Infof("caught %s, stopping...", s.String())
 
-				err := server.Stop()
-				if err != nil {
+				if err := server.Stop(); err != nil {
 					clog.Errorf("%s couldn't be stopped (%s)", programName, err.Error())
 					os.Exit(1)
 				}

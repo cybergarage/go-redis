@@ -199,8 +199,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			return
 		}
 
-		err = client.Set("key2_exists", "val", 0).Err()
-		if err != nil {
+		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
 			t.Error(err)
 			return
 		}
@@ -377,8 +376,12 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			return
 		}
 
+<<<<<<< HEAD
 		err = client.Set("myotherkey_renamenx", "World", 0).Err()
 		if err != nil {
+=======
+		if err := client.Set("myotherkey_renamenx", "World", 0).Err(); err != nil {
+>>>>>>> 8633b32 (fix golangci-lint issues)
 			t.Error(err)
 			return
 		}
