@@ -199,7 +199,8 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			return
 		}
 
-		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
+		err = client.Set("key2_exists", "val", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
@@ -376,7 +377,8 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			return
 		}
 
-		if err := client.Set("myotherkey_renamenx", "World", 0).Err(); err != nil {
+		err = client.Set("myotherkey_renamenx", "World", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}

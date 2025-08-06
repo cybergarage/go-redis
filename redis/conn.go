@@ -61,7 +61,8 @@ func (conn *Conn) Close() error {
 		return nil
 	}
 
-	if err := conn.Conn.Close(); err != nil {
+	err := conn.Conn.Close()
+	if err != nil {
 		return err
 	}
 
