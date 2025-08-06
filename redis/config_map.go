@@ -47,6 +47,7 @@ func (cfg *configMap) AppendConfig(key string, params string) {
 		cfg.params[key] = params
 		return
 	}
+
 	cfg.params[key] = strings.Join([]string{currParams, params}, ConfigSep)
 }
 
@@ -62,10 +63,12 @@ func (cfg *configMap) ConfigInteger(key string) (int, bool) {
 	if !ok {
 		return 0, false
 	}
+
 	v, err := strconv.Atoi(params)
 	if err != nil {
 		return 0, false
 	}
+
 	return v, true
 }
 

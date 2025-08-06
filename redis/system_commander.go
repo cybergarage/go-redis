@@ -18,6 +18,7 @@ func (server *server) Ping(conn *Conn, arg string) (*Message, error) {
 	if len(arg) == 0 {
 		return NewStringMessage("PONG"), nil
 	}
+
 	return NewBulkMessage(arg), nil
 }
 
@@ -38,6 +39,7 @@ func (server *server) ConfigSet(conn *Conn, params map[string]string) (*Message,
 	for key, param := range params {
 		server.SetConfig(key, param)
 	}
+
 	return NewOKMessage(), nil
 }
 
@@ -45,6 +47,7 @@ func (server *server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
 	msg := NewArrayMessage()
 	for _, key := range keys {
 		msg.Append(NewBulkMessage(key))
+
 		param, ok := server.ConfigString(key)
 		if ok {
 			msg.Append(NewBulkMessage(param))
@@ -52,5 +55,6 @@ func (server *server) ConfigGet(conn *Conn, keys []string) (*Message, error) {
 			msg.Append(NewBulkMessage(""))
 		}
 	}
+
 	return msg, nil
 }

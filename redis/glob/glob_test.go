@@ -40,6 +40,7 @@ func TestGlobMatches(t *testing.T) {
 		if err != nil {
 			t.Errorf("Glob(%s).Compile() = %v", tt.pattern, err)
 		}
+
 		if got := glob.MatchString(tt.value); got != tt.want {
 			t.Errorf("Glob(%s).MatchString(%s) = %v, want %v", tt.pattern, tt.value, got, tt.want)
 		}

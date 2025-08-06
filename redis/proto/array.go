@@ -31,6 +31,7 @@ func NewArray() *Array {
 		index: 0,
 		msgs:  make([]*Message, 0),
 	}
+
 	return array
 }
 
@@ -40,23 +41,27 @@ func newArrayWithParser(parser *Parser) (*Array, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	arraySize, err := strconv.Atoi(string(numBytes))
 	if err != nil {
 		return nil, err
 	}
+
 	if arraySize < 0 {
 		return NewArray(), nil
 	}
 
 	// Gets all array messages
 	msgs := make([]*Message, arraySize)
-	for n := 0; n < arraySize; n++ {
+	for n := range arraySize {
 		msg, err := parser.Next()
 		if err != nil {
 			return nil, err
 		}
+
 		msgs[n] = msg
 	}
+
 	array := &Array{
 		index: 0,
 		msgs:  msgs,
@@ -80,8 +85,10 @@ func (array *Array) Next() (*Message, error) {
 	if array.Size() <= array.index {
 		return nil, nil
 	}
+
 	msg := array.msgs[array.index]
 	array.index++
+
 	return msg, nil
 }
 
@@ -91,9 +98,11 @@ func (array *Array) NextMessage() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if msg == nil {
 		return nil, ErrEOM
 	}
+
 	return msg, nil
 }
 
@@ -103,14 +112,17 @@ func (array *Array) NextMessages() ([]*Message, error) {
 	if unreadMsgCnt <= 0 {
 		return []*Message{}, nil
 	}
+
 	unreadMsgs := make([]*Message, unreadMsgCnt)
-	for n := 0; n < unreadMsgCnt; n++ {
+	for n := range unreadMsgCnt {
 		msg, err := array.Next()
 		if err != nil {
 			return nil, err
 		}
+
 		unreadMsgs[n] = msg
 	}
+
 	return unreadMsgs, nil
 }
 
@@ -120,6 +132,7 @@ func (array *Array) NextBytes() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return msg.Bytes()
 }
 
@@ -129,6 +142,7 @@ func (array *Array) NextString() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return msg.String()
 }
 
@@ -138,6 +152,7 @@ func (array *Array) NextError() (error, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return msg.Error()
 }
 
@@ -147,6 +162,7 @@ func (array *Array) NextInteger() (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return msg.Integer()
 }
 
@@ -156,19 +172,22 @@ func (array *Array) NextArray() (*Array, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return msg.Array()
 }
 
 // ReverseBy returns the reversed array with the specified step.
 func (array *Array) ReverseBy(step int) *Array {
 	ra := NewArray()
+
 	l := len(array.msgs)
 	for i := 0; i < l; i += step {
-		for j := 0; j < step; j++ {
+		for j := range step {
 			idx := (l - i - 1) - (step - 1) + j
 			ra.msgs = append(ra.msgs, array.msgs[idx])
 		}
 	}
+
 	return ra
 }
 
@@ -188,11 +207,12 @@ func (array *Array) RESPBytes() ([]byte, error) {
 	respBytes.WriteRune(cr)
 	respBytes.WriteRune(lf)
 
-	for n := 0; n < arraySize; n++ {
+	for n := range arraySize {
 		bytes, err := array.msgs[n].RESPBytes()
 		if err != nil {
 			return respBytes.Bytes(), err
 		}
+
 		respBytes.Write(bytes)
 	}
 

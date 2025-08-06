@@ -24,6 +24,7 @@ func testParserSingleMessages(t *testing.T, msgString string, compare func(*Mess
 	t.Helper()
 
 	parser := NewParserWithBytes([]byte(msgString))
+
 	msg, err := parser.Next()
 	if err != nil {
 		if expectedError == nil {
@@ -31,6 +32,7 @@ func testParserSingleMessages(t *testing.T, msgString string, compare func(*Mess
 		} else if err.Error() != expectedError.Error() {
 			t.Errorf("Unexpected error message: %s, expecting: %s, msg: %s", err, expectedError, msgString)
 		}
+
 		return
 	}
 
@@ -47,6 +49,7 @@ func testParserSingleMessages(t *testing.T, msgString string, compare func(*Mess
 
 	if !bytes.Equal([]byte(msgString), msgBytes) {
 		msgString += string(cr)
+
 		msgString += string(lf)
 		if !bytes.Equal([]byte(msgString), msgBytes) {
 			t.Errorf("%s \n!=\n%s", string(msgBytes), msgString)
@@ -77,16 +80,20 @@ func TestParserStringMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+
 		if !msg.IsString() {
 			return nil, false
 		}
+
 		actual, err := msg.String()
 		if err != nil {
 			return nil, false
 		}
+
 		if actual != expected {
 			return actual, false
 		}
+
 		return actual, true
 	}
 
@@ -120,16 +127,20 @@ func TestParserErrorMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+
 		if !msg.IsError() {
 			return nil, false
 		}
+
 		actual, err := msg.Error()
 		if err != nil {
 			return nil, false
 		}
+
 		if actual.Error() != expected {
 			return actual, false
 		}
+
 		return actual, true
 	}
 
@@ -159,16 +170,20 @@ func TestParserIntegerMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+
 		if !msg.IsInteger() {
 			return nil, false
 		}
+
 		actual, err := msg.Integer()
 		if err != nil {
 			return nil, false
 		}
+
 		if actual != expected {
 			return actual, false
 		}
+
 		return actual, true
 	}
 
@@ -221,16 +236,20 @@ func TestParserBulkStringrMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+
 		if !msg.IsBulk() {
 			return nil, false
 		}
+
 		actual, err := msg.Bytes()
 		if err != nil {
 			return nil, false
 		}
+
 		if !bytes.Equal(actual, expected) {
 			return actual, false
 		}
+
 		return actual, true
 	}
 
@@ -283,13 +302,16 @@ func TestParserArrayMessages(t *testing.T) {
 		if !ok {
 			return nil, false
 		}
+
 		actual, err := msg.Bytes()
 		if err != nil {
 			return nil, false
 		}
+
 		if !bytes.Equal(actual, expected) {
 			return actual, false
 		}
+
 		return actual, true
 	}
 
@@ -304,6 +326,7 @@ func TestParserArrayMessages(t *testing.T) {
 		}
 
 		msgIndex := 0
+
 		for msg != nil {
 			array, err := msg.Array()
 			if err != nil {
@@ -328,6 +351,7 @@ func TestParserArrayMessages(t *testing.T) {
 					t.Errorf("%s %s", msgStr, err)
 					continue
 				}
+
 				arrayMsg, err = array.Next()
 				if err != nil {
 					t.Errorf("%s %s", msgStr, err)
@@ -341,7 +365,9 @@ func TestParserArrayMessages(t *testing.T) {
 					t.Errorf("%s %s != %s", msgStr, actual, expectedBytes)
 					return
 				}
+
 				msgIndex++
+
 				arrayMsg, err = array.Next()
 				if err != nil {
 					t.Errorf("%s %s", msgStr, err)

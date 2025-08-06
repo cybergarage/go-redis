@@ -55,6 +55,7 @@ func main() {
 	if *isDebugEnabled {
 		logLevel = clog.LevelDebug
 	}
+
 	clog.SetSharedLogger(clog.NewStdoutLogger(logLevel))
 
 	if *isProfileEnabled {
@@ -65,7 +66,9 @@ func main() {
 	}
 
 	server := server.NewServer()
-	if err := server.Start(); err != nil {
+
+	err := server.Start()
+	if err != nil {
 		clog.Errorf("%s couldn't be started (%s)", programName, err.Error())
 		os.Exit(1)
 	}
@@ -86,16 +89,21 @@ func main() {
 			switch s {
 			case syscall.SIGHUP:
 				clog.Infof("caught SIGHUP, restarting...")
-				if err := server.Restart(); err != nil {
+
+				err := server.Restart()
+				if err != nil {
 					clog.Errorf("%s couldn't be restarted (%s)", programName, err.Error())
 					os.Exit(1)
 				}
 			case syscall.SIGINT, syscall.SIGTERM:
 				clog.Infof("caught %s, stopping...", s.String())
-				if err := server.Stop(); err != nil {
+
+				err := server.Stop()
+				if err != nil {
 					clog.Errorf("%s couldn't be stopped (%s)", programName, err.Error())
 					os.Exit(1)
 				}
+
 				exitCh <- 0
 			}
 		}

@@ -28,5 +28,6 @@ func NewManader() *Manader {
 	manager := &Manader{
 		Manager: auth.NewManager(),
 	}
+
 	return manager
 }

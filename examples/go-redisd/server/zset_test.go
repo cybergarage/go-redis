@@ -65,10 +65,12 @@ func TestZSet(t *testing.T) {
 				}
 				zset.Add([]*ZSetMember{m}, zaopt)
 				mems := zset.Range(0, -1, zropt)
+
 				memdata := []string{}
 				for _, mem := range mems {
 					memdata = append(memdata, mem.Member)
 				}
+
 				if !reflect.DeepEqual(memdata, r.expected) {
 					t.Errorf("%s != %s", memdata, r.expected)
 					return
@@ -94,10 +96,12 @@ func TestZSet(t *testing.T) {
 			t.Run(r.data, func(t *testing.T) {
 				zset.Rem([]string{r.data})
 				mems := zset.Range(0, -1, zropt)
+
 				memdata := []string{}
 				for _, mem := range mems {
 					memdata = append(memdata, mem.Member)
 				}
+
 				if !reflect.DeepEqual(memdata, r.expected) {
 					t.Errorf("%s != %s", memdata, r.expected)
 					return

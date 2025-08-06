@@ -33,6 +33,7 @@ func nextIntegerArgument(cmd string, name string, args Arguments) (int, error) {
 	if err != nil {
 		return 0, newMissingArgumentError(cmd, name, err)
 	}
+
 	return val, nil
 }
 
@@ -41,6 +42,7 @@ func nextStringArgument(cmd string, name string, args Arguments) (string, error)
 	if err != nil {
 		return "", newMissingArgumentError(cmd, name, err)
 	}
+
 	return str, nil
 }
 
@@ -49,44 +51,59 @@ func nextFloatArgument(cmd string, name string, args Arguments) (float64, error)
 	if err != nil {
 		return 0, newMissingArgumentError(cmd, name, err)
 	}
+
 	score, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0, newMissingArgumentError(cmd, name, err)
 	}
+
 	return score, nil
 }
 
 func nextStringArrayArguments(cmd string, name string, args Arguments) ([]string, error) {
-	var str string
-	var err error
+	var (
+		str string
+		err error
+	)
+
 	strs := []string{}
+
 	str, err = args.NextString()
 	for err == nil {
 		strs = append(strs, str)
 		str, err = args.NextString()
 	}
+
 	if !errors.Is(err, proto.ErrEOM) {
 		return nil, newMissingArgumentError(cmd, name, err)
 	}
+
 	return strs, nil
 }
 
 func nextStringMapArguments(cmd string, args Arguments) (map[string]string, error) {
-	var key, val string
-	var err error
+	var (
+		key, val string
+		err      error
+	)
+
 	dir := map[string]string{}
+
 	key, err = args.NextString()
 	for err == nil {
 		val, err = args.NextString()
 		if err != nil {
 			newMissingArgumentError(cmd, key, err)
 		}
+
 		dir[key] = val
 		key, err = args.NextString()
 	}
+
 	if !errors.Is(err, proto.ErrEOM) {
 		return nil, err
 	}
+
 	return dir, nil
 }
 
@@ -107,10 +124,12 @@ func nextSetArguments(cmd string, args Arguments) (string, string, error) {
 	if err != nil {
 		return "", "", newMissingArgumentError(cmd, "key", err)
 	}
+
 	val, err := args.NextString()
 	if err != nil {
 		return "", "", newMissingArgumentError(cmd, "value", err)
 	}
+
 	return key, val, err
 }
 
@@ -119,17 +138,21 @@ func nextSetExArguments(cmd string, args Arguments) (string, int, string, error)
 	if err != nil {
 		return "", 0, "", newMissingArgumentError(cmd, "key", err)
 	}
+
 	seconds, err := args.NextInteger()
 	if err != nil {
 		return "", 0, "", newMissingArgumentError(cmd, "seconds", err)
 	}
+
 	if seconds < 1 {
 		return "", 0, "", newInvalidArgumentError(cmd, "seconds", fmt.Errorf(errorShouldBeGreaterThanInt, "argument", 0))
 	}
+
 	val, err := args.NextString()
 	if err != nil {
 		return "", 0, "", newMissingArgumentError(cmd, "value", err)
 	}
+
 	return key, seconds, val, err
 }
 
@@ -143,6 +166,7 @@ func nextMSetArguments(cmd string, args Arguments) (map[string]string, error) {
 
 func nextSetOptionArguments(cmd string, args Arguments) (SetOption, error) {
 	opt := newDefaultSetOption()
+
 	for {
 		argStr, err := args.NextString()
 		if err != nil {
@@ -152,22 +176,26 @@ func nextSetOptionArguments(cmd string, args Arguments) (SetOption, error) {
 				return opt, err
 			}
 		}
+
 		argStr = strings.ToUpper(argStr)
 		switch argStr {
 		case "NX":
 			if opt.NX || opt.XX {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "NX|XX"))
 			}
+
 			opt.NX = true
 		case "XX":
 			if opt.NX || opt.XX {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "NX|XX"))
 			}
+
 			opt.XX = true
 		case "EX", "PX", "EXAT", "PXAT":
 			if opt.EX > 0 || opt.PX > 0 || !opt.EXAT.IsZero() || !opt.PXAT.IsZero() {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, "EX|PX|EXAT|PXAT"))
 			}
+
 			argInt, err := args.NextInteger()
 			if err != nil {
 				if errors.Is(err, proto.ErrEOM) {
@@ -176,9 +204,11 @@ func nextSetOptionArguments(cmd string, args Arguments) (SetOption, error) {
 					return opt, err
 				}
 			}
+
 			if argInt < 1 {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorShouldBeGreaterThanInt, "expire", 0))
 			}
+
 			switch argStr {
 			case "EX":
 				opt.EX = time.Duration(argInt) * time.Second
@@ -193,16 +223,19 @@ func nextSetOptionArguments(cmd string, args Arguments) (SetOption, error) {
 			if opt.KEEPTTL {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, ""))
 			}
+
 			opt.KEEPTTL = true
 		case "GET":
 			if opt.GET {
 				return opt, newInvalidArgumentError(cmd, argStr, fmt.Errorf(errorUseOnlyOnce, ""))
 			}
+
 			opt.GET = true
 		default:
 			return opt, newUnkownArgumentError(cmd, argStr)
 		}
 	}
+
 	return opt, nil
 }
 
@@ -219,7 +252,9 @@ func nextPushArguments(cmd string, args Arguments) (string, []string, error) {
 	if err != nil {
 		return "", nil, err
 	}
+
 	elems, err := nextStringArrayArguments(cmd, "elements", args)
+
 	return key, elems, err
 }
 
@@ -228,13 +263,16 @@ func nextPopArguments(cmd string, args Arguments) (string, int, error) {
 	if err != nil {
 		return "", 0, err
 	}
+
 	cnt, err := nextIntegerArgument(cmd, "count", args)
 	if err != nil {
 		if !errors.Is(err, proto.ErrEOM) {
 			return "", 0, err
 		}
+
 		cnt = 1
 	}
+
 	return key, cnt, nil
 }
 
@@ -253,16 +291,20 @@ func nextRangeScoreIndexArgument(cmd string, name string, args Arguments) (float
 	if err != nil || len(str) == 0 {
 		return 0, false, newMissingArgumentError(cmd, name, err)
 	}
+
 	offset := 0
 	exclusive := false
+
 	if str[0] == '(' {
 		offset = 1
 		exclusive = true
 	}
+
 	rng, err := strconv.ParseFloat(str[offset:], 64)
 	if err != nil {
 		return 0, false, newInvalidArgumentError(cmd, name, err)
 	}
+
 	return rng, exclusive, nil
 }
 
@@ -292,6 +334,7 @@ func nextRangeOptionArguments(cmd string, args Arguments) (ZRangeOption, error) 
 			if err != nil {
 				return opt, err
 			}
+
 			opt.Count, err = nextIntegerArgument(cmd, "count", args)
 			if err != nil {
 				return opt, err
@@ -299,8 +342,10 @@ func nextRangeOptionArguments(cmd string, args Arguments) (ZRangeOption, error) 
 		case "WITHSCORES":
 			opt.WITHSCORES = true
 		}
+
 		param, err = args.NextString()
 	}
+
 	if !errors.Is(err, proto.ErrEOM) {
 		return opt, newMissingArgumentError(cmd, "", err)
 	}
@@ -318,7 +363,9 @@ func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption
 		GT:   false,
 		LT:   false,
 	}
+
 	var err error
+
 	arg, err := args.NextString()
 	if err == nil {
 		switch strings.ToUpper(arg) {
@@ -334,9 +381,11 @@ func nextExpireArgument(cmd string, ttl time.Time, args Arguments) (ExpireOption
 			return opt, newUnkownArgumentError(cmd, arg)
 		}
 	}
+
 	if !errors.Is(err, proto.ErrEOM) {
 		return opt, err
 	}
+
 	return opt, nil
 }
 
@@ -348,16 +397,20 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 		Count:        DefaultScanCount,
 		Type:         DefaultScanType,
 	}
+
 	var err error
+
 	param, err := args.NextString()
 	for err == nil {
 		switch strings.ToUpper(param) {
 		case "MATCH":
 			var pattern string
+
 			pattern, err = nextStringArgument(cmd, "pattern", args)
 			if err != nil {
 				return opt, err
 			}
+
 			opt.MatchPattern, err = regexp.Compile(pattern)
 			if err != nil {
 				return opt, newInvalidArgumentError(cmd, "pattern", err)
@@ -369,19 +422,24 @@ func nextScanArgument(cmd string, args Arguments) (ScanOption, error) {
 			}
 		case "Type":
 			var scanType string
+
 			scanType, err = nextStringArgument(cmd, "type", args)
 			if err != nil {
 				return opt, err
 			}
+
 			opt.Type, err = newScanTypeFromString(scanType)
 			if err != nil {
 				return opt, newInvalidArgumentError(cmd, "type", err)
 			}
 		}
+
 		param, err = args.NextString()
 	}
+
 	if !errors.Is(err, proto.ErrEOM) {
 		return opt, newMissingArgumentError(cmd, "", err)
 	}
+
 	return opt, nil
 }

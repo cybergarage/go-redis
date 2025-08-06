@@ -26,19 +26,23 @@ import (
 // nolint: gocyclo, maintidx
 func (server *server) registerCoreExecutors() {
 	// Connection management commands.
-
 	server.RegisterExexutor("AUTH", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
-		var user, passwd string
-		var err error
+		var (
+			user, passwd string
+			err          error
+		)
+
 		passwd, err = args.NextString()
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "password", err)
 		}
+
 		if msg, _ := args.Next(); msg != nil {
 			token, err := msg.String()
 			if err != nil {
 				return nil, err
 			}
+
 			user = passwd
 			passwd = token
 		}
@@ -48,6 +52,7 @@ func (server *server) registerCoreExecutors() {
 
 	server.RegisterExexutor("PING", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		arg := ""
+
 		var err error
 		if msg, _ := args.Next(); msg != nil {
 			arg, err = msg.String()
@@ -55,6 +60,7 @@ func (server *server) registerCoreExecutors() {
 				return nil, err
 			}
 		}
+
 		return server.systemCommandHandler.Ping(conn, arg)
 	})
 
@@ -63,6 +69,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "msg", err)
 		}
+
 		return server.systemCommandHandler.Echo(conn, msg)
 	})
 
@@ -71,10 +78,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "id", err)
 		}
+
 		msg, err := server.systemCommandHandler.Select(conn, id)
 		if err == nil {
 			conn.SetDatabase(id)
 		}
+
 		return msg, err
 	})
 
@@ -86,6 +95,7 @@ func (server *server) registerCoreExecutors() {
 
 	server.RegisterExexutor("CONFIG", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := ""
+
 		var err error
 		if msg, _ := args.Next(); msg != nil {
 			opt, err = msg.String()
@@ -100,12 +110,14 @@ func (server *server) registerCoreExecutors() {
 			if err != nil {
 				return nil, err
 			}
+
 			return server.systemCommandHandler.ConfigSet(conn, params)
 		case "GET":
 			params, err := nextStringArrayArguments(cmd, "params", args)
 			if err != nil {
 				return nil, err
 			}
+
 			return server.systemCommandHandler.ConfigGet(conn, params)
 		}
 
@@ -119,6 +131,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Del(conn, keys)
 	})
 
@@ -127,15 +140,19 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		ttl, err := nextIntegerArgument(cmd, "ttl", args)
 		if err != nil {
 			return nil, err
 		}
+
 		ttlTime := time.Now().Add(time.Duration(ttl) * time.Second)
+
 		opt, err := nextExpireArgument(cmd, ttlTime, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Expire(conn, key, opt)
 	})
 
@@ -144,15 +161,19 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		ttl, err := nextIntegerArgument(cmd, "ttl", args)
 		if err != nil {
 			return nil, err
 		}
+
 		ttlTime := time.Unix(int64(ttl), 0)
+
 		opt, err := nextExpireArgument(cmd, ttlTime, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Expire(conn, key, opt)
 	})
 
@@ -161,6 +182,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Exists(conn, keys)
 	})
 
@@ -169,6 +191,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Keys(conn, pattern)
 	})
 
@@ -177,6 +200,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Type(conn, key)
 	})
 
@@ -185,10 +209,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		newkey, err := nextStringArgument(cmd, "newkey", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Rename(conn, key, newkey, RenameOption{NX: false})
 	})
 
@@ -197,10 +223,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		newkey, err := nextStringArgument(cmd, "newkey", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Rename(conn, key, newkey, RenameOption{NX: true})
 	})
 
@@ -209,6 +237,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.TTL(conn, key)
 	})
 
@@ -217,10 +246,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt, err := nextScanArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Scan(conn, cursor, opt)
 	})
 
@@ -231,6 +262,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Get(conn, key)
 	})
 
@@ -244,6 +276,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
@@ -252,6 +285,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt := newDefaultSetOption()
 		opt.EX = time.Duration(seconds) * time.Second
 
@@ -261,24 +295,29 @@ func (server *server) registerCoreExecutors() {
 	server.RegisterExexutor("GETSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.GET = true
+
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
 	server.RegisterExexutor("MSET", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
+
 		dict, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		for key, val := range dict {
 			if _, err := server.userCommandHandler.Set(conn, key, val, opt); err != nil {
 				return nil, err
 			}
 		}
+
 		return NewOKMessage(), nil
 	})
 
@@ -287,22 +326,27 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		for key := range dict {
 			res, err := server.userCommandHandler.Get(conn, key)
 			if err != nil {
 				return nil, err
 			}
+
 			if !res.IsNil() {
 				return NewIntegerMessage(0), nil
 			}
 		}
+
 		opt := newDefaultSetOption()
+
 		opt.NX = true
 		for key, val := range dict {
 			if _, err := server.userCommandHandler.Set(conn, key, val, opt); err != nil {
 				return nil, err
 			}
 		}
+
 		return NewIntegerMessage(1), nil
 	})
 
@@ -311,25 +355,31 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		arrayMsg := NewArrayMessage()
+
 		array, _ := arrayMsg.Array()
 		for _, key := range keys {
 			msg, err := server.userCommandHandler.Get(conn, key)
 			if err != nil {
 				return nil, err
 			}
+
 			array.Append(msg)
 		}
+
 		return arrayMsg, nil
 	})
 
 	server.RegisterExexutor("SETNX", func(conn *Conn, cmd string, args Arguments) (*Message, error) {
 		opt := newDefaultSetOption()
 		opt.NX = true
+
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.Set(conn, key, val, opt)
 	})
 
@@ -340,10 +390,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		keys, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.HDel(conn, hash, keys)
 	})
 
@@ -352,10 +404,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		key, err := nextKeyArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.HGet(conn, hash, key)
 	})
 
@@ -364,6 +418,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.HGetAll(conn, hash)
 	})
 
@@ -371,14 +426,17 @@ func (server *server) registerCoreExecutors() {
 		opt := HSetOption{
 			NX: false,
 		}
+
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.HSet(conn, hash, key, val, opt)
 	})
 
@@ -386,14 +444,17 @@ func (server *server) registerCoreExecutors() {
 		opt := HSetOption{
 			NX: true,
 		}
+
 		hash, err := nextHashArgument(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		key, val, err := nextSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.HSet(conn, hash, key, val, opt)
 	})
 
@@ -402,10 +463,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		dict, err := nextMSetArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		hsetOpt := HSetOption{
 			NX: false,
 		}
@@ -414,6 +477,7 @@ func (server *server) registerCoreExecutors() {
 				return nil, err
 			}
 		}
+
 		return NewOKMessage(), nil
 	})
 
@@ -422,19 +486,24 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		fields, err := nextKeysArguments(cmd, args)
 		if err != nil {
 			return nil, err
 		}
+
 		arrayMsg := NewArrayMessage()
+
 		array, _ := arrayMsg.Array()
 		for _, field := range fields {
 			msg, err := server.userCommandHandler.HGet(conn, hash, field)
 			if err != nil {
 				return nil, err
 			}
+
 			array.Append(msg)
 		}
+
 		return arrayMsg, nil
 	})
 
@@ -445,10 +514,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		idx, err := nextIntegerArgument(cmd, "index", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.LIndex(conn, key, idx)
 	})
 
@@ -457,6 +528,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.LLen(conn, key)
 	})
 
@@ -465,6 +537,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.LPop(conn, key, cnt)
 	})
 
@@ -473,7 +546,9 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt := PushOption{X: false}
+
 		return server.userCommandHandler.LPush(conn, key, elems, opt)
 	})
 
@@ -482,7 +557,9 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt := PushOption{X: true}
+
 		return server.userCommandHandler.LPush(conn, key, elems, opt)
 	})
 
@@ -491,14 +568,17 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		start, err := nextIntegerArgument(cmd, "start", args)
 		if err != nil {
 			return nil, err
 		}
+
 		end, err := nextIntegerArgument(cmd, "end", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.LRange(conn, key, start, end)
 	})
 
@@ -507,6 +587,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.RPop(conn, key, cnt)
 	})
 
@@ -515,7 +596,9 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt := PushOption{X: false}
+
 		return server.userCommandHandler.RPush(conn, key, elems, opt)
 	})
 
@@ -524,7 +607,9 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt := PushOption{X: true}
+
 		return server.userCommandHandler.RPush(conn, key, elems, opt)
 	})
 
@@ -535,10 +620,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.SAdd(conn, key, members)
 	})
 
@@ -547,6 +634,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.SMembers(conn, key)
 	})
 
@@ -555,10 +643,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.SRem(conn, key, members)
 	})
 
@@ -580,9 +670,11 @@ func (server *server) registerCoreExecutors() {
 		}
 
 		var score float64
+
 		param, err := args.NextString()
 		for err == nil {
 			isOption := true
+
 			switch strings.ToUpper(param) {
 			case "NX":
 				opt.NX = true
@@ -600,30 +692,37 @@ func (server *server) registerCoreExecutors() {
 				score, err = strconv.ParseFloat(param, 64)
 				isOption = false
 			}
+
 			if !isOption {
 				break
 			}
 		}
+
 		if err != nil {
 			return nil, newMissingArgumentError(cmd, "score", err)
 		}
 
 		members := []*ZSetMember{}
+
 		member, err := args.NextString()
 		if err != nil {
 			err = newMissingArgumentError(cmd, "member", err)
 		}
+
 		for err == nil {
 			members = append(members, &ZSetMember{Score: score, Member: member})
+
 			score, err = nextScoreArgument(cmd, "score", args)
 			if err != nil {
 				break
 			}
+
 			member, err = nextStringArgument(cmd, "member", args)
 			if err != nil {
 				break
 			}
 		}
+
 		if !errors.Is(err, proto.ErrEOM) {
 			return nil, err
 		}
@@ -636,14 +735,17 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		inc, err := nextScoreArgument(cmd, "increment", args)
 		if err != nil {
 			return nil, err
 		}
+
 		member, err := nextStringArgument(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.ZIncBy(conn, key, inc, member)
 	})
 
@@ -671,6 +773,7 @@ func (server *server) registerCoreExecutors() {
 		if opt.BYSCORE {
 			opt.MINEXCLUSIVE = startEx
 			opt.MAXEXCLUSIVE = stopEx
+
 			return server.userCommandHandler.ZRangeByScore(conn, key, start, stop, opt)
 		}
 
@@ -711,6 +814,7 @@ func (server *server) registerCoreExecutors() {
 		if opt.WITHSCORES {
 			return NewArrayMessageWithArray(array.ReverseBy(2)), nil
 		}
+
 		return NewArrayMessageWithArray(array.Reverse()), nil
 	})
 
@@ -734,6 +838,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt.MINEXCLUSIVE = minEx
 		opt.MAXEXCLUSIVE = maxEx
 
@@ -760,6 +865,7 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		opt.MINEXCLUSIVE = minEx
 		opt.MAXEXCLUSIVE = maxEx
 
@@ -776,6 +882,7 @@ func (server *server) registerCoreExecutors() {
 		if opt.WITHSCORES {
 			return NewArrayMessageWithArray(array.ReverseBy(2)), nil
 		}
+
 		return NewArrayMessageWithArray(array.Reverse()), nil
 	})
 
@@ -784,10 +891,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		members, err := nextStringArrayArguments(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.ZRem(conn, key, members)
 	})
 
@@ -796,10 +905,12 @@ func (server *server) registerCoreExecutors() {
 		if err != nil {
 			return nil, err
 		}
+
 		member, err := nextStringArgument(cmd, "member", args)
 		if err != nil {
 			return nil, err
 		}
+
 		return server.userCommandHandler.ZScore(conn, key, member)
 	})
 }

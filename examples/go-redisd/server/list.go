@@ -36,14 +36,18 @@ func (list *List) LPop(count int) ([]string, bool) {
 	if count < 1 {
 		return nil, false
 	}
+
 	elems := []string{}
-	for n := 0; n < count; n++ {
+
+	for range count {
 		if len(list.elements) < 1 {
 			continue
 		}
+
 		elems = append(elems, list.elements[0])
 		list.elements = list.elements[1:]
 	}
+
 	return elems, true
 }
 
@@ -51,6 +55,7 @@ func (list *List) LPush(elems []string) int {
 	for _, elem := range elems {
 		list.elements = append([]string{elem}, list.elements...)
 	}
+
 	return len(list.elements)
 }
 
@@ -58,14 +63,18 @@ func (list *List) RPop(count int) ([]string, bool) {
 	if count < 1 {
 		return nil, false
 	}
+
 	elems := []string{}
-	for n := 0; n < count; n++ {
+
+	for range count {
 		if len(list.elements) < 1 {
 			continue
 		}
+
 		elems = append(elems, list.elements[len(list.elements)-1])
 		list.elements = list.elements[:len(list.elements)-1]
 	}
+
 	return elems, true
 }
 
@@ -78,16 +87,21 @@ func (list *List) Range(start int, stop int) []string {
 	if start < 0 {
 		start = len(list.elements) + start
 	}
+
 	if stop < 0 {
 		stop = len(list.elements) + stop
 	}
+
 	elems := []string{}
+
 	for n := start; n <= stop; n++ {
 		if (n < 0) || ((len(list.elements) - 1) < n) {
 			continue
 		}
+
 		elems = append(elems, list.elements[n])
 	}
+
 	return elems
 }
 
@@ -95,9 +109,11 @@ func (list *List) Index(idx int) (string, bool) {
 	if idx < 0 {
 		idx = len(list.elements) + idx
 	}
+
 	if (idx < 0) || ((len(list.elements) - 1) < idx) {
 		return "", false
 	}
+
 	return list.elements[idx], true
 }
 
@@ -124,8 +140,11 @@ func (server *Server) pop(conn *redis.Conn, key string, count int, isLPop bool) 
 		return nil, err
 	}
 
-	var elems []string
-	var ok bool
+	var (
+		elems []string
+		ok    bool
+	)
+
 	if isLPop {
 		elems, ok = list.LPop(count)
 	} else {
@@ -140,10 +159,12 @@ func (server *Server) pop(conn *redis.Conn, key string, count int, isLPop bool) 
 		if len(elems) < 1 {
 			return redis.NewNilMessage(), nil
 		}
+
 		return redis.NewBulkMessage(elems[0]), nil
 	}
 
 	arrayMsg := redis.NewArrayMessage()
+
 	array, _ := arrayMsg.Array()
 	for _, elem := range elems {
 		array.Append(redis.NewBulkMessage(elem))
@@ -208,6 +229,7 @@ func (server *Server) LRange(conn *redis.Conn, key string, start int, stop int) 
 
 	elems := list.Range(start, stop)
 	arrayMsg := redis.NewArrayMessage()
+
 	array, _ := arrayMsg.Array()
 	for _, elem := range elems {
 		array.Append(redis.NewBulkMessage(elem))

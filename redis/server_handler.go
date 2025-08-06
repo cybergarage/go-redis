@@ -31,6 +31,7 @@ func (server *server) executeCommand(conn *Conn, cmd string, args Arguments) (*M
 	}
 
 	upperCmd := strings.ToUpper(cmd)
+
 	cmdExecutor, ok := server.commandExecutors[upperCmd]
 	if !ok {
 		return NewErrorNotSupportedMessage(cmd), nil

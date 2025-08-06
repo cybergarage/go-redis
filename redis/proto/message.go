@@ -35,6 +35,7 @@ func NewMessageWithType(t MessageType) *Message {
 		bytes: nil,
 		array: nil,
 	}
+
 	return msg
 }
 
@@ -44,6 +45,7 @@ func newMessageWithTypeByte(b byte) (*Message, error) {
 	if !ok {
 		return nil, fmt.Errorf(errorUnknownMessageType, b)
 	}
+
 	return NewMessageWithType(t), nil
 }
 
@@ -94,6 +96,7 @@ func (msg *Message) IsNil() bool {
 	if !msg.IsBulk() {
 		return false
 	}
+
 	return (msg.bytes == nil)
 }
 
@@ -108,7 +111,9 @@ func (msg *Message) Append(arrayMsg *Message) error {
 	if err != nil {
 		return err
 	}
+
 	array.Append(arrayMsg)
+
 	return nil
 }
 
@@ -119,10 +124,12 @@ func (msg *Message) String() (string, error) {
 		if msg.bytes == nil {
 			return "", ErrNil
 		}
+
 		return string(msg.bytes), nil
 	case ArrayMessage, ErrorMessage, IntegerMessage:
 		return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
+
 	return "", fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
 
@@ -134,6 +141,7 @@ func (msg *Message) Error() (error, error) {
 	case StringMessage, ArrayMessage, BulkMessage, IntegerMessage:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
+
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
 
@@ -145,6 +153,7 @@ func (msg *Message) Integer() (int, error) {
 	case ArrayMessage, ErrorMessage:
 		return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
+
 	return 0, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
 
@@ -156,6 +165,7 @@ func (msg *Message) Array() (*Array, error) {
 	case IntegerMessage, StringMessage, BulkMessage, ErrorMessage:
 		return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 	}
+
 	return nil, fmt.Errorf(errorInvalidMessageType, msg.Type)
 }
 
@@ -169,12 +179,14 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 		if !ok {
 			return nil, fmt.Errorf(errorUnknownMessageType, msg.Type)
 		}
+
 		respBytes.WriteByte(b)
 		respBytes.Write(msg.bytes)
 		respBytes.WriteRune(cr)
 		respBytes.WriteRune(lf)
 	case BulkMessage:
 		respBytes.WriteByte(bulkMessageByte)
+
 		switch {
 		case msg.bytes == nil:
 			respBytes.WriteString("-1")
@@ -188,6 +200,7 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 			respBytes.WriteRune(lf)
 			respBytes.Write(msg.bytes)
 		}
+
 		respBytes.WriteRune(cr)
 		respBytes.WriteRune(lf)
 	case ArrayMessage:
@@ -195,10 +208,12 @@ func (msg *Message) RESPBytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		bytes, err := array.RESPBytes()
 		if err != nil {
 			return nil, err
 		}
+
 		respBytes.Write(bytes)
 	}
 

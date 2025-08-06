@@ -46,6 +46,7 @@ func NewClient() *Client {
 	client := &Client{
 		Client: nil,
 	}
+
 	return client
 }
 
@@ -58,10 +59,14 @@ func (client *Client) Open(host string) error {
 func (client *Client) OpenWith(host string, port int, opts *ClientOptions) error {
 	opts.Addr = fmt.Sprintf("%s:%d", host, port)
 	client.Client = goredis.NewClient(opts)
+
 	status := client.Ping()
-	if err := status.Err(); err != nil {
+
+	err := status.Err()
+	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -70,5 +75,6 @@ func (client *Client) Close() error {
 	if client.Client == nil {
 		return nil
 	}
+
 	return client.Client.Close()
 }

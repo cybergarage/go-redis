@@ -42,6 +42,8 @@ func (dbs *Databases) GetDatabase(id redis.DatabaseID) (*Database, bool) {
 	if !ok {
 		return nil, false
 	}
+
 	db, ok := v.(*Database)
+
 	return db, ok
 }

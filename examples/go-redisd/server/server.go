@@ -31,6 +31,7 @@ func NewServer() *Server {
 		Databases: NewDatabases(),
 	}
 	server.SetCommandHandler(server)
+
 	return server
 }
 
@@ -41,5 +42,6 @@ func (server *Server) GetDatabase(id redis.DatabaseID) (*Database, error) {
 		db = NewDatabaseWithID(id)
 		server.SetDatabase(db)
 	}
+
 	return db, nil
 }

@@ -32,6 +32,7 @@ func NewParserWithReader(msgReader io.Reader) *Parser {
 	Parser := &Parser{
 		reader: msgReader,
 	}
+
 	return Parser
 }
 
@@ -43,6 +44,7 @@ func NewParserWithBytes(msgBytes []byte) *Parser {
 // nextLineBytes gets a next line bytes.
 func (parser *Parser) nextLineBytes() ([]byte, error) {
 	var readBytes bytes.Buffer
+
 	readByte := make([]byte, 1)
 
 	// Gets a message bytes.
@@ -51,10 +53,12 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 		readBytes.WriteByte(readByte[0])
 		n, err = parser.reader.Read(readByte)
 	}
+
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			return readBytes.Bytes(), nil
 		}
+
 		return nil, err
 	}
 
@@ -66,6 +70,7 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 	if len(lenBytes) == 0 {
 		return make([]byte, 0), nil
 	}
+
 	return lenBytes, nil
 }
 
@@ -73,6 +78,7 @@ func (parser *Parser) nextLineBytes() ([]byte, error) {
 func (parser *Parser) nextLengthBytes(num int) ([]byte, error) {
 	n := num + 2 // + crlf
 	buf := make([]byte, n)
+
 	totalRead := 0
 	for totalRead < n {
 		read, err := parser.reader.Read(buf[totalRead:])
@@ -81,15 +87,20 @@ func (parser *Parser) nextLengthBytes(num int) ([]byte, error) {
 				if totalRead+read < n {
 					return nil, fmt.Errorf(errorInvalidBulkStringLength, totalRead+read, num)
 				}
+
 				break
 			}
+
 			return nil, err
 		}
+
 		totalRead += read
 	}
+
 	if buf[num] != cr || buf[num+1] != lf {
 		return nil, fmt.Errorf(errorInvalidBulkStringDelim, buf[num:n])
 	}
+
 	return buf[0:num], nil
 }
 
@@ -99,6 +110,7 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	num, err := strconv.Atoi(string(numBytes))
 	if err != nil {
 		return nil, err
@@ -108,6 +120,7 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if num < 0 {
 		return msg, nil
 	}
@@ -116,6 +129,7 @@ func (parser *Parser) nextBulkMessage() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return msg, nil
 }
 
@@ -125,11 +139,14 @@ func (parser *Parser) nextArrayMessage() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	msg, err := newMessageWithTypeByte(arrayMessageByte)
 	if err != nil {
 		return nil, err
 	}
+
 	msg.array = array
+
 	return msg, nil
 }
 
@@ -137,11 +154,13 @@ func (parser *Parser) nextArrayMessage() (*Message, error) {
 func (parser *Parser) Next() (*Message, error) {
 	// Parses a first type byte.
 	typeByte := make([]byte, 1)
+
 	_, err := parser.reader.Read(typeByte)
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			return nil, nil
 		}
+
 		return nil, err
 	}
 
@@ -160,9 +179,11 @@ func (parser *Parser) Next() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	msg.bytes, err = parser.nextLineBytes()
 	if err != nil {
 		return nil, err
 	}
+
 	return msg, nil
 }

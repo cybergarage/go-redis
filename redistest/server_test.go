@@ -43,6 +43,7 @@ func TestServer(t *testing.T) {
 	// CommandTest
 
 	client := NewClient()
+
 	err = client.Open(LocalHost)
 	if err != nil {
 		t.Error(err)
@@ -67,6 +68,7 @@ func TestServer(t *testing.T) {
 	// redis-benchmark
 
 	params := []string{"-t get,set -n 10000"}
+
 	t.Run("redis-benchmark", func(t *testing.T) {
 		for _, param := range params {
 			t.Run(param, func(t *testing.T) {
@@ -78,6 +80,7 @@ func TestServer(t *testing.T) {
 	// YCSB
 
 	workloads := []string{"workloada", "workloadb"}
+
 	t.Run("YCSB", func(t *testing.T) {
 		for _, workload := range workloads {
 			t.Run(workload, func(t *testing.T) {
@@ -110,6 +113,7 @@ func TestTLSServer(t *testing.T) {
 		t.Error(err)
 		return
 	}
+
 	server.SetCertificateAuthenticator(ca)
 
 	err = server.Start()
@@ -128,6 +132,7 @@ func TestTLSServer(t *testing.T) {
 		t.Error(err)
 		return
 	}
+
 	clientOpts.TLSConfig = tlsConfig
 
 	err = client.OpenWith(LocalHost, redis.DefaultPort, &clientOpts)

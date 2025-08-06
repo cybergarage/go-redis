@@ -32,6 +32,7 @@ type server struct {
 	*auth.Manader
 	*ConnManager
 	tracer.Tracer
+
 	Addr                 string
 	portListener         net.Listener
 	tlsPortListener      net.Listener
@@ -121,11 +122,13 @@ func (server *server) Start() error {
 
 // Stop stops the server.
 func (server *server) Stop() error {
-	if err := server.ConnManager.Stop(); err != nil {
+	err := server.ConnManager.Stop()
+	if err != nil {
 		return err
 	}
 
-	if err := server.close(); err != nil {
+	err = server.close()
+	if err != nil {
 		return err
 	}
 
@@ -144,9 +147,11 @@ func (server *server) Stop() error {
 
 // Restart restarts the server.
 func (server *server) Restart() error {
-	if err := server.Stop(); err != nil {
+	err := server.Stop()
+	if err != nil {
 		return err
 	}
+
 	return server.Start()
 }
 
@@ -156,10 +161,12 @@ func (server *server) open() error {
 
 	if server.IsPortEnabled() {
 		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.Port()))
+
 		server.portListener, err = net.Listen("tcp", addr)
 		if err != nil {
 			return err
 		}
+
 		log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 	}
 
@@ -168,12 +175,15 @@ func (server *server) open() error {
 		if err != nil {
 			return err
 		}
+
 		server.tlsConfig = tlsConfig
 		addr := net.JoinHostPort(server.Addr, strconv.Itoa(server.TLSPort()))
+
 		server.tlsPortListener, err = net.Listen("tcp", addr)
 		if err != nil {
 			return err
 		}
+
 		log.Infof("%s/%s (%s) started", PackageName, Version, addr)
 	}
 
@@ -187,6 +197,7 @@ func (server *server) close() error {
 		if err != nil {
 			return err
 		}
+
 		server.portListener = nil
 	}
 
@@ -195,6 +206,7 @@ func (server *server) close() error {
 		if err != nil {
 			return err
 		}
+
 		server.tlsPortListener = nil
 	}
 
@@ -206,10 +218,7 @@ func (server *server) serve() error {
 	defer server.close()
 
 	l := server.portListener
-	for {
-		if l == nil {
-			break
-		}
+	for l != nil {
 		conn, err := l.Accept()
 		if err != nil {
 			return err
@@ -224,11 +233,9 @@ func (server *server) serve() error {
 // tlsServe handles client connections with TLS.
 func (server *server) tlsServe() error {
 	defer server.close()
+
 	l := server.tlsPortListener
-	for {
-		if l == nil {
-			break
-		}
+	for l != nil {
 		conn, err := l.Accept()
 		if err != nil {
 			return err
@@ -238,7 +245,8 @@ func (server *server) tlsServe() error {
 		if err := tlsConn.Handshake(); err != nil {
 			return err
 		}
-		ok, err := server.Manager.VerifyCertificate(tlsConn)
+
+		ok, err := server.VerifyCertificate(tlsConn)
 		if !ok {
 			log.Error(err)
 			return err
@@ -255,16 +263,19 @@ func (server *server) receive(conn net.Conn, tlsConn *tls.Conn) error {
 	_, isPasswdRequired := server.ConfigRequirePass()
 
 	handlerConn := newConnWith(conn, tlsConn)
+
 	defer func() {
 		handlerConn.Close()
 	}()
 
 	handlerConn.SetAuthrized(!isPasswdRequired)
+
 	if tlsConn != nil {
 		ok, err := server.VerifyCertificate(tlsConn)
 		if !ok {
 			err = errors.New("invalid client certificates")
 		}
+
 		if err != nil {
 			log.Error(err)
 			return errors.Join(err, handlerConn.Close())
@@ -272,6 +283,7 @@ func (server *server) receive(conn net.Conn, tlsConn *tls.Conn) error {
 	}
 
 	server.AddConn(handlerConn)
+
 	defer func() {
 		server.RemoveConn(handlerConn)
 	}()
@@ -281,24 +293,31 @@ func (server *server) receive(conn net.Conn, tlsConn *tls.Conn) error {
 	parser := proto.NewParserWithReader(conn)
 
 	for {
-		span := server.Tracer.StartSpan(PackageName)
+		span := server.StartSpan(PackageName)
 		handlerConn.SetSpanContext(span)
 
 		handlerConn.StartSpan("parse")
+
 		reqMsg, parserErr := parser.Next()
+
 		handlerConn.FinishSpan()
+
 		if parserErr != nil {
 			span.Span().Finish()
 			log.Error(parserErr)
+
 			return parserErr
 		}
+
 		if reqMsg == nil {
 			span.Span().Finish()
 			break
 		}
 
-		var resMsg *Message
-		var reqErr error
+		var (
+			resMsg *Message
+			reqErr error
+		)
 
 		resMsg, reqErr = server.handleMessage(handlerConn, reqMsg)
 		if reqErr != nil {
@@ -308,15 +327,20 @@ func (server *server) receive(conn net.Conn, tlsConn *tls.Conn) error {
 		}
 
 		handlerConn.StartSpan("response")
+
 		resErr := server.responseMessage(conn, resMsg)
+
 		handlerConn.FinishSpan()
+
 		if resErr != nil {
 			log.Error(resErr)
 		}
+
 		if errors.Is(reqErr, ErrQuit) {
 			span.Span().Finish()
 			return nil
 		}
+
 		span.Span().Finish()
 	}
 
@@ -337,26 +361,34 @@ func (server *server) handleMessage(conn *Conn, msg *proto.Message) (*Message, e
 		if err != nil {
 			return nil, err
 		}
+
 		return server.handleArrayMessage(conn, msg)
 	case proto.ErrorMessage:
 		return nil, nil
 	}
+
 	return nil, nil
 }
 
 // responseMessage returns the response message to the request connection.
 func (server *server) responseMessage(conn io.Writer, msg *Message) error {
-	var bytes []byte
-	var err error
+	var (
+		bytes []byte
+		err   error
+	)
+
 	if msg != nil {
 		bytes, err = msg.RESPBytes()
 	} else {
 		bytes, err = NewErrorMessage(ErrSystem).Bytes()
 	}
+
 	if err != nil {
 		return err
 	}
+
 	_, err = conn.Write(bytes)
+
 	return err
 }
 
@@ -373,6 +405,7 @@ func (server *server) handleArrayMessage(conn *Conn, arrayMsg *proto.Array) (*Me
 		if err != nil {
 			return nil, err
 		}
+
 		return server.handleArrayMessage(conn, nestedArrayMsg)
 	}
 

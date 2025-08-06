@@ -33,13 +33,16 @@ func NewRecords() *Records {
 // Keys returns all key names.
 func (rmap *Records) Keys() []string {
 	keys := []string{}
+
 	rmap.Range(func(key, value any) bool {
 		skey, ok := key.(string)
 		if ok {
 			keys = append(keys, skey)
 		}
+
 		return true
 	})
+
 	return keys
 }
 
@@ -61,7 +64,9 @@ func (rmap *Records) GetRecord(key string) (*Record, bool) {
 	if !ok {
 		return nil, false
 	}
+
 	record, ok := v.(*Record)
+
 	return record, ok
 }
 
@@ -70,7 +75,9 @@ func (rmap *Records) RemoveRecord(key string) error {
 	if _, ok := rmap.Load(key); !ok {
 		return fmt.Errorf("%w : %s", ErrNotFound, key)
 	}
+
 	rmap.Delete(key)
+
 	return nil
 }
 
@@ -80,14 +87,18 @@ func (rmap *Records) RenameRecord(key string, newkey string) error {
 	if !ok {
 		return fmt.Errorf("%w: %s", ErrNotFound, key)
 	}
+
 	record.Key = newkey
+
 	err := rmap.SetRecord(record)
 	if err != nil {
 		return err
 	}
+
 	err = rmap.RemoveRecord(key)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

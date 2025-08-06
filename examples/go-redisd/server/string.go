@@ -27,10 +27,14 @@ func (server *Server) Set(conn *redis.Conn, key string, val string, opt redis.Se
 	}
 
 	var oldVal []byte
+
 	hasOldRecord := false
+
 	if opt.NX || opt.GET {
 		var currRecord *Record
+
 		currRecord, hasOldRecord = db.GetRecord(key)
+
 		switch {
 		case opt.NX:
 			if hasOldRecord {
@@ -61,6 +65,7 @@ func (server *Server) Set(conn *redis.Conn, key string, val string, opt redis.Se
 		if hasOldRecord && oldVal != nil {
 			return redis.NewBulkMessage(string(oldVal)), nil
 		}
+
 		return redis.NewNilMessage(), nil
 	}
 
@@ -72,13 +77,16 @@ func (server *Server) Get(conn *redis.Conn, key string) (*redis.Message, error) 
 	if err != nil {
 		return nil, err
 	}
+
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
+
 	stringData, ok := record.Data.(string)
 	if ok {
 		return redis.NewStringMessage(stringData), nil
 	}
+
 	return redis.NewNilMessage(), nil
 }

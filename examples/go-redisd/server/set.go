@@ -34,34 +34,42 @@ func NewSet() *Set {
 
 func (set *Set) Add(members []string) int {
 	addedMemberCount := 0
+
 	for _, member := range members {
 		hasMember := false
+
 		for _, set := range set.members {
 			if set == member {
 				hasMember = true
 				continue
 			}
 		}
+
 		if hasMember {
 			continue
 		}
+
 		set.members = append(set.members, member)
 		addedMemberCount++
 	}
+
 	return addedMemberCount
 }
 
 func (set *Set) Rem(members []string) int {
 	removedMemberCount := 0
+
 	for _, rm := range members {
 		for n, m := range set.members {
 			if m == rm {
 				set.members = append(set.members[:n], set.members[n+1:]...)
 				removedMemberCount++
+
 				break
 			}
 		}
 	}
+
 	return removedMemberCount
 }
 
@@ -78,10 +86,12 @@ func (server *Server) SAdd(conn *redis.Conn, key string, members []string) (*red
 	if err != nil {
 		return nil, err
 	}
+
 	_, set, err := db.GetSetRecord(key)
 	if err != nil {
 		return nil, err
 	}
+
 	return redis.NewIntegerMessage(set.Add(members)), nil
 }
 
@@ -90,11 +100,14 @@ func (server *Server) SMembers(conn *redis.Conn, key string) (*redis.Message, er
 	if err != nil {
 		return nil, err
 	}
+
 	_, set, err := db.GetSetRecord(key)
 	if err != nil {
 		return nil, err
 	}
+
 	arrayMsg := redis.NewArrayMessage()
+
 	array, _ := arrayMsg.Array()
 	for _, m := range set.Members() {
 		array.Append(redis.NewBulkMessage(m))
@@ -108,9 +121,11 @@ func (server *Server) SRem(conn *redis.Conn, key string, members []string) (*red
 	if err != nil {
 		return nil, err
 	}
+
 	_, set, err := db.GetSetRecord(key)
 	if err != nil {
 		return nil, err
 	}
+
 	return redis.NewIntegerMessage(set.Rem(members)), nil
 }

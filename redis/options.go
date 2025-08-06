@@ -90,6 +90,7 @@ func newScanTypeFromString(str string) (ScanType, error) {
 	if len(str) == 0 {
 		return KeyScan, nil
 	}
+
 	switch str {
 	case "SSCAN":
 		return SetScan, nil
@@ -98,6 +99,7 @@ func newScanTypeFromString(str string) (ScanType, error) {
 	case "ZSCAN":
 		return SortedSetScan, nil
 	}
+
 	return 0, NewErrNotSupported(str)
 }
 

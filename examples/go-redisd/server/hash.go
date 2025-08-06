@@ -32,23 +32,30 @@ func (hash Hash) Set(field string, val string, opt redis.HSetOption) int {
 	if opt.NX && hasKey {
 		return 0
 	}
+
 	hash[field] = val
+
 	if hasKey {
 		return 0
 	}
+
 	return 1
 }
 
 func (hash Hash) Del(fields []string) int {
 	removedFields := 0
+
 	for _, field := range fields {
 		_, ok := hash[field]
 		if !ok {
 			continue
 		}
+
 		delete(hash, field)
+
 		removedFields++
 	}
+
 	return removedFields
 }
 
@@ -61,14 +68,17 @@ func (server *Server) HDel(conn *redis.Conn, key string, fields []string) (*redi
 	if err != nil {
 		return nil, err
 	}
+
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
+
 	hash, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewIntegerMessage(0), nil
 	}
+
 	return redis.NewIntegerMessage(hash.Del(fields)), nil
 }
 
@@ -80,14 +90,17 @@ func (server *Server) HSet(conn *redis.Conn, key string, field string, val strin
 	}
 
 	var hash Hash
+
 	record, hasRecord := db.GetRecord(key)
 	if hasRecord {
 		var ok bool
+
 		hash, ok = record.Data.(Hash)
 		if !ok {
 			hasRecord = false
 		}
 	}
+
 	if !hasRecord {
 		dict := Hash{}
 		dict[field] = val
@@ -98,6 +111,7 @@ func (server *Server) HSet(conn *redis.Conn, key string, field string, val strin
 			TTL:       0,
 		}
 		db.SetRecord(record)
+
 		return redis.NewIntegerMessage(1), nil
 	}
 
@@ -109,18 +123,22 @@ func (server *Server) HGet(conn *redis.Conn, key string, field string) (*redis.M
 	if err != nil {
 		return nil, err
 	}
+
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
+
 	hash, ok := record.Data.(Hash)
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
+
 	hashData, ok := hash[field]
 	if !ok {
 		return redis.NewNilMessage(), nil
 	}
+
 	return redis.NewStringMessage(hashData), nil
 }
 
@@ -131,6 +149,7 @@ func (server *Server) HGetAll(conn *redis.Conn, key string) (*redis.Message, err
 	if err != nil {
 		return nil, err
 	}
+
 	record, ok := db.GetRecord(key)
 	if !ok {
 		return arrayMsg, nil

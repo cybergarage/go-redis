@@ -30,10 +30,10 @@ func (server *server) Auth(conn *Conn, username string, password string) (*Messa
 	}
 
 	ok, err := server.VerifyCredential(conn, q)
-
 	if err != nil {
 		return nil, err
 	}
+
 	if !ok {
 		return nil, errors.New("invalid username or password")
 	}
@@ -41,6 +41,7 @@ func (server *server) Auth(conn *Conn, username string, password string) (*Messa
 	conn.SetUserName(username)
 	conn.SetPassword(password)
 	conn.SetAuthrized(true)
+
 	return NewOKMessage(), nil
 }
 
@@ -53,5 +54,6 @@ func (server *server) SetCredential(cred auth.Credential) {
 func (server *server) LookupCredential(q auth.Query) (auth.Credential, bool, error) {
 	user := q.Username()
 	cred, ok := server.credStore[user]
+
 	return cred, ok, nil
 }

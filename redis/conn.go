@@ -60,10 +60,14 @@ func (conn *Conn) Close() error {
 	if conn.isClosed {
 		return nil
 	}
-	if err := conn.Conn.Close(); err != nil {
+
+	err := conn.Conn.Close()
+	if err != nil {
 		return err
 	}
+
 	conn.isClosed = true
+
 	return nil
 }
 
@@ -132,7 +136,9 @@ func (conn *Conn) TLSConnectionState() (*tls.ConnectionState, bool) {
 	if conn.tlsConn == nil {
 		return nil, false
 	}
+
 	tlsState := conn.tlsConn.ConnectionState()
+
 	return &tlsState, true
 }
 

@@ -53,6 +53,7 @@ func (cfg *serverConfig) Port() int {
 	if !ok {
 		return DefaultTLSPort
 	}
+
 	return port
 }
 
@@ -62,6 +63,7 @@ func (cfg *serverConfig) IsPortEnabled() bool {
 	if !ok {
 		return false
 	}
+
 	return (0 < port)
 }
 
@@ -76,6 +78,7 @@ func (cfg *serverConfig) TLSPort() int {
 	if !ok {
 		return DefaultTLSPort
 	}
+
 	return port
 }
 
@@ -85,6 +88,7 @@ func (cfg *serverConfig) IsTLSPortEnabled() bool {
 	if !ok {
 		return false
 	}
+
 	return (0 < port)
 }
 

@@ -74,5 +74,6 @@ func NewStringArrayMessage(strs []string) *Message {
 	for _, str := range strs {
 		array.Append(NewBulkMessage(str))
 	}
+
 	return proto.NewMessageWithType(proto.ArrayMessage).SetArray(array)
 }

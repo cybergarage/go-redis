@@ -29,18 +29,22 @@ func isStringsEqual(aa []string, ba []string) bool {
 	for len(aa) != len(ba) {
 		return false
 	}
+
 	for _, a := range aa {
 		hasStr := false
+
 		for _, b := range ba {
 			if a == b {
 				hasStr = true
 				break
 			}
 		}
+
 		if !hasStr {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -115,6 +119,7 @@ func ConnectionCommandTest(t *testing.T, client *Client) {
 					t.Error(echo.Err())
 					return
 				}
+
 				if echo.Val() != msg {
 					t.Errorf("'%s' != '%s'", echo.Val(), msg)
 					return
@@ -170,6 +175,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 				}
 			}
 		}
+
 		for _, r := range records {
 			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
 				res, err := client.Del(r.keys...).Result()
@@ -177,6 +183,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -186,14 +193,18 @@ func GenericCommandTest(t *testing.T, client *Client) {
 	})
 
 	t.Run("EXISTS", func(t *testing.T) {
-		if err := client.Set("key1_exists", "val", 0).Err(); err != nil {
+		err := client.Set("key1_exists", "val", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if err := client.Set("key2_exists", "val", 0).Err(); err != nil {
+
+		err = client.Set("key2_exists", "val", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			keys     []string
 			expected int64
@@ -211,6 +222,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -221,10 +233,12 @@ func GenericCommandTest(t *testing.T, client *Client) {
 
 	t.Run("KEYS", func(t *testing.T) {
 		args := []string{"firstname_keys", "Jack", "lastname_keys", "Stuntman", "age_keys", "35"}
+
 		err := client.MSet(args).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		records := []struct {
 			pattern  string
 			expected []string
@@ -240,18 +254,22 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if len(res) != len(r.expected) {
 					t.Errorf("%s: %s != %s", r.pattern, res, r.expected)
 					return
 				}
+
 				for _, ex := range r.expected {
 					found := false
+
 					for _, re := range res {
 						if ex == re {
 							found = true
 							continue
 						}
 					}
+
 					if !found {
 						t.Errorf("%s: %s != %s", r.pattern, res, r.expected)
 						return
@@ -277,10 +295,12 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			"scan_key:12", "12",
 			"scan_key:13", "13",
 			"scan_key:14", "14"}
+
 		err := client.MSet(args).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		records := []struct {
 			count          int64
 			expectedCursor int64
@@ -289,6 +309,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			{count: 10, expectedCursor: -1, expectedKeys: []string{"scan_key:01", "scan_key:02", "scan_key:03", "scan_key:04", "scan_key:05", "scan_key:06", "scan_key:07", "scan_key:08", "scan_key:09", "scan_key:10"}},
 			{count: 10, expectedCursor: 0, expectedKeys: []string{"scan_key:11", "scan_key:12", "scan_key:13", "scan_key:14"}},
 		}
+
 		cursor := uint64(0)
 		for _, r := range records {
 			keys, nextCursor, err := client.Scan(cursor, "scan_key:*", r.count).Result()
@@ -296,25 +317,30 @@ func GenericCommandTest(t *testing.T, client *Client) {
 				t.Error(err)
 				return
 			}
+
 			if !isStringsEqual(keys, r.expectedKeys) {
 				t.Errorf("%v != %v", keys, r.expectedKeys)
 				return
 			}
+
 			if 0 < r.expectedCursor {
 				if nextCursor != uint64(r.expectedCursor) {
 					t.Errorf("%d != %d", nextCursor, r.expectedCursor)
 					return
 				}
 			}
+
 			cursor = nextCursor
 		}
 	})
 
 	t.Run("RENAME", func(t *testing.T) {
-		if err := client.Set("mykey_rename", "Hello", 0).Err(); err != nil {
+		err := client.Set("mykey_rename", "Hello", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			key      string
 			newkey   string
@@ -329,11 +355,13 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.Get(r.newkey).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -343,14 +371,18 @@ func GenericCommandTest(t *testing.T, client *Client) {
 	})
 
 	t.Run("RENAMENX", func(t *testing.T) {
-		if err := client.Set("mykey_renamenx", "Hello", 0).Err(); err != nil {
+		err := client.Set("mykey_renamenx", "Hello", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if err := client.Set("myotherkey_renamenx", "World", 0).Err(); err != nil {
+
+		err = client.Set("myotherkey_renamenx", "World", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			key      string
 			newkey   string
@@ -365,11 +397,13 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.Get(r.newkey).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -383,10 +417,12 @@ func GenericCommandTest(t *testing.T, client *Client) {
 			t.Error(err)
 			return
 		}
+
 		err := client.HSet("key2_type", "key", "val").Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		records := []struct {
 			key      string
 			expected string
@@ -402,6 +438,7 @@ func GenericCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -417,10 +454,13 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 
 	t.Run("EXPIRE", func(t *testing.T) {
 		key := "mykey_expire"
-		if err := client.Set(key, "Hello World", 0).Err(); err != nil {
+
+		err := client.Set(key, "Hello World", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			expire   time.Duration
 			sleep    time.Duration
@@ -438,11 +478,13 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 						t.Error(err)
 						return
 					}
+
 					if !ok {
 						t.Errorf("%t", ok)
 						return
 					}
 				}
+
 				if 0 < r.sleep {
 					time.Sleep(r.sleep)
 				}
@@ -452,6 +494,7 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if (ttl != r.expected) && (ttl < r.expected) {
 					t.Errorf("%d < %d", ttl, r.expected)
 					return
@@ -462,10 +505,13 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 
 	t.Run("EXPIREAT", func(t *testing.T) {
 		key := "mykey_expire"
-		if err := client.Set(key, "Hello World", 0).Err(); err != nil {
+
+		err := client.Set(key, "Hello World", 0).Err()
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			expire   time.Duration
 			sleep    time.Duration
@@ -475,6 +521,7 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 			{expire: 1 * time.Second, sleep: 2 * time.Second, expected: -2 * time.Second},
 			{expire: 0 * time.Second, sleep: 1 * time.Second, expected: -2 * time.Second},
 		}
+
 		now := time.Now()
 		for _, r := range records {
 			t.Run(fmt.Sprintf("ex:%d, slp:%d", r.expire/time.Second, r.sleep/time.Second), func(t *testing.T) {
@@ -484,11 +531,13 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 						t.Error(err)
 						return
 					}
+
 					if !ok {
 						t.Errorf("%t", ok)
 						return
 					}
 				}
+
 				if 0 < r.sleep {
 					time.Sleep(r.sleep)
 				}
@@ -498,6 +547,7 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if (ttl != r.expected) && (ttl < r.expected) {
 					t.Errorf("%d < %d", ttl, r.expected)
 					return
@@ -528,6 +578,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -539,10 +590,12 @@ func StringCommandTest(t *testing.T, client *Client) {
 	t.Run("DECR", func(t *testing.T) {
 		key := "mykey_decr"
 		startVal := 10
+
 		err := client.Set(key, strconv.Itoa(startVal), 0).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		records := []struct {
 			expected int64
 		}{
@@ -556,6 +609,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -567,11 +621,14 @@ func StringCommandTest(t *testing.T, client *Client) {
 	t.Run("DECRBY", func(t *testing.T) {
 		key := "mykey_decrby"
 		startVal := 10
+
 		err := client.Set(key, strconv.Itoa(startVal), 0).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		decVal := 3
+
 		records := []struct {
 			expected int64
 		}{
@@ -585,6 +642,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -596,10 +654,12 @@ func StringCommandTest(t *testing.T, client *Client) {
 	t.Run("INCR", func(t *testing.T) {
 		key := "mykey_incr"
 		startVal := 10
+
 		err := client.Set(key, strconv.Itoa(startVal), 0).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		records := []struct {
 			expected int64
 		}{
@@ -613,6 +673,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -624,11 +685,14 @@ func StringCommandTest(t *testing.T, client *Client) {
 	t.Run("INCRBY", func(t *testing.T) {
 		key := "mykey_incrby"
 		startVal := 10
+
 		err := client.Set(key, strconv.Itoa(startVal), 0).Err()
 		if err != nil {
 			t.Error(err)
 		}
+
 		incVal := 3
+
 		records := []struct {
 			expected int64
 		}{
@@ -642,6 +706,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -668,10 +733,12 @@ func StringCommandTest(t *testing.T, client *Client) {
 					if err == nil {
 						t.Errorf("%s != %s", res, string(r.expected))
 					}
+
 					return
 				} else if err != nil {
 					t.Error(err)
 				}
+
 				if res != string(r.expected) {
 					t.Errorf("%s != %s", res, string(r.expected))
 				}
@@ -694,20 +761,24 @@ func StringCommandTest(t *testing.T, client *Client) {
 					args = append(args, key)
 					args = append(args, r.vals[n])
 				}
+
 				err := client.MSet(args).Err()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.MGet(r.keys...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(res) != len(r.vals) {
 					t.Errorf("%d != %d", len(res), len(r.vals))
 					return
 				}
+
 				for n, val := range r.vals {
 					if res[n] != val {
 						t.Errorf("%s != %s", res[n], val)
@@ -733,11 +804,13 @@ func StringCommandTest(t *testing.T, client *Client) {
 					args = append(args, key)
 					args = append(args, r.vals[n])
 				}
+
 				res, err := client.MSetNX(args).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
 					return
@@ -764,11 +837,13 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.Get(r.key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -795,6 +870,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
 					return
@@ -821,11 +897,13 @@ func StringCommandTest(t *testing.T, client *Client) {
 						return
 					}
 				}
+
 				res, err := client.StrLen(r.key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -836,11 +914,13 @@ func StringCommandTest(t *testing.T, client *Client) {
 
 	t.Run("SUBSTR(GETRANGE)", func(t *testing.T) {
 		key := "mykey_substr"
+
 		_, err := client.Set(key, "This is a string", 0).Result()
 		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			start    int64
 			end      int64
@@ -858,6 +938,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -874,11 +955,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 	t.Run("HDEL", func(t *testing.T) {
 		key := "myhash_hdel"
 		fields := []string{"field1", "field2"}
+
 		err := client.HSet(key, fields[0], "foo").Err()
 		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			fields   []string
 			expected int64
@@ -894,6 +977,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -905,11 +989,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 	t.Run("HEXISTS", func(t *testing.T) {
 		key := "myhash_exists"
 		fields := []string{"field1", "field2"}
+
 		err := client.HSet(key, fields[0], "foo").Err()
 		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		records := []struct {
 			field    string
 			expected bool
@@ -924,6 +1010,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%t != %t", res, r.expected)
 					return
@@ -934,6 +1021,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 
 	t.Run("HKEYS", func(t *testing.T) {
 		key := "myhash_hkeys"
+
 		records := []struct {
 			fields []string
 			values []string
@@ -949,11 +1037,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 						return
 					}
 				}
+
 				res, err := client.HKeys(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(res, r.fields) {
 					t.Errorf("%s != %s", res, r.fields)
 					return
@@ -964,6 +1054,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 
 	t.Run("HLEN", func(t *testing.T) {
 		key := "myhash_hlen"
+
 		records := []struct {
 			field    string
 			value    string
@@ -982,11 +1073,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 						return
 					}
 				}
+
 				res, err := client.HLen(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != int64(r.expected) {
 					t.Errorf("%d != %d", res, r.expected)
 					return
@@ -1012,11 +1105,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.HGet(key, r.field).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -1043,11 +1138,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.HGet(key, r.field).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -1070,20 +1167,24 @@ func HashCommandTest(t *testing.T, client *Client) {
 				for n, key := range r.keys {
 					args[key] = r.vals[n]
 				}
+
 				err := client.HMSet(r.hash, args).Err()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.HMGet(r.hash, r.keys...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(res) != len(r.vals) {
 					t.Errorf("%d != %d", len(res), len(r.vals))
 					return
 				}
+
 				for n, val := range r.vals {
 					if res[n] != val {
 						t.Errorf("%s != %s", res[n], val)
@@ -1111,17 +1212,20 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				res, err := client.HGetAll(r.hash).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				for ekey, eval := range r.expected {
 					rval, ok := res[ekey]
 					if !ok {
 						t.Errorf("%s", ekey)
 						return
 					}
+
 					if rval != eval {
 						t.Errorf("%s != %s", rval, eval)
 					}
@@ -1140,15 +1244,18 @@ func HashCommandTest(t *testing.T, client *Client) {
 			{"f2", "99"},
 			{"f3", "-256"},
 		}
+
 		args := map[string]interface{}{}
 		for _, r := range records {
 			args[r.field] = r.value
 		}
+
 		err := client.HMSet(key, args).Err()
 		if err != nil {
 			t.Error(err)
 			return
 		}
+
 		for _, r := range records {
 			t.Run(r.field, func(t *testing.T) {
 				// Note: go-redis does not support HSTRLEN yet
@@ -1157,6 +1264,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if len(res) != len(r.value) {
 					t.Errorf("%d != %d", len(res), len(r.value))
 					return
@@ -1167,6 +1275,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 
 	t.Run("HVALS", func(t *testing.T) {
 		key := "myhash_hvals"
+
 		records := []struct {
 			fields []string
 			values []string
@@ -1182,11 +1291,13 @@ func HashCommandTest(t *testing.T, client *Client) {
 						return
 					}
 				}
+
 				res, err := client.HVals(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(res, r.values) {
 					t.Errorf("%s != %s", res, r.fields)
 					return
@@ -1227,8 +1338,10 @@ func ListCommandTest(t *testing.T, client *Client) {
 					if len(r.expected) != 0 { // Is response nil ?
 						t.Error(err)
 					}
+
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -1255,15 +1368,18 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				l, err := client.LLen(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if l != r.expectedLen {
 					t.Errorf("%d != %d", l, r.expectedLen)
 					return
@@ -1300,6 +1416,7 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -1326,19 +1443,23 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				rng, err := client.LRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(rng) != len(r.expectedRng) {
 					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
 					return
 				}
+
 				for n, rs := range rng {
 					if rs != r.expectedRng[n] {
 						t.Errorf("%s != %s", rs, r.expectedRng[n])
@@ -1376,19 +1497,23 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				rng, err := client.LRange(r.key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(rng) != len(r.expectedRng) {
 					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
 					return
 				}
+
 				for n, rs := range rng {
 					if rs != r.expectedRng[n] {
 						t.Errorf("%s != %s", rs, r.expectedRng[n])
@@ -1427,6 +1552,7 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expected {
 					t.Errorf("%s != %s", res, r.expected)
 					return
@@ -1453,19 +1579,23 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				rng, err := client.LRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(rng) != len(r.expectedRng) {
 					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
 					return
 				}
+
 				for n, rs := range rng {
 					if rs != r.expectedRng[n] {
 						t.Errorf("%s != %s", rs, r.expectedRng[n])
@@ -1503,19 +1633,23 @@ func ListCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				rng, err := client.LRange(r.key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if len(rng) != len(r.expectedRng) {
 					t.Errorf("%d != %d", len(rng), len(r.expectedRng))
 					return
 				}
+
 				for n, rs := range rng {
 					if rs != r.expectedRng[n] {
 						t.Errorf("%s != %s", rs, r.expectedRng[n])
@@ -1550,15 +1684,18 @@ func SetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.SMembers(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1587,15 +1724,18 @@ func SetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				ret, err := client.SCard(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if ret != r.expectedCard {
 					t.Errorf("%d != %d", ret, r.expectedCard)
 					return
@@ -1630,6 +1770,7 @@ func SetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%t != %t", res, r.expectedRet)
 					return
@@ -1662,15 +1803,18 @@ func SetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.SMembers(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1703,20 +1847,24 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
+
 				res, err := client.ZAdd(key, params...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.ZRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1744,20 +1892,24 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
+
 				res, err := client.ZAdd(key, params...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				ret, err := client.ZCard(key).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if ret != r.expectedCard {
 					t.Errorf("%d != %d", ret, r.expectedCard)
 					return
@@ -1787,15 +1939,18 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%f != %f", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.ZRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !reflect.DeepEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1820,6 +1975,7 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 			{Score: 2, Member: "two"},
 			{Score: 3, Member: "three"},
 		}
+
 		_, err := client.ZAdd(key, params...).Result()
 		if err != nil {
 			t.Error(err)
@@ -1833,15 +1989,18 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.ZRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1869,20 +2028,24 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
+
 				res, err := client.ZAdd(key, params...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				mems, err := client.ZRevRange(key, 0, -1).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1909,6 +2072,7 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 			{Score: 2, Member: "two"},
 			{Score: 3, Member: "three"},
 		}
+
 		_, err := client.ZAdd(key, params...).Result()
 		if err != nil {
 			t.Error(err)
@@ -1923,11 +2087,13 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 					Offset: 0,
 					Count:  -1,
 				}
+
 				mems, err := client.ZRangeByScore(key, opt).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if !isStringsEqual(mems, r.expectedMems) {
 					t.Errorf("%s != %s", mems, r.expectedMems)
 					return
@@ -1952,20 +2118,24 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 		for _, r := range records {
 			t.Run(fmt.Sprintf("%s(%f)", r.member, r.score), func(t *testing.T) {
 				params := []goredis.Z{{Score: r.score, Member: r.member}}
+
 				res, err := client.ZAdd(key, params...).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if res != r.expectedRet {
 					t.Errorf("%d != %d", r.expectedRet, res)
 					return
 				}
+
 				score, err := client.ZScore(key, r.member).Result()
 				if err != nil {
 					t.Error(err)
 					return
 				}
+
 				if score != r.expectedScore {
 					t.Errorf("%f != %f", score, r.expectedScore)
 					return

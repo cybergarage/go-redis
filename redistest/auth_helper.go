@@ -26,6 +26,7 @@ func AuthCommandTest(t *testing.T, server *Server) {
 
 	requirePass := "password"
 	server.SetRequirePass(requirePass)
+
 	err := server.Restart()
 	if err != nil {
 		t.Error(err)
@@ -33,6 +34,7 @@ func AuthCommandTest(t *testing.T, server *Server) {
 
 	defer func() {
 		server.RemoveRequirePass()
+
 		err := server.Restart()
 		if err != nil {
 			t.Error(err)
@@ -52,11 +54,13 @@ func AuthCommandTest(t *testing.T, server *Server) {
 			client := NewClient()
 			opts := NewClientOptions()
 			opts.Password = auth.passwd
+
 			err := client.OpenWith(LocalHost, redis.DefaultPort, &opts)
 			if auth.expected {
 				if err != nil {
 					t.Error(err)
 				}
+
 				status := client.Ping()
 				if status.Err() != nil {
 					t.Error(status.Err())
@@ -65,11 +69,13 @@ func AuthCommandTest(t *testing.T, server *Server) {
 				if err == nil {
 					t.Errorf("Expected error : %s", auth.passwd)
 				}
+
 				status := client.Ping()
 				if status.Err() == nil {
 					t.Errorf("Expected error : %s", auth.passwd)
 				}
 			}
+
 			client.Close()
 		})
 	}

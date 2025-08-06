@@ -44,9 +44,11 @@ func regexpFromGlob(pattern string) string {
 		{old: "*", new: ".*"},
 		{old: "?", new: "."},
 	}
+
 	re2Pattern := pattern
 	for _, repstr := range repstrs {
 		re2Pattern = strings.ReplaceAll(re2Pattern, repstr.old, repstr.new)
 	}
+
 	return "^" + re2Pattern + "$"
 }

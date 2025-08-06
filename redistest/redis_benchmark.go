@@ -28,14 +28,17 @@ func ExecRedisBenchmark(t *testing.T, param string) {
 	t.Helper()
 
 	args := strings.Split(param, " ")
+
 	out, err := exec.Command(redisBenchmarkCmd, args...).CombinedOutput()
 	if err != nil {
 		return
 	}
+
 	outStr := string(out)
 	if strings.Contains(outStr, "FAILED") {
 		t.Errorf("%s", outStr)
 		return
 	}
+
 	t.Logf("%s", outStr)
 }
