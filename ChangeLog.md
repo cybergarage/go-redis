@@ -4,6 +4,9 @@
 - Support transaction commands
   -  MULTI, EXEC, DISCARD 
 
+## v1.5.7 (2025-XX-XX)
+- fix golangci-lint issues
+
 ## v1.5.6 (2025-05-30)
 - Update package
   - go-authenticator
