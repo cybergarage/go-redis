@@ -1,10 +1,6 @@
 module github.com/cybergarage/go-redis
 
-<<<<<<< HEAD
-go 1.22
-=======
-go 1.22
->>>>>>> a821ade (Update go.mod)
+go 1.24
 
 require (
 	github.com/cybergarage/go-authenticator v1.0.5
