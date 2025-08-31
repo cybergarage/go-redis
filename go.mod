@@ -1,6 +1,6 @@
 module github.com/cybergarage/go-redis
 
-go 1.25
+go 1.22
 
 require (
 	github.com/cybergarage/go-authenticator v1.0.5
