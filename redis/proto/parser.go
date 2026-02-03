@@ -15,6 +15,7 @@
 package proto
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
@@ -24,13 +25,13 @@ import (
 
 // Parser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
-	reader io.Reader
+	reader *bufio.Reader
 }
 
 // NewParserWithReader returns a new parser for the specified reader.
 func NewParserWithReader(msgReader io.Reader) *Parser {
 	Parser := &Parser{
-		reader: msgReader,
+		reader: bufio.NewReader(msgReader),
 	}
 
 	return Parser
@@ -45,25 +46,25 @@ func NewParserWithBytes(msgBytes []byte) *Parser {
 func (parser *Parser) nextLineBytes() ([]byte, error) {
 	var readBytes bytes.Buffer
 
-	readByte := make([]byte, 1)
-
 	// Gets a message bytes.
-	n, err := parser.reader.Read(readByte)
-	for n == 1 && err == nil && readByte[0] != cr {
-		readBytes.WriteByte(readByte[0])
-		n, err = parser.reader.Read(readByte)
+	readByte, err := parser.reader.ReadByte()
+	for err == nil && readByte != cr {
+		readBytes.WriteByte(readByte)
+		readByte, err = parser.reader.ReadByte()
 	}
 
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			return readBytes.Bytes(), nil
 		}
-
 		return nil, err
 	}
 
 	// Skips a next line field.
-	parser.reader.Read(readByte)
+	_, err = parser.reader.ReadByte()
+	if err != nil {
+		return nil, err
+	}
 
 	// Returns an empty byte array instead of nil
 	lenBytes := readBytes.Bytes()
@@ -152,10 +153,7 @@ func (parser *Parser) nextArrayMessage() (*Message, error) {
 
 // Next returns a next message.
 func (parser *Parser) Next() (*Message, error) {
-	// Parses a first type byte.
-	typeByte := make([]byte, 1)
-
-	_, err := parser.reader.Read(typeByte)
+	typeByte, err := parser.reader.ReadByte()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			return nil, nil
@@ -165,17 +163,17 @@ func (parser *Parser) Next() (*Message, error) {
 	}
 
 	// Returns a next array if the message type is array.
-	if typeByte[0] == arrayMessageByte {
+	if typeByte == arrayMessageByte {
 		return parser.nextArrayMessage()
 	}
 
 	// Returns a next bulk strings if the message type is bulk string.
-	if typeByte[0] == bulkMessageByte {
+	if typeByte == bulkMessageByte {
 		return parser.nextBulkMessage()
 	}
 
 	// Returns a next line bytes
-	msg, err := newMessageWithTypeByte(typeByte[0])
+	msg, err := newMessageWithTypeByte(typeByte)
 	if err != nil {
 		return nil, err
 	}
