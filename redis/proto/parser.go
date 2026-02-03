@@ -22,7 +22,7 @@ import (
 	"strconv"
 )
 
-// Paser represents a Redis serialization protocol (RESP) parser.
+// Parser represents a Redis serialization protocol (RESP) parser.
 type Parser struct {
 	reader io.Reader
 }

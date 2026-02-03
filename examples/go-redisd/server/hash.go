@@ -26,7 +26,7 @@ import (
 
 type Hash map[string]string
 
-// nolint: ifshort
+// Set sets the specified hash field and returns 1 if a new field was created.
 func (hash Hash) Set(field string, val string, opt redis.HSetOption) int {
 	_, hasKey := hash[field]
 	if opt.NX && hasKey {
@@ -82,7 +82,7 @@ func (server *Server) HDel(conn *redis.Conn, key string, fields []string) (*redi
 	return redis.NewIntegerMessage(hash.Del(fields)), nil
 }
 
-// nolint: ifshort
+// HSet sets the specified hash field and returns the number of fields that were added.
 func (server *Server) HSet(conn *redis.Conn, key string, field string, val string, opt redis.HSetOption) (*redis.Message, error) {
 	db, err := server.GetDatabase(conn.Database())
 	if err != nil {

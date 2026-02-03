@@ -24,7 +24,7 @@ type CertificateAuthenticator = auth.CertificateAuthenticator
 // CertificateAuthenticatorOption represents an authenticator option.
 type CertificateAuthenticatorOption = auth.CertificateAuthenticatorOption
 
-// WithCertificateAuthenticatorCommonName sets the common name.
+// WithCommonNameRegexp returns an option to authenticate by a certificate Common Name regexp.
 func WithCommonNameRegexp(regexps ...string) CertificateAuthenticatorOption {
 	return auth.WithCommonNameRegexp(regexps...)
 }

@@ -101,10 +101,7 @@ func (zset *ZSet) Range(start int, stop int, opt ZRangeOption) []*ZSetMember {
 		mems = append(mems, zset.members[n])
 	}
 
-	offset := opt.Offset
-	if offset < 0 {
-		offset = 0
-	}
+	offset := max(opt.Offset, 0)
 
 	count := opt.Count
 	if count < 0 {

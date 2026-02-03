@@ -17,6 +17,7 @@ package redistest
 import (
 	"fmt"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -31,14 +32,7 @@ func isStringsEqual(aa []string, ba []string) bool {
 	}
 
 	for _, a := range aa {
-		hasStr := false
-
-		for _, b := range ba {
-			if a == b {
-				hasStr = true
-				break
-			}
-		}
+		hasStr := slices.Contains(ba, a)
 
 		if !hasStr {
 			return false
@@ -48,7 +42,9 @@ func isStringsEqual(aa []string, ba []string) bool {
 	return true
 }
 
-// nolint: maintidx, gocyclo
+// CommandTest runs the full command conformance test suite against the provided client.
+//
+//nolint:maintidx,gocyclo
 func CommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -104,7 +100,9 @@ func CommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo
+// ConnectionCommandTest runs connection management command tests.
+//
+//nolint:maintidx,gocyclo
 func ConnectionCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -129,7 +127,9 @@ func ConnectionCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo
+// ServerCommandTest runs server management command tests.
+//
+//nolint:maintidx,gocyclo
 func ServerCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -150,7 +150,9 @@ func ServerCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo
+// GenericCommandTest runs generic (key/value) command tests.
+//
+//nolint:maintidx,gocyclo
 func GenericCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -447,7 +449,9 @@ func GenericCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo
+// GenericTTLCommandTest runs TTL-related generic command tests.
+//
+//nolint:maintidx,gocyclo
 func GenericTTLCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -556,7 +560,9 @@ func GenericTTLCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo, dupl
+// StringCommandTest runs string command tests.
+//
+//nolint:maintidx,gocyclo,dupl
 func StringCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -947,7 +953,9 @@ func StringCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo, dupl
+// HashCommandTest runs hash command tests.
+//
+//nolint:maintidx,gocyclo,dupl
 func HashCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -1162,7 +1170,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 		}
 		for _, r := range records {
 			t.Run(r.hash+":"+strings.Join(r.keys, ","), func(t *testing.T) {
-				args := map[string]interface{}{}
+				args := map[string]any{}
 				for n, key := range r.keys {
 					args[key] = r.vals[n]
 				}
@@ -1244,7 +1252,7 @@ func HashCommandTest(t *testing.T, client *Client) {
 			{"f3", "-256"},
 		}
 
-		args := map[string]interface{}{}
+		args := map[string]any{}
 		for _, r := range records {
 			args[r.field] = r.value
 		}
@@ -1306,7 +1314,9 @@ func HashCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo, dupl
+// ListCommandTest runs list command tests.
+//
+//nolint:maintidx,gocyclo,dupl
 func ListCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -1660,7 +1670,9 @@ func ListCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo, dupl
+// SetCommandTest runs set command tests.
+//
+//nolint:maintidx,gocyclo,dupl
 func SetCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 
@@ -1823,7 +1835,9 @@ func SetCommandTest(t *testing.T, client *Client) {
 	})
 }
 
-// nolint: maintidx, gocyclo, dupl
+// ZSetCommandTest runs sorted set (zset) command tests.
+//
+//nolint:maintidx,gocyclo,dupl
 func ZSetCommandTest(t *testing.T, client *Client) {
 	t.Helper()
 

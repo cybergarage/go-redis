@@ -30,7 +30,8 @@ type Client struct {
 type ClientOptions = goredis.Options
 
 // NewClientOptions returns a default client options.
-// nolint: exhaustivestruct
+//
+//nolint:exhaustruct
 func NewClientOptions() ClientOptions {
 	return goredis.Options{ // nolint:exhaustruct
 		DialTimeout:  time.Second,
@@ -42,7 +43,7 @@ func NewClientOptions() ClientOptions {
 
 // NewClient returns a client instance.
 func NewClient() *Client {
-	// nolint: exhaustivestruct
+	//nolint:exhaustruct
 	client := &Client{
 		Client: nil,
 	}
