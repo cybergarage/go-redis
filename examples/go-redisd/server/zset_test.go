@@ -66,7 +66,7 @@ func TestZSet(t *testing.T) {
 				zset.Add([]*ZSetMember{m}, zaopt)
 				mems := zset.Range(0, -1, zropt)
 
-				memdata := []string{}
+				memdata := make([]string, 0, len(mems))
 				for _, mem := range mems {
 					memdata = append(memdata, mem.Member)
 				}
@@ -97,7 +97,7 @@ func TestZSet(t *testing.T) {
 				zset.Rem([]string{r.data})
 				mems := zset.Range(0, -1, zropt)
 
-				memdata := []string{}
+				memdata := make([]string, 0, len(mems))
 				for _, mem := range mems {
 					memdata = append(memdata, mem.Member)
 				}

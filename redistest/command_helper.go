@@ -761,7 +761,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 		}
 		for _, r := range records {
 			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
-				args := []string{}
+				args := make([]string, 0, 2*len(r.keys))
 				for n, key := range r.keys {
 					args = append(args, key)
 					args = append(args, r.vals[n])
@@ -804,7 +804,7 @@ func StringCommandTest(t *testing.T, client *Client) {
 		}
 		for _, r := range records {
 			t.Run(strings.Join(r.keys, ","), func(t *testing.T) {
-				args := []string{}
+				args := make([]string, 0, 2*len(r.keys))
 				for n, key := range r.keys {
 					args = append(args, key)
 					args = append(args, r.vals[n])
@@ -1856,7 +1856,7 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 
 		for _, r := range records {
 			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
-				params := []goredis.Z{}
+				params := make([]goredis.Z, 0, len(r.scores))
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
@@ -1901,7 +1901,7 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 
 		for _, r := range records {
 			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
-				params := []goredis.Z{}
+				params := make([]goredis.Z, 0, len(r.scores))
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
@@ -2037,7 +2037,7 @@ func ZSetCommandTest(t *testing.T, client *Client) {
 
 		for _, r := range records {
 			t.Run(fmt.Sprintf("%s(%f)", r.data[0], r.scores[0]), func(t *testing.T) {
-				params := []goredis.Z{}
+				params := make([]goredis.Z, 0, len(r.scores))
 				for n, score := range r.scores {
 					params = append(params, goredis.Z{Score: score, Member: r.data[n]})
 				}
