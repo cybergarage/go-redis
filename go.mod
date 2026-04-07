@@ -1,11 +1,11 @@
 module github.com/cybergarage/go-redis
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/cybergarage/go-authenticator v1.0.5
 	github.com/cybergarage/go-logger v1.3.12
-	github.com/cybergarage/go-tracing v1.1.5
+	github.com/cybergarage/go-tracing v1.1.7
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.6.0
 )
